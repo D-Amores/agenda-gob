@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEventosTable extends Migration
+class CreateAudienciasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,26 +13,23 @@ class CreateEventosTable extends Migration
      */
     public function up()
     {
-        Schema::create('eventos', function (Blueprint $table) {
+        Schema::create('audiencias', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->string('lugar');//Se puede cambiar a text el tipo de dato y cambiar el nombre del campo a 'ubicacion' si es necesario
+            $table->string('lugar'); //Se puede cambiar a text el tipo de dato y cambiar el nombre del campo a 'ubicacion' si es necesario
+            $table->string('asunto_audiencia'); // Asunto de la audiencia
             $table->text('descripcion')->nullable();
-            $table->boolean('asistencia_de_gobernador');
-            $table->dateTime('fecha_evento');
-            $table->string('hora_evento');
-            $table->timestamps();
+            $table->string('procedencia')->nullable(); //
+            $table->dateTime('fecha_audiencia');
+            $table->string('hora_audiencia');
 
             $table->unsignedBigInteger('area_id')->nullable();
 
 
             // Claves foráneas
-            $table->foreignId('vestimenta_id')->constrained('vestimentas')->onDelete('cascade');
             $table->foreignId('estatus_id')->constrained('estatus')->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-
-            
-            
+            $table->timestamps();
         });
     }
 
@@ -43,6 +40,6 @@ class CreateEventosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('eventos');
+        Schema::dropIfExists('audiencias');
     }
 }
