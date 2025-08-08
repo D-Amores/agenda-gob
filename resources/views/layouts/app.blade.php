@@ -24,7 +24,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Agenda</title>
+    <title>@yield('title')</title>
     
     <meta name="description" content="Most Powerful &amp; Comprehensive Bootstrap 5 HTML Admin Dashboard Template built for developers!" />
     <meta name="keywords" content="dashboard, bootstrap 5 dashboard, bootstrap 5 design, bootstrap 5">
@@ -84,30 +84,37 @@
 <div class="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
   <div class="layout-container">
 
-    
-    
+    <!-- Navbar -->
+      @include('partials.nav')
+    <!-- / Navbar -->
 
+      <!-- Layout container -->
+    <div class="layout-page">
 
+      <!-- Content wrapper -->
+      <div class="content-wrapper">
 
-<!-- Navbar -->
-    @include('partials.nav')
-<!-- / Navbar -->
-
-    @yield('content')
-          
-    @include('partials.footer')
-<!-- Footer -->
-
-          
-          <div class="content-backdrop fade"></div>
+        <!-- Menu -->
+          @include('partials.menu')
+        <!-- / Menu -->
+        <div class="container-xxl flex-grow-1 container-p-y">
+          @yield('content')
         </div>
-        <!--/ Content wrapper -->
-      </div>
+                
+        <!-- Footer -->
+          @include('partials.footer')
+        <!-- / Footer -->
 
-      <!--/ Layout container -->
+            
+        <div class="content-backdrop fade"></div>
+      </div>
+          <!--/ Content wrapper -->
     </div>
+      <!--/ Layout container -->
 
   </div>
+
+</div>
 
   
   

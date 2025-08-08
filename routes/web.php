@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AudienciaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 
@@ -20,3 +21,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 //Route::get('/contacto', [ContactoController::class, 'index'])->name('contacto');
+
+
+//Audiencia
+Route::get('/audiencia', [AudienciaController::class, 'index'])->name('audiencia_registro');
