@@ -24,8 +24,7 @@ class CreateAudienciasTable extends Migration
             $table->string('hora_audiencia');
 
             $table->unsignedBigInteger('area_id')->nullable();
-
-
+            
             // Claves foráneas
             $table->foreignId('estatus_id')->constrained('estatus')->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
