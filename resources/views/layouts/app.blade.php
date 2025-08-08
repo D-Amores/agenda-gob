@@ -152,6 +152,8 @@
 
 <!-- Page JS -->
 <script src="{{ asset('sneat/assets/js/dashboards-analytics.js') }}"></script>
+
+@yield('script')
   
 </body>
 
