@@ -138,7 +138,7 @@
                 <label class="form-label" for="estatus_id">Estatus</label>
                 <select class="form-select" id="estatus_id" name="estatus_id" required>
                   <option value="">Seleccione un estatus</option>
-                  @foreach($estatusList as $estatus)
+                  @foreach($estatusLista as $estatus)
                     <option value="{{ $estatus->id }}">{{ $estatus->estatus }}</option>
                   @endforeach
                 </select>
