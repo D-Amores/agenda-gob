@@ -18,7 +18,7 @@
       data-assets-path="{{ asset('sneat/assets/') }}/"
       data-template="horizontal-menu-template">
 
-  
+
 <!-- Mirrored from demos.themeselection.com/sneat-bootstrap-html-admin-template/html/horizontal-menu-template/dashboards-analytics.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 28 Mar 2022 15:52:38 GMT -->
 <head>
     <meta charset="utf-8" />
@@ -27,12 +27,12 @@
     <title>@yield('title')</title>
 
     @yield('link')
-    
+
     <meta name="description" content="Most Powerful &amp; Comprehensive Bootstrap 5 HTML Admin Dashboard Template built for developers!" />
     <meta name="keywords" content="dashboard, bootstrap 5 dashboard, bootstrap 5 design, bootstrap 5">
     <!-- Canonical SEO -->
     <link rel="canonical" href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/">
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/assets/img/favicon/favicon.ico" />
 
@@ -63,7 +63,7 @@
     <script src="{{ asset('sneat/assets/vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('sneat/assets/js/config.js') }}"></script>
 
-    
+
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async="async" src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
     <script>
@@ -75,8 +75,6 @@
     gtag('js', new Date());
     gtag('config', 'GA_MEASUREMENT_ID');
     </script>
-    <!-- Custom notification for demo -->
-    <!-- beautify ignore:end -->
 
 </head>
 
@@ -102,12 +100,12 @@
         <div class="container-xxl flex-grow-1 container-p-y">
           @yield('content')
         </div>
-                
+
         <!-- Footer -->
           @include('partials.footer')
         <!-- / Footer -->
 
-            
+
         <div class="content-backdrop fade"></div>
       </div>
           <!--/ Content wrapper -->
@@ -118,17 +116,17 @@
 
 </div>
 
-  
-  
+
+
   <!-- Overlay -->
   <div class="layout-overlay layout-menu-toggle"></div>
-  
-  
+
+
   <!-- Drag Target Area To SlideIn Menu On Small Screens -->
   <div class="drag-target"></div>
-  
 
-  
+
+
 
   <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
@@ -154,7 +152,7 @@
 <script src="{{ asset('sneat/assets/js/dashboards-analytics.js') }}"></script>
 
 @yield('script')
-  
+
 </body>
 
 
