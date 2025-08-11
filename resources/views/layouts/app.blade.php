@@ -60,7 +60,6 @@
     <script src="{{ asset('sneat/assets/vendor/js/helpers.js') }}"></script>
 
     <!-- Template customizer & Theme config -->
-    <script src="{{ asset('sneat/assets/vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('sneat/assets/js/config.js') }}"></script>
 
     
@@ -154,6 +153,9 @@
 <script src="{{ asset('sneat/assets/js/dashboards-analytics.js') }}"></script>
 
 @yield('script')
+
+<script src="{{ asset('vendor/sweetalert/sweetalert.all.js') }}"></script>
+@include('sweetalert::alert')
   
 </body>
 
