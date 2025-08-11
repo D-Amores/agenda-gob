@@ -1,191 +1,29 @@
 @extends ('layouts.app')
 
 @section('title') Audiencia @endsection
+
+@section('link') 
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/bs-stepper/bs-stepper.css') }}" />
+    <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/bootstrap-select/bootstrap-select.css') }}" />
+    <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/select2/select2.css') }}" />
+    <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/css/formValidation.min.css') }}" />
+ 
+@endsection
+
 @section('content')
 <div class="row">
-  <div class="col-12">
-    <h5>Default</h5>
-  </div>
-
-  <!-- Default Wizard -->
-  <div class="col-12 mb-4">
-    <small class="text-light fw-semibold">Basic</small>
-    <div class="bs-stepper wizard-numbered mt-2">
-      <div class="bs-stepper-header">
-        <div class="step" data-target="#account-details">
-          <button type="button" class="step-trigger">
-            <span class="bs-stepper-circle">1</span>
-            <span class="bs-stepper-label mt-1">
-              <span class="bs-stepper-title">Account Details</span>
-              <span class="bs-stepper-subtitle">Setup Account Details</span>
-            </span>
-          </button>
-        </div>
-        <div class="line">
-          <i class="bx bx-chevron-right"></i>
-        </div>
-        <div class="step" data-target="#personal-info">
-          <button type="button" class="step-trigger">
-            <span class="bs-stepper-circle">2</span>
-            <span class="bs-stepper-label mt-1">
-              <span class="bs-stepper-title">Personal Info</span>
-              <span class="bs-stepper-subtitle">Add personal info</span>
-            </span>
-
-          </button>
-        </div>
-        <div class="line">
-          <i class="bx bx-chevron-right"></i>
-        </div>
-        <div class="step" data-target="#social-links">
-          <button type="button" class="step-trigger">
-            <span class="bs-stepper-circle">3</span>
-            <span class="bs-stepper-label mt-1">
-              <span class="bs-stepper-title">Social Links</span>
-              <span class="bs-stepper-subtitle">Add social links</span>
-            </span>
-          </button>
-        </div>
-      </div>
-      <div class="bs-stepper-content">
-        <form onSubmit="return false">
-          <!-- Account Details -->
-          <div id="account-details" class="content">
-            <div class="content-header mb-3">
-              <h6 class="mb-0">Account Details</h6>
-              <small>Enter Your Account Details.</small>
-            </div>
-            <div class="row g-3">
-              <div class="col-sm-6">
-                <label class="form-label" for="username">Username</label>
-                <input type="text" id="username" class="form-control" placeholder="johndoe" />
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="email">Email</label>
-                <input type="email" id="email" class="form-control" placeholder="john.doe@email.com" aria-label="john.doe" />
-              </div>
-              <div class="col-sm-6 form-password-toggle">
-                <label class="form-label" for="password">Password</label>
-                <div class="input-group input-group-merge">
-                  <input type="password" id="password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password2" />
-                  <span class="input-group-text cursor-pointer" id="password2"><i class="bx bx-hide"></i></span>
-                </div>
-              </div>
-              <div class="col-sm-6 form-password-toggle">
-                <label class="form-label" for="confirm-password">Confirm Password</label>
-                <div class="input-group input-group-merge">
-                  <input type="password" id="confirm-password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="confirm-password2" />
-                  <span class="input-group-text cursor-pointer" id="confirm-password2"><i class="bx bx-hide"></i></span>
-                </div>
-              </div>
-              <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev" disabled>
-                  <i class="bx bx-chevron-left bx-sm ms-sm-n2"></i>
-                  <span class="align-middle d-sm-inline-block d-none">Previous</span>
-                </button>
-                <button class="btn btn-primary btn-next">
-                  <span class="align-middle d-sm-inline-block d-none me-sm-1">Next</span>
-                  <i class="bx bx-chevron-right bx-sm me-sm-n2"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- Personal Info -->
-          <div id="personal-info" class="content">
-            <div class="content-header mb-3">
-              <h6 class="mb-0">Personal Info</h6>
-              <small>Enter Your Personal Info.</small>
-            </div>
-            <div class="row g-3">
-              <div class="col-sm-6">
-                <label class="form-label" for="first-name">First Name</label>
-                <input type="text" id="first-name" class="form-control" placeholder="John" />
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="last-name">Last Name</label>
-                <input type="text" id="last-name" class="form-control" placeholder="Doe" />
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="country">Country</label>
-                <select class="select2" id="country">
-                  <option label=" "></option>
-                  <option>UK</option>
-                  <option>USA</option>
-                  <option>Spain</option>
-                  <option>France</option>
-                  <option>Italy</option>
-                  <option>Australia</option>
-                </select>
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="language">Language</label>
-                <select class="selectpicker w-auto" id="language" data-style="btn-transparent" data-icon-base="bx" data-tick-icon="bx-check text-white" multiple>
-                  <option>English</option>
-                  <option>French</option>
-                  <option>Spanish</option>
-                </select>
-              </div>
-              <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-primary btn-prev">
-                  <i class="bx bx-chevron-left bx-sm ms-sm-n2"></i>
-                  <span class="align-middle d-sm-inline-block d-none">Previous</span>
-                </button>
-                <button class="btn btn-primary btn-next">
-                  <span class="align-middle d-sm-inline-block d-none me-sm-1">Next</span>
-                  <i class="bx bx-chevron-right bx-sm me-sm-n2"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- Social Links -->
-          <div id="social-links" class="content">
-            <div class="content-header mb-3">
-              <h6 class="mb-0">Social Links</h6>
-              <small>Enter Your Social Links.</small>
-            </div>
-            <div class="row g-3">
-              <div class="col-sm-6">
-                <label class="form-label" for="twitter">Twitter</label>
-                <input type="text" id="twitter" class="form-control" placeholder="https://twitter.com/abc" />
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="facebook">Facebook</label>
-                <input type="text" id="facebook" class="form-control" placeholder="https://facebook.com/abc" />
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="google">Google+</label>
-                <input type="text" id="google" class="form-control" placeholder="https://plus.google.com/abc" />
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="linkedin">LinkedIn</label>
-                <input type="text" id="linkedin" class="form-control" placeholder="https://linkedin.com/abc" />
-              </div>
-              <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-primary btn-prev">
-                  <i class="bx bx-chevron-left bx-sm ms-sm-n2"></i>
-                  <span class="align-middle d-sm-inline-block d-none">Previous</span>
-                </button>
-                <button class="btn btn-success btn-submit">Submit</button>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-  <!-- /Default Wizard -->
-
   <!-- Validation Wizard -->
   <div class="col-12 mb-4">
-    <small class="text-light fw-semibold">Validation</small>
+    <small class="text-light fw-semibold">Audiencia</small>
     <div id="wizard-validation" class="bs-stepper mt-2">
       <div class="bs-stepper-header">
         <div class="step" data-target="#account-details-validation">
           <button type="button" class="step-trigger">
             <span class="bs-stepper-circle">1</span>
             <span class="bs-stepper-label mt-1">
-              <span class="bs-stepper-title">Account Details</span>
-              <span class="bs-stepper-subtitle">Setup Account Details</span>
+              <span class="bs-stepper-title">Detalles de la Audiencia</span>
+              <span class="bs-stepper-subtitle">Audiencia</span>
             </span>
           </button>
         </div>
@@ -196,8 +34,8 @@
           <button type="button" class="step-trigger">
             <span class="bs-stepper-circle">2</span>
             <span class="bs-stepper-label mt-1">
-              <span class="bs-stepper-title">Personal Info</span>
-              <span class="bs-stepper-subtitle">Add personal info</span>
+              <span class="bs-stepper-title">Informacion de la Audiencia</span>
+              <span class="bs-stepper-subtitle">Agrega Informacion de la Audiencia</span>
             </span>
           </button>
         </div>
@@ -208,97 +46,84 @@
           <button type="button" class="step-trigger">
             <span class="bs-stepper-circle">3</span>
             <span class="bs-stepper-label mt-1">
-              <span class="bs-stepper-title">Social Links</span>
-              <span class="bs-stepper-subtitle">Add social links</span>
+              <span class="bs-stepper-title">Información adicional</span>
+              <span class="bs-stepper-subtitle">Seleccione un estatus e ingrese una descripción opcional.</span>
             </span>
           </button>
         </div>
       </div>
       <div class="bs-stepper-content">
-        <form id="wizard-validation-form" onSubmit="return false">
-          <!-- Account Details -->
+        <form id="wizard-validation-form" method="POST" action="{{ route('audiencias.store') }}">
+          @csrf
+          <!-- Audiencia Details -->
           <div id="account-details-validation" class="content">
-            <div class="content-header mb-3">
-              <h6 class="mb-0">Account Details</h6>
-              <small>Enter Your Account Details.</small>
-            </div>
             <div class="row g-3">
               <div class="col-sm-6">
-                <label class="form-label" for="formValidationUsername">Username</label>
-                <input type="text" name="formValidationUsername" id="formValidationUsername" class="form-control" placeholder="johndoe" />
+                <label class="form-label" for="formValidationName">Nombre</label>
+                <input type="text" name="formValidationName" id="formValidationName" class="form-control" placeholder="Reunion" required/>
               </div>
               <div class="col-sm-6">
-                <label class="form-label" for="formValidationEmail">Email</label>
-                <input type="email" name="formValidationEmail" id="formValidationEmail" class="form-control" placeholder="john.doe@email.com" aria-label="john.doe" />
+                <label class="form-label" for="formValidationAsunto">Asunto</label>
+                <input type="text" name="formValidationAsunto" id="formValidationAsunto" class="form-control" placeholder="ejemplo" aria-label="john.doe" required/>
               </div>
-              <div class="col-sm-6 form-password-toggle">
-                <label class="form-label" for="formValidationPass">Password</label>
-                <div class="input-group input-group-merge">
-                  <input type="password" id="formValidationPass" name="formValidationPass" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="formValidationPass2" />
-                  <span class="input-group-text cursor-pointer" id="formValidationPass2"><i class="bx bx-hide"></i></span>
-                </div>
+              <div class="col-sm-6">
+                <label class="form-label" for="formValidationLugar">Lugar</label>
+                <input type="text" name="formValidationLugar" id="formValidationLugar" class="form-control" placeholder="ejemplo" aria-label="john.doe" required />
               </div>
-              <div class="col-sm-6 form-password-toggle">
-                <label class="form-label" for="formValidationConfirmPass">Confirm Password</label>
-                <div class="input-group input-group-merge">
-                  <input type="password" id="formValidationConfirmPass" name="formValidationConfirmPass" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="formValidationConfirmPass2" />
-                  <span class="input-group-text cursor-pointer" id="formValidationConfirmPass2"><i class="bx bx-hide"></i></span>
-                </div>
+              <div class="col-sm-6">
+                <label class="form-label" for="formValidationFecha">Fecha</label>
+                <input type="date" name="formValidationFecha" id="formValidationFecha" class="form-control" value="<?php echo date('Y-m-d'); ?>"  aria-label="Fecha" required/>
               </div>
+
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev" disabled>
+                <button type="button" class="btn btn-label-secondary btn-prev" disabled>
                   <i class="bx bx-chevron-left bx-sm ms-sm-n2"></i>
-                  <span class="align-middle d-sm-inline-block d-none">Previous</span>
+                  <span class="align-middle d-sm-inline-block d-none">Anterior</span>
                 </button>
-                <button class="btn btn-primary btn-next">
-                  <span class="align-middle d-sm-inline-block d-none me-sm-1">Next</span>
+                <button type="button" class="btn btn-primary btn-next">
+                  <span class="align-middle d-sm-inline-block d-none me-sm-1">Siguiente</span>
                   <i class="bx bx-chevron-right bx-sm me-sm-n2"></i>
                 </button>
               </div>
             </div>
           </div>
-          <!-- Personal Info -->
+          <!-- Audiencia Info -->
           <div id="personal-info-validation" class="content">
-            <div class="content-header mb-3">
-              <h6 class="mb-0">Personal Info</h6>
-              <small>Enter Your Personal Info.</small>
-            </div>
             <div class="row g-3">
+
+              <!-- Procedencia -->
               <div class="col-sm-6">
-                <label class="form-label" for="formValidationFirstName">First Name</label>
-                <input type="text" id="formValidationFirstName" name="formValidationFirstName" class="form-control" placeholder="John" />
+                <label class="form-label" for="procedencia">Procedencia</label>
+                <input type="text" id="procedencia" name="procedencia" class="form-control" placeholder="Ingrese la procedencia" />
               </div>
+
+              <!-- Hora de Audiencia -->
               <div class="col-sm-6">
-                <label class="form-label" for="formValidationLastName">Last Name</label>
-                <input type="text" id="formValidationLastName" name="formValidationLastName" class="form-control" placeholder="Doe" />
+                <label class="form-label" for="hora_audiencia">Hora de Audiencia</label>
+                <input type="time" id="hora_audiencia" name="hora_audiencia" class="form-control" required/>
               </div>
+
+
+              <!-- Área (select) -->
               <div class="col-sm-6">
-                <label class="form-label" for="formValidationCountry">Country</label>
-                <select class="select2" id="formValidationCountry" name="formValidationCountry">
-                  <option label=" "></option>
-                  <option>UK</option>
-                  <option>USA</option>
-                  <option>Spain</option>
-                  <option>France</option>
-                  <option>Italy</option>
-                  <option>Australia</option>
+                <label class="form-label" for="area_id">Área</label>
+                <select class="form-select" id="area_id" name="area_id">
+                  <option value="">Seleccione un área</option>
+                  <option value="1" selected>Área Legal</option>
+                  <option value="2">Área Administrativa</option>
+                  <option value="3">Área Técnica</option>
+                  <!-- Agrega más opciones si es necesario -->
                 </select>
               </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="formValidationLanguage">Language</label>
-                <select class="selectpicker w-auto" id="formValidationLanguage" data-style="btn-transparent" data-icon-base="bx" data-tick-icon="bx-check text-white" name="formValidationLanguage" multiple>
-                  <option>English</option>
-                  <option>French</option>
-                  <option>Spanish</option>
-                </select>
-              </div>
+
+              <!-- Botones de navegación -->
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-primary btn-prev">
+                <button type="button" class="btn btn-primary btn-prev">
                   <i class="bx bx-chevron-left bx-sm ms-sm-n2"></i>
-                  <span class="align-middle d-sm-inline-block d-none">Previous</span>
+                  <span class="align-middle d-sm-inline-block d-none">Anterior</span>
                 </button>
-                <button class="btn btn-primary btn-next">
-                  <span class="align-middle d-sm-inline-block d-none me-sm-1">Next</span>
+                <button type="button" class="btn btn-primary btn-next">
+                  <span class="align-middle d-sm-inline-block d-none me-sm-1">Siguiente</span>
                   <i class="bx bx-chevron-right bx-sm me-sm-n2"></i>
                 </button>
               </div>
@@ -306,33 +131,34 @@
           </div>
           <!-- Social Links -->
           <div id="social-links-validation" class="content">
-            <div class="content-header mb-3">
-              <h6 class="mb-0">Social Links</h6>
-              <small>Enter Your Social Links.</small>
-            </div>
+
             <div class="row g-3">
+              <!-- Estatus -->
               <div class="col-sm-6">
-                <label class="form-label" for="formValidationTwitter">Twitter</label>
-                <input type="text" name="formValidationTwitter" id="formValidationTwitter" class="form-control" placeholder="https://twitter.com/abc" />
+                <label class="form-label" for="estatus_id">Estatus</label>
+                <select class="form-select" id="estatus_id" name="estatus_id" required>
+                  <option value="">Seleccione un estatus</option>
+                  @foreach($estatusLista as $estatus)
+                    <option value="{{ $estatus->id }}">{{ $estatus->estatus }}</option>
+                  @endforeach
+                </select>
               </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="formValidationFacebook">Facebook</label>
-                <input type="text" name="formValidationFacebook" id="formValidationFacebook" class="form-control" placeholder="https://facebook.com/abc" />
+
+
+              <!-- Descripción (campo grande, opcional) -->
+              <div class="col-sm-12">
+                <label class="form-label" for="descripcion">Descripción (opcional)</label>
+                <textarea class="form-control" id="descripcion" name="descripcion" rows="2" placeholder="Ingrese una descripción si es necesario...">
+                </textarea>
               </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="formValidationGoogle">Google+</label>
-                <input type="text" name="formValidationGoogle" id="formValidationGoogle" class="form-control" placeholder="https://plus.google.com/abc" />
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="formValidationLinkedIn">LinkedIn</label>
-                <input type="text" name="formValidationLinkedIn" id="formValidationLinkedIn" class="form-control" placeholder="https://linkedin.com/abc" />
-              </div>
+
+              <!-- Botones -->
               <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-primary btn-prev">
+                <button type="button" class="btn btn-primary btn-prev">
                   <i class="bx bx-chevron-left bx-sm ms-sm-n2"></i>
-                  <span class="align-middle d-sm-inline-block d-none">Previous</span>
+                  <span class="align-middle d-sm-inline-block d-none">Anterior</span>
                 </button>
-                <button class="btn btn-success btn-next btn-submit">Submit</button>
+                <button type="submit" class="btn btn-success btn-next btn-submit">Enviar</button>
               </div>
             </div>
           </div>
@@ -342,170 +168,79 @@
   </div>
   <!-- /Validation Wizard -->
 
-  <!-- Vertical Wizard -->
-  <div class="col-12 mb-4">
-    <small class="text-light fw-semibold">Vertical</small>
-    <div class="bs-stepper wizard-vertical vertical mt-2">
-      <div class="bs-stepper-header">
-        <div class="step" data-target="#account-details-1">
-          <button type="button" class="step-trigger">
-            <span class="bs-stepper-circle">1</span>
-            <span class="bs-stepper-label mt-1">
-              <span class="bs-stepper-title">Account Details</span>
-              <span class="bs-stepper-subtitle">Setup Account Details</span>
-            </span>
-          </button>
-        </div>
-        <div class="line"></div>
-        <div class="step" data-target="#personal-info-1">
-          <button type="button" class="step-trigger">
-            <span class="bs-stepper-circle">2</span>
-            <span class="bs-stepper-label mt-1">
-              <span class="bs-stepper-title">Personal Info</span>
-              <span class="bs-stepper-subtitle">Add personal info</span>
-            </span>
-          </button>
-        </div>
-        <div class="line"></div>
-        <div class="step" data-target="#social-links-1">
-          <button type="button" class="step-trigger">
-            <span class="bs-stepper-circle">3</span>
-            <span class="bs-stepper-label mt-1">
-              <span class="bs-stepper-title">Social Links</span>
-              <span class="bs-stepper-subtitle">Add social links</span>
-            </span>
-          </button>
-        </div>
-      </div>
-      <div class="bs-stepper-content">
-        <form onSubmit="return false">
-          <!-- Account Details -->
-          <div id="account-details-1" class="content">
-            <div class="content-header mb-3">
-              <h6 class="mb-0">Account Details</h6>
-              <small>Enter Your Account Details.</small>
-            </div>
-            <div class="row g-3">
-              <div class="col-sm-6">
-                <label class="form-label" for="username-vertical">Username</label>
-                <input type="text" id="username-vertical" class="form-control" placeholder="johndoe" />
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="email-vertical">Email</label>
-                <input type="email" id="email-vertical" class="form-control" placeholder="john.doe@email.com" aria-label="john.doe" />
-              </div>
-              <div class="col-sm-6 form-password-toggle">
-                <label class="form-label" for="password-vertical">Password</label>
-                <div class="input-group input-group-merge">
-                  <input type="password" id="password-vertical" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password2-vertical" />
-                  <span class="input-group-text cursor-pointer" id="password2-vertical"><i class="bx bx-hide"></i></span>
-                </div>
-              </div>
-              <div class="col-sm-6 form-password-toggle">
-                <label class="form-label" for="confirm-password-vertical">Confirm Password</label>
-                <div class="input-group input-group-merge">
-                  <input type="password" id="confirm-password-vertical" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="confirm-password-vertical2" />
-                  <span class="input-group-text cursor-pointer" id="confirm-password-vertical2"><i class="bx bx-hide"></i></span>
-                </div>
-              </div>
-              <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-label-secondary btn-prev" disabled>
-                  <i class="bx bx-chevron-left bx-sm ms-sm-n2"></i>
-                  <span class="align-middle d-sm-inline-block d-none">Previous</span>
-                </button>
-                <button class="btn btn-primary btn-next">
-                  <span class="align-middle d-sm-inline-block d-none me-sm-1">Next</span>
-                  <i class="bx bx-chevron-right bx-sm me-sm-n2"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- Personal Info -->
-          <div id="personal-info-1" class="content">
-            <div class="content-header mb-3">
-              <h6 class="mb-0">Personal Info</h6>
-              <small>Enter Your Personal Info.</small>
-            </div>
-            <div class="row g-3">
-              <div class="col-sm-6">
-                <label class="form-label" for="first-name-vertical">First Name</label>
-                <input type="text" id="first-name-vertical" class="form-control" placeholder="John" />
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="last-name-vertical">Last Name</label>
-                <input type="text" id="last-name-vertical" class="form-control" placeholder="Doe" />
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="country-vertical">Country</label>
-                <select class="select2" id="country-vertical">
-                  <option label=" "></option>
-                  <option>UK</option>
-                  <option>USA</option>
-                  <option>Spain</option>
-                  <option>France</option>
-                  <option>Italy</option>
-                  <option>Australia</option>
-                </select>
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="language-vertical">Language</label>
-                <select class="selectpicker w-auto" id="language-vertical" data-style="btn-transparent" data-icon-base="bx" data-tick-icon="bx-check text-white" multiple>
-                  <option>English</option>
-                  <option>French</option>
-                  <option>Spanish</option>
-                </select>
-              </div>
-              <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-primary btn-prev">
-                  <i class="bx bx-chevron-left bx-sm ms-sm-n2"></i>
-                  <span class="align-middle d-sm-inline-block d-none">Previous</span>
-                </button>
-                <button class="btn btn-primary btn-next">
-                  <span class="align-middle d-sm-inline-block d-none me-sm-1">Next</span>
-                  <i class="bx bx-chevron-right bx-sm me-sm-n2"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- Social Links -->
-          <div id="social-links-1" class="content">
-            <div class="content-header mb-3">
-              <h6 class="mb-0">Social Links</h6>
-              <small>Enter Your Social Links.</small>
-            </div>
-            <div class="row g-3">
-              <div class="col-sm-6">
-                <label class="form-label" for="twitter-vertical">Twitter</label>
-                <input type="text" id="twitter-vertical" class="form-control" placeholder="https://twitter.com/abc" />
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="facebook-vertical">Facebook</label>
-                <input type="text" id="facebook-vertical" class="form-control" placeholder="https://facebook.com/abc" />
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="google-vertical">Google+</label>
-                <input type="text" id="google-vertical" class="form-control" placeholder="https://plus.google.com/abc" />
-              </div>
-              <div class="col-sm-6">
-                <label class="form-label" for="linkedin-vertical">LinkedIn</label>
-                <input type="text" id="linkedin-vertical" class="form-control" placeholder="https://linkedin.com/abc" />
-              </div>
-              <div class="col-12 d-flex justify-content-between">
-                <button class="btn btn-primary btn-prev">
-                  <i class="bx bx-chevron-left bx-sm ms-sm-n2"></i>
-                  <span class="align-middle d-sm-inline-block d-none">Previous</span>
-                </button>
-                <button class="btn btn-success btn-submit">Submit</button>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-  <!-- /Vertical Wizard -->
 </div>
+@endsection
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+@section('script') 
+  <!-- Vendors JS -->
+  <script src="{{ asset('sneat/assets/vendor/libs/bs-stepper/bs-stepper.js') }}"></script>
+<script src="{{ asset('sneat/assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script>
+<script src="{{ asset('sneat/assets/vendor/libs/select2/select2.js') }}"></script>
+
+<script>
+  // Establece la hora actual en formato HH:MM
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  document.getElementById('hora_audiencia').value = `${hours}:${minutes}`;
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const wizardEl = document.querySelector('#wizard-validation');
+    const stepper = new Stepper(wizardEl, {
+      linear: true,
+      animation: true
+    });
+
+    const form = document.querySelector('#wizard-validation-form');
+    const steps = form.querySelectorAll('.content');
+    const nextButtons = form.querySelectorAll('.btn-next:not(.btn-submit)');
+    const prevButtons = form.querySelectorAll('.btn-prev');
+    const submitButton = form.querySelector('.btn-submit');
+
+    function validateStep(stepElement) {
+      const inputs = stepElement.querySelectorAll('input, select, textarea');
+      let valid = true;
+
+      inputs.forEach(input => {
+        input.classList.remove('is-invalid');
+
+        // Validar campos requeridos
+        if (input.hasAttribute('required') && !input.value.trim()) {
+          input.classList.add('is-invalid');
+          valid = false;
+        }
+      });
+
+      return valid;
+    }
+
+    nextButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        const currentStep = form.querySelector('.content.active');
+
+        if (validateStep(currentStep)) {
+          stepper.next();
+        }
+      });
+    });
+
+    prevButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        stepper.previous();
+      });
+    });
+
+    submitButton.addEventListener('click', function () {
+      const currentStep = form.querySelector('.content.active');
+
+      if (validateStep(currentStep)) {
+        // Aquí puedes hacer envío AJAX si lo deseas
+        form.submit();
+      }
+    });
+  });
+</script>
+
 @endsection
