@@ -26,3 +26,7 @@ Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashb
 //Audiencia
 Route::get('/audiencia', [AudienciaController::class, 'index'])->name('audiencias.registro');
 Route::post('/audiencia/guardar', [AudienciaController::class, 'store'])->name('audiencias.store');
+// Mostrar formulario de edición
+Route::get('/audiencia/{audiencia}/editar', [AudienciaController::class, 'editar'])->name('audiencias.editar');
+// Actualizar audiencia (POST o PUT)
+Route::put('/audiencia/{audiencia}', [AudienciaController::class, 'actualizar'])->name('audiencias.actualizar');
