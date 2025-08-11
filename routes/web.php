@@ -24,4 +24,5 @@ Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashb
 
 
 //Audiencia
-Route::get('/audiencia', [AudienciaController::class, 'index'])->name('audiencia_registro');
+Route::get('/audiencia', [AudienciaController::class, 'index'])->name('audiencias.registro');
+Route::post('/audiencia/guardar', [AudienciaController::class, 'store'])->name('audiencias.store');
