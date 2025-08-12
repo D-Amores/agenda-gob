@@ -26,7 +26,7 @@
         <div class="avatar avatar-md border-5 border-light-success rounded-circle mx-auto mb-4">
           <span class="avatar-initial rounded-circle bg-label-success"><i class="bx bx-user bx-sm"></i></span>
         </div>
-        <h3 class="card-title mb-1 me-2">24,680</h3>
+        <h3 class="card-title mb-1 me-2">{{$numeroAudiencia}}</h3>
 {{--        <small class="d-block mb-2">29% of target</small>--}}
 {{--        <span class="text-success">+42% <i class="bx bx-chevron-up"></i></span>--}}
       </div>
@@ -52,7 +52,7 @@
         <div class="avatar avatar-md border-5 border-light-warning rounded-circle mx-auto mb-4">
           <span class="avatar-initial rounded-circle bg-label-warning"><i class="bx bx-archive bx-sm"></i></span>
         </div>
-        <h3 class="card-title mb-1 me-2">1,862</h3>
+        <h3 class="card-title mb-1 me-2">{{$numeroEventos}}</h3>
 {{--        <small class="d-block mb-2">47% of target</small>--}}
 {{--        <span class="text-success">+82% <i class="bx bx-chevron-up"></i></span>--}}
       </div>
