@@ -54,7 +54,7 @@
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/typeahead-js/typeahead.css') }}" />
-    <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/apex-charts/apex-charts.css') }}" />
+    <!-- <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/apex-charts/apex-charts.css') }}" /> -->
 
     <!-- Helpers -->
     <script src="{{ asset('sneat/assets/vendor/js/helpers.js') }}"></script>
@@ -142,7 +142,7 @@
 <!-- endbuild -->
 
 <!-- Vendors JS -->
-<script src="{{ asset('sneat/assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
+<!-- <script src="{{ asset('sneat/assets/vendor/libs/apex-charts/apexcharts.js') }}"></script> -->
 
 <!-- Main JS -->
 <script src="{{ asset('sneat/assets/js/main.js') }}"></script>
