@@ -9,36 +9,39 @@ use App\Models\Evento;
 
 class DashboardController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $numeroAudiencia = Audiencia::count();
         $numeroEventos = Evento::count();
 
-        // Obtener las fechas de eventos últimos 7 días (o el rango que quieras)
+        // Fechas recientes de eventos
         $fechasEventos = Evento::select(DB::raw('DATE(fecha_evento) as fecha'))
-            ->whereDate('fecha_evento', '>=', now()->subDays(6)->startOfDay())
-            ->groupBy('fecha')
+            ->whereDate('fecha_evento', '>=', now()->subDays(6)->startOfDay());
+
+        // Fechas recientes de audiencias
+        $fechasAudiencias = Audiencia::select(DB::raw('DATE(fecha_audiencia) as fecha'))
+            ->whereDate('fecha_audiencia', '>=', now()->subDays(6)->startOfDay());
+
+        // Combinar fechas y ordenar
+        $fechasTodas = $fechasEventos
+            ->union($fechasAudiencias)
             ->orderBy('fecha', 'asc')
             ->pluck('fecha');
 
-        // Obtener el conteo de audiencias por fecha (solo las fechas donde hay eventos)
-        $audienciasPorFecha = Audiencia::select(DB::raw('DATE(fecha_audiencia) as fecha'), DB::raw('COUNT(*) as total'))
-            ->whereIn(DB::raw('DATE(fecha_audiencia)'), $fechasEventos)
-            ->groupBy('fecha')
-            ->pluck('total', 'fecha');
-
-        // Preparar datos para la vista
-        $labels = [];
+        // Contar eventos y audiencias por fecha
+        $eventosData = [];
         $audienciasData = [];
 
-        foreach ($fechasEventos as $fecha) {
-            $labels[] = \Carbon\Carbon::parse($fecha)->format('d/m');
-            $audienciasData[] = $audienciasPorFecha[$fecha] ?? 0; // si no hay audiencias, 0
+        foreach($fechasTodas as $fecha) {
+            $eventosData[] = Evento::whereDate('fecha_evento', $fecha)->count();
+            $audienciasData[] = Audiencia::whereDate('fecha_audiencia', $fecha)->count();
         }
 
         return view('tablero', compact(
             'numeroAudiencia',
             'numeroEventos',
-            'labels',
+            'fechasTodas',
+            'eventosData',
             'audienciasData'
         ));
     }
