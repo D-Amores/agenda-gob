@@ -74,6 +74,7 @@
                             <label class="form-check-label" for="select-etc">ETC</label>
                         </div>
                         <hr class="container-m-nx">
+                        {{$audiencias}}
                     </div>
                 </div>
             </div>
