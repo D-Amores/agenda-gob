@@ -19,6 +19,7 @@ class Audiencia extends Model
         'procedencia',
         'fecha_audiencia',
         'hora_audiencia',
+        'hora_fin_audiencia',
         'area_id',
         'estatus_id',
         'user_id',
