@@ -9,7 +9,7 @@ use App\Models\Evento;
 
 class DashboardController extends Controller
 {
-    public function dashboard(){
+    public function index(){
         $numeroAudiencia = Audiencia::count();
         $numeroEventos = Evento::count();
 

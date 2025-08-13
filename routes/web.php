@@ -3,6 +3,7 @@
 use App\Http\Controllers\AudienciaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +20,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+Route::get('/login', [LoginController::class, 'index'])->name('login');
+Route::post('/login', [LoginController::class, 'index']);
+
+Route::match(['get', 'post'], '/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 //Route::get('/contacto', [ContactoController::class, 'index'])->name('contacto');
 
 
