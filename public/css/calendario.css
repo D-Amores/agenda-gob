@@ -1,0 +1,96 @@
+.app-calendar-wrapper {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.app-calendar-content .card {
+  box-shadow: none !important;
+  border: none !important;
+  box-shadow: 3px 7px 15px -3px rgba(0, 0, 0, 0.15) !important;
+}
+
+
+/* Estilos para los días válidos del mes actual */
+.fc-daygrid-day:not(.fc-day-other) {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fc-daygrid-day:not(.fc-day-other):hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: #f4f4f4; /* opcional, para dar efecto visual */
+    z-index: 1; /* elevar sobre otros elementos */
+}
+
+/* ========== MODO MES (dayGridMonth) ========== */
+.fc-daygrid-day:not(.fc-day-other) {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fc-daygrid-day:not(.fc-day-other):hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: #f4f4f4;
+    z-index: 1;
+}
+
+/* ========== MODO SEMANA y DÍA (timeGridWeek, timeGridDay) ========== */
+.fc-timegrid-col:not(.fc-day-disabled) {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.fc-timegrid-col:not(.fc-day-disabled):hover {
+    background-color: #f4f4f4;
+}
+
+.hr-line {
+  height: 1px;
+  background-color: #dee2e6; /* Igual que el borde de Bootstrap */
+  border: none;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+/*Scroll en la lista de eventos*/
+
+.event-list-scroll {
+  max-height: 250px; /* ajusta según tu necesidad */
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+}
+
+/*Ocultar scroll en la lista de eventos*/
+.event-list-scroll {
+  max-height: 200px;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+.event-list-scroll::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+
+/* Clase para truncar texto a 2 líneas con puntos suspensivos */
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;     /* Limita a 2 líneas */
+  line-clamp: 2;             /* Propiedad estándar para compatibilidad */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/*
+
+.container-xxl.container-p-y {
+  background-color: #f5f5f9;
+}
+
+*/

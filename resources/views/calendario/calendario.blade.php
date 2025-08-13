@@ -1,0 +1,248 @@
+@extends ('layouts.app')
+
+@section('title') Calendario @endsection
+
+@section('link')
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/select2/select2.css') }}" />
+    <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/css/formValidation.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/fullcalendar/fullcalendar.css') }}" />
+    <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/flatpickr/flatpickr.css') }}" />
+    <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/quill/editor.css') }}" />
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/css/pages/app-calendar.css') }}" />
+
+    <!-- Css personalizado -->
+    <link rel="stylesheet" href="{{ asset('css/calendario.css') }}" />
+@endsection
+
+@section('content')
+    <div class="card app-calendar-wrapper">
+        <div class="row g-0">
+            <!-- Calendar Sidebar -->
+<div class="col app-calendar-sidebar personalizado d-flex flex-column"
+     style="background-color: white !important; box-shadow: 3px 7px 15px -3px rgba(0, 0, 0, 0.15) !important; height: 100vh;">            
+                <div class="border-bottom p-4 my-sm-0 mb-3">
+                    <div class="d-grid gap-2">
+                        <!-- Botón Agregar Evento -->
+                        <a href="{{ route('audiencias.registro') }}" class="btn btn-primary btn-sm">
+                            <i class="bx bx-plus"></i>
+                            <span class="align-middle">Agregar Evento</span>
+                        </a>
+                        <!-- Botón Agregar Audiencia -->
+                        <a href="{{ route('audiencias.registro') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bx bx-user-plus"></i>
+                            <span class="align-middle">Agregar Audiencia</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <!-- inline calendar (flatpicker) 
+                      <div class="ms-n2">
+                        <div class="inline-calendar"></div>
+                      </div>
+                      <hr class="container-m-nx my-4">
+                    -->
+                    <!-- Filter -->
+                    <div class="mb-4">
+                        <small class="text-small text-muted text-uppercase align-middle">Filtros</small>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input select-all" type="checkbox" id="selectAll" data-value="all" checked>
+                        <label class="form-check-label" for="selectAll">Ver todo</label>
+                    </div>
+                    <div class="app-calendar-events-filter">
+                        <div class="form-check form-check-danger mb-2">
+                            <input class="form-check-input input-filter" type="checkbox" id="select-personal" data-value="personal" checked>
+                            <label class="form-check-label" for="select-personal">Personal</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input input-filter" type="checkbox" id="select-business" data-value="business" checked>
+                            <label class="form-check-label" for="select-business">Business</label>
+                        </div>
+                        <div class="form-check form-check-warning mb-2">
+                            <input class="form-check-input input-filter" type="checkbox" id="select-family" data-value="family" checked>
+                            <label class="form-check-label" for="select-family">Family</label>
+                        </div>
+                        <div class="form-check form-check-success mb-2">
+                            <input class="form-check-input input-filter" type="checkbox" id="select-holiday" data-value="holiday" checked>
+                            <label class="form-check-label" for="select-holiday">Holiday</label>
+                        </div>
+                        <div class="form-check form-check-info">
+                            <input class="form-check-input input-filter" type="checkbox" id="select-etc" data-value="etc" checked>
+                            <label class="form-check-label" for="select-etc">ETC</label>
+                        </div>
+                        <hr class="container-m-nx">
+                    </div>
+                </div>
+            </div>
+            <!-- /Calendar Sidebar -->
+
+            <!-- Calendar & Modal -->
+            <div class="col app-calendar-content ps-3">
+                <div class="card shadow-none border-0">
+                    <div class="card-body pb-0">
+                        <!-- FullCalendar -->
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+                <div class="app-overlay"></div>
+                <!-- FullCalendar Offcanvas -->
+                <div class="offcanvas offcanvas-end event-sidebar" tabindex="-1" id="addEventSidebar" aria-labelledby="addEventSidebarLabel">
+                    <div class="offcanvas-header border-bottom">
+                      <h5 class="offcanvas-title">Eventos y Audiencias</h5>
+                      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <!-- Botones de acción -->
+                        <div class="d-flex justify-content-center gap-2 mb-3 flex-wrap">
+                            <!-- Botón Agregar Evento -->
+                            <a href="{{ route('audiencias.registro') }}" class="btn btn-primary btn-sm w-auto px-3">
+                                <i class="bx bx-plus"></i>
+                                <span class="align-middle">Agregar Evento</span>
+                            </a>
+
+                            <!-- Botón Agregar Audiencia -->
+                            <a href="{{ route('audiencias.registro') }}" class="btn btn-outline-secondary btn-sm w-auto px-3">
+                                <i class="bx bx-user-plus"></i>
+                                <span class="align-middle">Agregar Audiencia</span>
+                            </a>
+                        </div>
+
+                        <hr class="my-3">
+
+                        <!-- Detalles del evento -->
+                        <div class="text-center mb-4">
+                            <div class="mx-auto" style="max-width: 320px;">
+                                <div class="mb-2">
+                                    <i class="bx bx-calendar-event text-primary fs-5 align-middle me-1"></i>
+                                    <span class="fw-semibold">Asunto:</span>
+                                    <span class="text-body text-truncate-2">Reunión con el equipo legal</span>
+                                </div>
+                                <!-- Grupo de detalles -->
+                                <div class="border rounded p-3 bg-light">
+
+                                    <div class="mb-2">
+                                        <i class="bx bx-time-five text-success fs-5 align-middle me-1"></i>
+                                        <span class="fw-semibold">Hora:</span>
+                                        <span class="text-body">10:00 AM - 11:30 AM</span>
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <i class="bx bx-check-circle text-info fs-5 align-middle me-1"></i>
+                                        <span class="fw-semibold">Estatus:</span>
+                                        <span class="badge bg-success align-middle">Confirmado</span>
+                                    </div>
+
+                                    <div>
+                                        <i class="bx bx-user-pin text-warning fs-5 align-middle me-1"></i>
+                                        <span class="fw-semibold">Vestimenta:</span>
+                                        <span class="text-body">Formal</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botones de acción del detalle -->
+                        <div class="d-flex justify-content-center gap-2 mb-3 flex-wrap">
+                            <!-- Botón Editar -->
+                            <button class="btn btn-warning btn-sm w-auto px-3">
+                                <i class="bx bx-edit"></i>
+                                <span class="align-middle">Editar</span>
+                            </button>
+
+                            <!-- Botón Cancelar -->
+                            <button class="btn btn-secondary btn-sm w-auto px-3">
+                                <i class="bx bx-x"></i>
+                                <span class="align-middle">Cancelar</span>
+                            </button>
+
+                            <!-- Botón Eliminar -->
+                            <button class="btn btn-danger btn-sm w-auto px-3">
+                                <i class="bx bx-trash"></i>
+                                <span class="align-middle">Eliminar</span>
+                            </button>
+                        </div>
+
+                        <hr class="my-3">
+
+                        <h5 class="text-center mb-3 fw-semibold">Eventos del Día</h5>
+                        <div class="event-list-scroll">
+                            <ul class="list-group">
+                              <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                  <i class="bx bx-calendar me-2 text-primary"></i>
+                                  <strong>Reunión con equipo legal</strong>
+                                  <div class="small text-muted">10:00 AM - 11:00 AM</div>
+                                </div>
+                                <button class="btn btn-sm btn-outline-warning">
+                                  <i class="bx bx-edit-alt"></i> Editar
+                                </button>
+                              </li>
+                              <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                  <i class="bx bx-calendar me-2 text-success"></i>
+                                  <strong>Audiencia en Sala 2</strong>
+                                  <div class="small text-muted">1:30 PM - 2:30 PM</div>
+                                </div>
+                                <button class="btn btn-sm btn-outline-warning">
+                                  <i class="bx bx-edit-alt"></i> Editar
+                                </button>
+                              </li>
+                              <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                  <i class="bx bx-calendar me-2 text-success"></i>
+                                  <strong>Audiencia en Sala 2</strong>
+                                  <div class="small text-muted">1:30 PM - 2:30 PM</div>
+                                </div>
+                                <button class="btn btn-sm btn-outline-warning">
+                                  <i class="bx bx-edit-alt"></i> Editar
+                                </button>
+                              </li>
+                              <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                  <i class="bx bx-calendar me-2 text-success"></i>
+                                  <strong>Audiencia en Sala 2</strong>
+                                  <div class="small text-muted">1:30 PM - 2:30 PM</div>
+                                </div>
+                                <button class="btn btn-sm btn-outline-warning">
+                                  <i class="bx bx-edit-alt"></i> Editar
+                                </button>
+                              </li>
+                              <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                  <i class="bx bx-calendar me-2 text-success"></i>
+                                  <strong>Audiencia en Sala 2</strong>
+                                  <div class="small text-muted">1:30 PM - 2:30 PM</div>
+                                </div>
+                                <button class="btn btn-sm btn-outline-warning">
+                                  <i class="bx bx-edit-alt"></i> Editar
+                                </button>
+                              </li>
+                              <!-- Puedes duplicar más ítems similares -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Calendar & Modal -->
+        </div>
+    </div>
+@endsection
+
+@section('script')
+    <!-- Vendors JS -->
+    <script src="{{ asset('sneat/assets/vendor/libs/fullcalendar/fullcalendar.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.js"></script>
+    <script src="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js') }}"></script>
+    <script src="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js') }}"></script>
+    <script src="{{ asset('sneat/assets/vendor/libs/select2/select2.js') }}"></script>
+    <script src="{{ asset('sneat/assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
+    <script src="{{ asset('sneat/assets/vendor/libs/moment/moment.js') }}"></script>
+
+    <!-- Page JS -->
+    <script src="{{ asset('sneat/assets/js/app-calendar-events.js') }}"></script>
+    <script src="{{ asset('js/calendario.js') }}"></script>
+@endsection

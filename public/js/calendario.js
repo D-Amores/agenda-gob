@@ -124,6 +124,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let i = new Calendar(x, {
         initialView: "dayGridMonth",
+        locale: "es",
+        allDayText: 'Todo el día',
+        buttonText: {
+            today: "Hoy",
+            month: "Mes",
+            week: "Semana",
+            day: "Día",
+            list: "Lista"
+        },
+        noEventsContent: "No hay eventos para mostrar",
         events: function (e, t) {
             let n = (function () {
                 let t = [],
@@ -158,32 +168,11 @@ document.addEventListener("DOMContentLoaded", function () {
             return ["fc-event-" + M[e._def.extendedProps.calendar]];
         },
         dateClick: function (e) {
-            e = moment(e.date).format("YYYY-MM-DD");
-            w();
             p.show();
-            t && (t.innerHTML = "Agregar");
-            n.classList.remove("d-none");
-            d.classList.add("d-none");
-            o.classList.add("d-none");
-            s.value = e;
-            c.value = e;
         },
         eventClick: function (e) {
-            e = e;
-            (a = e.event).url && (e.jsEvent.preventDefault(), window.open(a.url, "_blank"));
-            p.show();
-            n.classList.add("d-none");
-            d.classList.remove("d-none");
-            t && (t.innerHTML = "Update Event");
-            o.classList.remove("d-none");
-            F.value = a.title;
-            h.setDate(a.start, !0, "Y-m-d");
-            !0 === a.allDay ? (m.checked = !0) : (m.checked = !1);
-            null !== a.end ? b.setDate(a.end, !0, "Y-m-d") : b.setDate(a.start, !0, "Y-m-d");
-            u.val(a.extendedProps.calendar).trigger("change");
-            void 0 !== a.extendedProps.location && (C.value = a.extendedProps.location);
-            void 0 !== a.extendedProps.guests && v.val(a.extendedProps.guests).trigger("change");
-            void 0 !== a.extendedProps.description && (V.value = a.extendedProps.description);
+          p.show();
+
         },
         datesSet: function () {
             y();
