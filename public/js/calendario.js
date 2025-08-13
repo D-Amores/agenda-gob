@@ -34,7 +34,63 @@ document.addEventListener("DOMContentLoaded", function () {
         I = [].slice.call(document.querySelectorAll(".input-filter")),
         R = document.querySelector(".inline-calendar");
 
-    let a, l = events, r = !1, e;
+    let a, l = [], r = !1, e;
+
+// Función para sumar una hora si hora_fin_audiencia es null
+function addOneHour(dateStr, timeStr) {
+    const fullStr = `${dateStr}T${timeStr}`;
+    const dt = new Date(fullStr);
+
+    if (isNaN(dt.getTime())) {
+        console.error("Fecha inválida:", fullStr);
+        return new Date().toISOString().slice(0, 19); // fallback: ahora
+    }
+
+    dt.setHours(dt.getHours() + 1);
+    return dt.toISOString().slice(0, 19);
+}
+
+
+// Cargar audiencias desde la variable global `audiencias` generada en Blade
+if (typeof audiencias !== 'undefined') {
+    console.log("AUDIENCIAS:", audiencias);
+
+    l = audiencias.map(a => {
+        const fecha = moment(a.fecha_audiencia).format('YYYY-MM-DD');
+        const horaInicio = a.hora_audiencia || "00:00:00";
+        const horaFin = a.hora_fin_audiencia;
+
+        // Validar horaInicio; si no existe, usar 00:00:00
+        const start = horaInicio
+            ? `${fecha}T${horaInicio}`
+            : `${fecha}T00:00:00`;
+
+        // Si hay horaFin, usarla; si no, sumar 1 hora al inicio
+        const end = horaFin
+            ? `${fecha}T${horaFin}`
+            : addOneHour(fecha, horaInicio || "00:00:00");
+
+        console.log("AUDIENCIAS CON ID FALTANTE:", audiencias.filter(a => !a.id));
+
+        return {
+            id: a.id,
+            title: a.asunto_audiencia || 'Sin título',
+            start: start,
+            end: end,
+            allDay: false,
+            extendedProps: {
+                descripcion: a.descripcion,
+                lugar: a.lugar,
+                calendar: 'business', // Puedes cambiarlo si tienes categorías distintas
+                user: a.user && a.user.name ? a.user.name : '',
+                estatus: a.estatus && a.estatus.nombre ? a.estatus.nombre : ''
+
+            }
+        };
+    });
+}
+
+
     const p = new bootstrap.Offcanvas(D);
 
     function f(e) {
@@ -120,19 +176,19 @@ document.addEventListener("DOMContentLoaded", function () {
             inline: !0
         }));
 
-    var { dayGrid: S, interaction: L, timeGrid: E, list: k } = calendarPlugins;
-
-    let i = new Calendar(x, {
+    //var { dayGrid: S, interaction: L, timeGrid: E, list: k } = calendarPlugins;
+    
+    let i = new FullCalendar.Calendar(x, {
         initialView: "dayGridMonth",
         locale: "es",
-        allDayText: 'Todo el día',
-        buttonText: {
+        //allDayText: 'Todo el día',
+        /*buttonText: {
             today: "Hoy",
             month: "Mes",
             week: "Semana",
             day: "Día",
             list: "Lista"
-        },
+        },*/
         noEventsContent: "No hay eventos para mostrar",
         events: function (e, t) {
             let n = (function () {
@@ -149,7 +205,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 })
             );
         },
-        plugins: [L, S, E, k],
+        //plugins: [L, S, E, k],
+        plugins: [
+    FullCalendar.dayGridPlugin,
+    FullCalendar.timeGridPlugin,
+    FullCalendar.listPlugin,
+    FullCalendar.interactionPlugin
+],
+
         editable: !0,
         dragScroll: !0,
         dayMaxEvents: 2,

@@ -114,7 +114,7 @@
                         <hr class="my-3">
 
                         <!-- Detalles del evento -->
-                        <div class="text-center mb-4">
+                        <form id="eventForm" class="text-center mb-4">
                             <div class="mx-auto" style="max-width: 320px;">
                                 <div class="mb-2">
                                     <i class="bx bx-calendar-event text-primary fs-5 align-middle me-1"></i>
@@ -143,7 +143,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </form>
 
                         <!-- Botones de acción del detalle -->
                         <div class="d-flex justify-content-center gap-2 mb-3 flex-wrap">
@@ -233,8 +233,12 @@
 @endsection
 
 @section('script')
+    <script>
+        const audiencias = @json($audiencias);
+    </script>
+
     <!-- Vendors JS -->
-    <script src="{{ asset('sneat/assets/vendor/libs/fullcalendar/fullcalendar.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.js"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js') }}"></script>
