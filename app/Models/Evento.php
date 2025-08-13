@@ -17,6 +17,7 @@ class Evento extends Model
         'asistencia_de_gobernador',
         'fecha_evento',
         'hora_evento',
+        'hora_fin_evento',
         'user_id',
         'vestimenta_id',
         'estatus_id',

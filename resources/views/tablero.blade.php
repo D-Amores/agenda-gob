@@ -27,8 +27,6 @@
           <span class="avatar-initial rounded-circle bg-label-success"><i class="bx bx-user bx-sm"></i></span>
         </div>
         <h3 class="card-title mb-1 me-2">{{$numeroAudiencia}}</h3>
-{{--        <small class="d-block mb-2">29% of target</small>--}}
-{{--        <span class="text-success">+42% <i class="bx bx-chevron-up"></i></span>--}}
       </div>
     </div>
   </div>
@@ -53,8 +51,6 @@
           <span class="avatar-initial rounded-circle bg-label-warning"><i class="bx bx-archive bx-sm"></i></span>
         </div>
         <h3 class="card-title mb-1 me-2">{{$numeroEventos}}</h3>
-{{--        <small class="d-block mb-2">47% of target</small>--}}
-{{--        <span class="text-success">+82% <i class="bx bx-chevron-up"></i></span>--}}
       </div>
     </div>
   </div>
@@ -96,7 +92,7 @@
 
 @section('script')
   <!-- Page JS -->
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="{{ asset('sneat/assets/js/charts-apex.js') }}"></script>
 
   <script type="text/javascript">
 
