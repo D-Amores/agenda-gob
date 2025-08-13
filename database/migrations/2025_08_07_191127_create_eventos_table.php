@@ -21,6 +21,7 @@ class CreateEventosTable extends Migration
             $table->boolean('asistencia_de_gobernador');
             $table->dateTime('fecha_evento');
             $table->string('hora_evento');
+            $table->string('hora_fin_evento')->nullable();
             $table->timestamps();
 
             $table->unsignedBigInteger('area_id')->nullable();
