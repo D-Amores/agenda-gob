@@ -20,10 +20,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Mostrar el formulario
 Route::get('/login', [LoginController::class, 'index'])->name('login');
-Route::post('/login', [LoginController::class, 'index']);
 
-Route::match(['get', 'post'], '/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+// Procesar login
+Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+
+// Dashboard protegido
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
+
 //Route::get('/contacto', [ContactoController::class, 'index'])->name('contacto');
 
 
