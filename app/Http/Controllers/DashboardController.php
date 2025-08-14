@@ -11,30 +11,35 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $numeroAudiencia = Audiencia::count();
-        $numeroEventos = Evento::count();
+        $areaId = auth()->user()->area_id;
 
-        // Fechas recientes de eventos
+        $numeroEventos = Evento::where('area_id', $areaId)->count();
+        $numeroAudiencia = Audiencia::where('area_id', $areaId)->count();
+
+        // Fechas recientes de eventos del área
         $fechasEventos = Evento::select(DB::raw('DATE(fecha_evento) as fecha'))
-            ->whereDate('fecha_evento', '>=', now()->subDays(6)->startOfDay());
+            ->where('area_id', $areaId)
+            ->whereDate('fecha_evento', '>=', now()->subDays(6)->startOfDay())
+            ->groupBy(DB::raw('DATE(fecha_evento)'));
 
-        // Fechas recientes de audiencias
+        // Fechas recientes de audiencias del área
         $fechasAudiencias = Audiencia::select(DB::raw('DATE(fecha_audiencia) as fecha'))
-            ->whereDate('fecha_audiencia', '>=', now()->subDays(6)->startOfDay());
+            ->where('area_id', $areaId)
+            ->whereDate('fecha_audiencia', '>=', now()->subDays(6)->startOfDay())
+            ->groupBy(DB::raw('DATE(fecha_audiencia)'));
 
         // Combinar fechas y ordenar
         $fechasTodas = $fechasEventos
             ->union($fechasAudiencias)
             ->orderBy('fecha', 'asc')
             ->pluck('fecha');
-
-        // Contar eventos y audiencias por fecha
+        
         $eventosData = [];
         $audienciasData = [];
 
         foreach($fechasTodas as $fecha) {
-            $eventosData[] = Evento::whereDate('fecha_evento', $fecha)->count();
-            $audienciasData[] = Audiencia::whereDate('fecha_audiencia', $fecha)->count();
+            $eventosData[] = Evento::where('area_id', $areaId)->whereDate('fecha_evento', $fecha)->count();
+            $audienciasData[] = Audiencia::where('area_id', $areaId)->whereDate('fecha_audiencia', $fecha)->count();
         }
 
         return view('tablero', compact(
@@ -44,5 +49,6 @@ class DashboardController extends Controller
             'eventosData',
             'audienciasData'
         ));
+
     }
 }

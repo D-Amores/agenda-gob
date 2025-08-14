@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth'); // Todas las acciones requieren login
+    }
+
     // Mostrar formulario
     public function index()
     {

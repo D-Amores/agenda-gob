@@ -100,9 +100,6 @@
   var audiencias = @json($audienciasData);     
   var eventos = @json($eventosData);          
 
-  var lugares = ['Lugar A', 'Lugar B', 'Lugar C', 'Lugar D', 'Lugar E'];
-  var vestimentas = ['Formal', 'Casual', 'Deportivo', 'Formal', 'Informal'];
-
   var options = {
     chart: {
       height: 380,
@@ -140,46 +137,17 @@
       { name: "Eventos", data: eventos }
     ],
     xaxis: { categories: fechasTodas },
-    tooltip: {
-      shared: false, // tooltip independiente por serie
-      intersect: true,
-      custom: function({ series, seriesIndex, dataPointIndex, w }) {
-        if(seriesIndex === 0) { // Audiencia
-          return `
-            <div style="
-              padding: 10px;
-              background: rgba(78, 115, 223, 0.1);
-              color: #4e73df;
-              border-radius: 10px;
-              font-weight: 600;
-              min-width: 180px;
-              text-align: left;
-            ">
-              <div style="margin-bottom: 5px;">Fecha: ${w.config.xaxis.categories[dataPointIndex]}</div>
-              <div>Audiencias: <strong>${series[seriesIndex][dataPointIndex]}</strong></div>
-              <div>Lugar: <strong>${lugares[dataPointIndex]}</strong></div>
-              <div>Vestimenta: <strong>${vestimentas[dataPointIndex]}</strong></div>
-            </div>
-          `;
-        } else { // Eventos
-          return `
-            <div style="
-              padding: 10px;
-              background: rgba(255, 107, 107, 0.1);
-              color: #ff6b6b;
-              border-radius: 10px;
-              font-weight: 600;
-              min-width: 180px;
-              text-align: left;
-            ">
-              <div style="margin-bottom: 5px;">Fecha: ${w.config.xaxis.categories[dataPointIndex]}</div>
-              <div>Eventos: <strong>${series[seriesIndex][dataPointIndex]}</strong></div>
-              <div>Lugar: <strong>${lugares[dataPointIndex]}</strong></div>
-              <div>Vestimenta: <strong>${vestimentas[dataPointIndex]}</strong></div>
-            </div>
-          `;
+    yaxis: {
+        decimalsInFloat: 0, // fuerza que no haya decimales
+        labels: {
+            formatter: function (val) {
+                return Math.round(val);
+            }
         }
-      }
+    },
+    tooltip: {
+      shared: true, // ahora usa tooltip por defecto compartido
+      intersect: false
     }
   };
 
