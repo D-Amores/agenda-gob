@@ -96,93 +96,97 @@
 
   <script type="text/javascript">
 
-  var labels = @json($labels);
-  var audiencias = @json($audienciasData);
+  var fechasTodas = @json($fechasTodas);       
+  var audiencias = @json($audienciasData);     
+  var eventos = @json($eventosData);          
+
   var lugares = ['Lugar A', 'Lugar B', 'Lugar C', 'Lugar D', 'Lugar E'];
   var vestimentas = ['Formal', 'Casual', 'Deportivo', 'Formal', 'Informal'];
 
   var options = {
-  chart: {
-    height: 380,
-    type: "area",
-    background: "transparent",
-    toolbar: { show: false }
-  },
-  stroke: {
-    curve: "smooth",
-    width: 3
-  },
-  dataLabels: {
-    enabled: false
-  },
-  colors: ["#4e73df"], // Azul elegante
-  fill: {
-    type: "gradient",
-    gradient: {
-      shade: "light",
-      type: "vertical",
-      shadeIntensity: 0.5,
-      gradientToColors: ["#1cc88a"], // Verde degradado
-      opacityFrom: 0.6,
-      opacityTo: 0.1,
-      stops: [0, 100]
+    chart: {
+      height: 380,
+      type: "area",
+      background: "transparent",
+      toolbar: { show: false }
+    },
+    stroke: {
+      curve: "smooth",
+      width: 3
+    },
+    dataLabels: { enabled: false },
+    colors: ["#4e73df", "#ff6b6b"], 
+    fill: {
+      type: "gradient",
+      gradient: {
+        shade: "light",
+        type: "vertical",
+        shadeIntensity: 0.5,
+        gradientToColors: ["#1cc88a", "#f6c23e"], 
+        opacityFrom: 0.6,
+        opacityTo: 0.1,
+        stops: [0, 100]
+      }
+    },
+    markers: {
+      size: 6,
+      colors: ["#fff"],
+      strokeColors: ["#4e73df", "#ff6b6b"],
+      strokeWidth: 3,
+      hover: { size: 8 }
+    },
+    series: [
+      { name: "Audiencia", data: audiencias },
+      { name: "Eventos", data: eventos }
+    ],
+    xaxis: { categories: fechasTodas },
+    tooltip: {
+      shared: false, // tooltip independiente por serie
+      intersect: true,
+      custom: function({ series, seriesIndex, dataPointIndex, w }) {
+        if(seriesIndex === 0) { // Audiencia
+          return `
+            <div style="
+              padding: 10px;
+              background: rgba(78, 115, 223, 0.1);
+              color: #4e73df;
+              border-radius: 10px;
+              font-weight: 600;
+              min-width: 180px;
+              text-align: left;
+            ">
+              <div style="margin-bottom: 5px;">Fecha: ${w.config.xaxis.categories[dataPointIndex]}</div>
+              <div>Audiencias: <strong>${series[seriesIndex][dataPointIndex]}</strong></div>
+              <div>Lugar: <strong>${lugares[dataPointIndex]}</strong></div>
+              <div>Vestimenta: <strong>${vestimentas[dataPointIndex]}</strong></div>
+            </div>
+          `;
+        } else { // Eventos
+          return `
+            <div style="
+              padding: 10px;
+              background: rgba(255, 107, 107, 0.1);
+              color: #ff6b6b;
+              border-radius: 10px;
+              font-weight: 600;
+              min-width: 180px;
+              text-align: left;
+            ">
+              <div style="margin-bottom: 5px;">Fecha: ${w.config.xaxis.categories[dataPointIndex]}</div>
+              <div>Eventos: <strong>${series[seriesIndex][dataPointIndex]}</strong></div>
+              <div>Lugar: <strong>${lugares[dataPointIndex]}</strong></div>
+              <div>Vestimenta: <strong>${vestimentas[dataPointIndex]}</strong></div>
+            </div>
+          `;
+        }
+      }
     }
-  },
-  markers: {
-    size: 6,
-    colors: ["#fff"],
-    strokeColors: "#4e73df",
-    strokeWidth: 3,
-    hover: { size: 8 }
-  },
-  series: [
-    {
-      name: "Audiencia",
-      data: audiencias
-    }
-  ],
-  xaxis: {
-    categories: labels
-  },
-  tooltip: {
-    custom: function({ series, seriesIndex, dataPointIndex, w }) {
-      return `
-        <div style="
-          padding: 12px;
-          background: rgba(255, 255, 255, 0.75);
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          color: #333;
-          border-radius: 12px;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          box-shadow: 0 6px 15px rgba(0,0,0,0.12);
-          min-width: 220px;
-        ">
-          <div style="font-weight: 700; font-size: 14px; margin-bottom: 8px; color:#4e73df;">
-            ${w.config.xaxis.categories[dataPointIndex]}
-          </div>
-          <div style="font-size: 13px; margin-bottom: 5px;">
-            <span style="color: #28a745;">●</span> Audiencias: 
-            <strong>${series[seriesIndex][dataPointIndex]}</strong>
-          </div>
-          <div style="font-size: 13px; margin-bottom: 5px;">
-            <span style="color: #007bff;">●</span> Lugar: 
-            <strong>${lugares[dataPointIndex]}</strong>
-          </div>
-          <div style="font-size: 13px;">
-            <span style="color: #ffc107;">●</span> Vestimenta: 
-            <strong>${vestimentas[dataPointIndex]}</strong>
-          </div>
-        </div>
-      `;
-    }
-  }
-};
+  };
 
-var chart = new ApexCharts(document.querySelector("#chart"), options);
-chart.render();
-
+  var chart = new ApexCharts(document.querySelector("#chart"), options);
+  chart.render();
 
 </script>
+
 
 @endsection
