@@ -10,8 +10,9 @@ class CalendarioController extends Controller
 {
     public function index()
     {
-        $eventos = Evento::all();
-        $audiencias = Audiencia::all();
+        $eventos = Evento::with(['estatus', 'user', 'vestimenta'])->get();
+        $audiencias = Audiencia::with(['estatus', 'user'])->get();
+
         // Aquí puedes agregar la lógica para mostrar el calendario
         return view('calendario.calendario', compact('audiencias', 'eventos'));	
     }

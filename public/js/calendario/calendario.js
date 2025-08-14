@@ -9,7 +9,7 @@ FullCalendar.globalLocales.push(function () {
          buttonText: {
              prev: "Ant",
              next: "Sig",
-             today: "Hoy",
+             today: "Hoy",  
              month: "Mes",
              week: "Semana",
              day: "Día",
@@ -34,11 +34,14 @@ document.addEventListener("DOMContentLoaded", function () {
         D = document.getElementById("addEventSidebar"),
         P = document.querySelector(".app-overlay"),
         M = {
+            reprogramado: "warning",  // amarillo
+            atendido: "success",      // verde
+            cancelado: "danger",       // rojo
             Reunion: "primary",         // Reuniones internas de la secretaría
             Audiencia: "success",       // Audiencias con ciudadanos o grupos
             Sesion: "warning",          // Sesiones de consejo, comité o junta
             Plazo: "danger",            // Fechas límite o vencimientos importantes
-            EventoPublico: "info"       // Eventos abiertos al público o comunicados
+            pendiente: "info"       // Eventos abiertos al público o comunicados
         },
         t = document.querySelector(".offcanvas-title"),
         T = document.querySelector(".btn-toggle-sidebar"),
@@ -61,16 +64,89 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let a, l = [], r = !1, e;
 
-// Función para sumar una hora si hora_fin_audiencia es null
-function addOneHour(dateStr, timeStr) {
-        let dt = timeStr
-            ? new Date(`${dateStr}T${timeStr}`)
-            : new Date(`${dateStr}T00:00:00`);
-        if (isNaN(dt.getTime())) dt = new Date();
-        dt.setHours(dt.getHours() + 1);
-        return dt;
+function renderEventosDelDia(fechaSeleccionada) {
+    const lista = document.querySelector('.event-list-scroll ul');
+    lista.innerHTML = ''; // Limpiar lista previa
+
+    const fechaFormateada = moment(fechaSeleccionada).format('YYYY-MM-DD');
+
+    const eventosDelDia = l.filter(evento =>
+        moment(evento.start).format('YYYY-MM-DD') === fechaFormateada
+    );
+
+    if (eventosDelDia.length === 0) {
+        lista.innerHTML = `<li class="list-group-item text-center text-muted">No hay eventos</li>`;
+        document.getElementById("eventForm").classList.add("d-none"); // Ocultar detalle
+        return;
     }
 
+    eventosDelDia.forEach((evento, index) => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+        // Marca como seleccionado si es el primero
+        const isFirst = index === 0;
+        const btnClass = isFirst ? 'btn-primary active' : 'btn-outline-primary';
+
+        li.innerHTML = `
+            <div>
+                <i class="bx bx-calendar me-2 text-primary"></i>
+                <strong>${evento.title}</strong>
+                <div class="small text-muted">${moment(evento.start).format('h:mm A')} - ${moment(evento.end).format('h:mm A')}</div>
+            </div>
+            <button class="btn btn-sm ${btnClass} btn-select-event" data-id="${evento.id}">
+                <i class="bx bx-check-circle"></i> Seleccionar
+            </button>
+        `;
+
+        lista.appendChild(li);
+    });
+
+    // Mostrar detalles del primer evento (solo si hay eventos)
+    llenarFormulario(eventosDelDia[0]);
+    document.getElementById("eventForm").classList.remove("d-none");
+    p.show();
+
+    // Agregar listeners a los botones
+    lista.querySelectorAll(".btn-select-event").forEach(btn => {
+        btn.addEventListener("click", e => {
+            // Quitar estilo de seleccionado de todos
+            lista.querySelectorAll(".btn-select-event").forEach(b => {
+                b.classList.remove("btn-primary", "active");
+                b.classList.add("btn-outline-primary");
+            });
+
+            // Aplicar estilo al seleccionado
+            btn.classList.remove("btn-outline-primary");
+            btn.classList.add("btn-primary", "active");
+
+            const eventId = btn.getAttribute("data-id");
+            const evento = l.find(ev => ev.id == eventId);
+            if (!evento) return;
+
+            llenarFormulario(evento);
+            p.show();
+            document.getElementById("eventForm").classList.remove("d-none");
+        });
+    });
+}
+
+
+
+
+function llenarFormulario(event) {
+    const eventForm = document.getElementById("eventForm");
+
+    if (!eventForm || !event) return;
+
+    // Asegurarse de mostrar el formulario
+    eventForm.classList.remove("d-none");
+
+    document.getElementById("asunto").innerText = event.title;
+    document.getElementById("hora").innerText = `${moment(event.start).format('h:mm A')} - ${moment(event.end).format('h:mm A')}`;
+    document.getElementById("estatus").innerText = event.extendedProps.estatus || "N/D";
+    document.getElementById("vestimenta").innerText = event.extendedProps.vestimenta || "N/D";
+}
 
 // Cargar audiencias desde la variable global `audiencias` generada en Blade
     if (typeof audiencias !== 'undefined') {
@@ -94,7 +170,7 @@ function addOneHour(dateStr, timeStr) {
 
 
         return {
-            id: Number(a.id),
+            id: `audiencia-${a.id}`,
             title: a.asunto_audiencia || 'Sin título',
             start: start,
             end: end,
@@ -102,15 +178,51 @@ function addOneHour(dateStr, timeStr) {
             extendedProps: {
                 descripcion: a.descripcion || '',
                 lugar: a.lugar || '',
-                calendar: a.tipo || 'EventoPublico', // importante para colores
+                calendar: (a.estatus?.estatus || 'pendiente').toLowerCase(),
                 user: a.user?.name || '',
-                estatus: a.estatus?.nombre || ''
+                estatus: a.estatus?.estatus || '',
+                vestimenta: a.vestimenta?.tipo || 'No especificada'
             }
         };
     });
 
     }
     console.log("AUDIENCIAS PROCESADAS:", l);
+
+    if (typeof eventos !== 'undefined') {
+        const eventosProcesados = eventos
+            .filter(e => e && e.id)
+            .map(e => {
+                const fecha = e.fecha_evento.split(' ')[0];
+                const start = e.hora_evento
+                    ? moment(`${fecha} ${e.hora_evento}`, 'YYYY-MM-DD HH:mm').toDate()
+                    : moment(`${fecha} 00:00`, 'YYYY-MM-DD HH:mm').toDate();
+
+                const end = e.hora_fin_evento
+                    ? moment(`${fecha} ${e.hora_fin_evento}`, 'YYYY-MM-DD HH:mm').toDate()
+                    : moment(start).add(1, 'hours').toDate();
+
+                return {
+                    id: `evento-${e.id}`, // prefijo para evitar colisiones con audiencias
+                    title: e.nombre || 'Sin título',
+                    start: start,
+                    end: end,
+                    allDay: false,
+                    extendedProps: {
+                        descripcion: e.descripcion || '',
+                        lugar: e.lugar || '',
+                        calendar: (e.estatus?.estatus || 'pendiente').toLowerCase(),
+                        user: e.user?.name || '',
+                        estatus: e.estatus?.estatus || '',
+                        vestimenta: e.vestimenta?.tipo || 'No especificada'
+                    }
+                };
+            });
+
+        // Combinar con las audiencias
+        l = l.concat(eventosProcesados);
+    }
+
 
 
     const p = new bootstrap.Offcanvas(D);
@@ -221,37 +333,37 @@ function addOneHour(dateStr, timeStr) {
         direction: direction,
         initialDate: new Date(),
         navLinks: true,
+        fixedWeekCount: false,
         titleFormat: { month: 'short', year: 'numeric' },
+        eventTimeFormat: {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false // o true si quieres 12h con AM/PM
+        },
         eventClassNames: function ({ event: e }) {
             return ["fc-event-" + M[e._def.extendedProps.calendar]];
         },
         eventDidMount: function({ event, el }) {
-        // le asignamos el title al elemento DOM del evento
-        let tooltipContent = `<strong>${event.title}</strong><br>${event.extendedProps.descripcion || ''}`;
-        new bootstrap.Tooltip(el, {
-            title: tooltipContent,
-            html: true, // permite HTML dentro del tooltip
-            placement: 'top', // se puede cambiar a 'right', 'left', 'bottom'
-            trigger: 'hover',
-            container: 'body'
-        });
-    },
+            // le asignamos el title al elemento DOM del evento
+            let tooltipContent = `<strong>${event.title}</strong><br>${event.extendedProps.descripcion || ''}`;
+            new bootstrap.Tooltip(el, {
+                title: tooltipContent,
+                html: true, // permite HTML dentro del tooltip
+                placement: 'top', // se puede cambiar a 'right', 'left', 'bottom'
+                trigger: 'hover',
+                container: 'body'
+            });
+        },
         dateClick: function (e) {
             p.show();
+            renderEventosDelDia(e.date);
         },
         eventClick: function (e) {
-          p.show();
+            p.show();
+            llenarFormulario(e.event);
 
         },
         datesSet: function () {
-            // Cambia SOLO el hover de los botones, respetando el resto de estilos de Sneat
-            document.documentElement.style.setProperty('--fc-button-hover-bg-color', '#7b1fa2');
-            document.documentElement.style.setProperty('--fc-button-hover-border-color', '#7b1fa2');
-            document.documentElement.style.setProperty('--fc-button-hover-text-color', '#fff');
-            // Cambiar cursor en días del mes anterior/siguiente
-            document.querySelectorAll('.fc-day-other').forEach(cell => {
-                cell.style.cursor = 'not-allowed';
-            });
             y();
         },
         viewDidMount: function () {
