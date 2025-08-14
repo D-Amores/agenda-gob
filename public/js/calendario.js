@@ -1,4 +1,29 @@
 "use strict";
+FullCalendar.globalLocales.push(function () {
+     var es = {
+         code: "es",
+         week: {
+             dow: 1,
+             doy: 4
+         },
+         buttonText: {
+             prev: "Ant",
+             next: "Sig",
+             today: "Hoy",
+             month: "Mes",
+             week: "Semana",
+             day: "Día",
+             list: "Agenda"
+         },
+         weekText: "Sm",
+         allDayText: "Todo el día",
+         moreLinkText: "más",
+         noEventsText: "No hay eventos para mostrar"
+     };
+     return es;
+ }());
+
+
 
 let direction = "ltr";
 isRtl && (direction = "rtl");
@@ -9,11 +34,11 @@ document.addEventListener("DOMContentLoaded", function () {
         D = document.getElementById("addEventSidebar"),
         P = document.querySelector(".app-overlay"),
         M = {
-            Business: "primary",
-            Holiday: "success",
-            Personal: "danger",
-            Family: "warning",
-            ETC: "info"
+            Reunion: "primary",         // Reuniones internas de la secretaría
+            Audiencia: "success",       // Audiencias con ciudadanos o grupos
+            Sesion: "warning",          // Sesiones de consejo, comité o junta
+            Plazo: "danger",            // Fechas límite o vencimientos importantes
+            EventoPublico: "info"       // Eventos abiertos al público o comunicados
         },
         t = document.querySelector(".offcanvas-title"),
         T = document.querySelector(".btn-toggle-sidebar"),
@@ -38,57 +63,54 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Función para sumar una hora si hora_fin_audiencia es null
 function addOneHour(dateStr, timeStr) {
-    const fullStr = `${dateStr}T${timeStr}`;
-    const dt = new Date(fullStr);
-
-    if (isNaN(dt.getTime())) {
-        console.error("Fecha inválida:", fullStr);
-        return new Date().toISOString().slice(0, 19); // fallback: ahora
+        let dt = timeStr
+            ? new Date(`${dateStr}T${timeStr}`)
+            : new Date(`${dateStr}T00:00:00`);
+        if (isNaN(dt.getTime())) dt = new Date();
+        dt.setHours(dt.getHours() + 1);
+        return dt;
     }
-
-    dt.setHours(dt.getHours() + 1);
-    return dt.toISOString().slice(0, 19);
-}
 
 
 // Cargar audiencias desde la variable global `audiencias` generada en Blade
-if (typeof audiencias !== 'undefined') {
-    console.log("AUDIENCIAS:", audiencias);
+    if (typeof audiencias !== 'undefined') {
+        console.log("AUDIENCIAS:", audiencias);
 
-    l = audiencias.map(a => {
-        const fecha = moment(a.fecha_audiencia).format('YYYY-MM-DD');
-        const horaInicio = a.hora_audiencia || "00:00:00";
-        const horaFin = a.hora_fin_audiencia;
+        l = audiencias
+    .filter(a => a && a.id)
+    .map(a => {
+        // Obtener solo la fecha en formato YYYY-MM-DD
+        const fecha = a.fecha_audiencia.split(' ')[0];
 
-        // Validar horaInicio; si no existe, usar 00:00:00
-        const start = horaInicio
-            ? `${fecha}T${horaInicio}`
-            : `${fecha}T00:00:00`;
+        // Inicio
+        const start = a.hora_audiencia
+            ? moment(`${fecha} ${a.hora_audiencia}`, 'YYYY-MM-DD HH:mm').toDate()
+            : moment(`${fecha} 00:00`, 'YYYY-MM-DD HH:mm').toDate();
 
-        // Si hay horaFin, usarla; si no, sumar 1 hora al inicio
-        const end = horaFin
-            ? `${fecha}T${horaFin}`
-            : addOneHour(fecha, horaInicio || "00:00:00");
+        // Fin
+        const end = a.hora_fin_audiencia
+            ? moment(`${fecha} ${a.hora_fin_audiencia}`, 'YYYY-MM-DD HH:mm').toDate()
+            : moment(start).add(1, 'hours').toDate();
 
-        console.log("AUDIENCIAS CON ID FALTANTE:", audiencias.filter(a => !a.id));
 
         return {
-            id: a.id,
+            id: Number(a.id),
             title: a.asunto_audiencia || 'Sin título',
             start: start,
             end: end,
             allDay: false,
             extendedProps: {
-                descripcion: a.descripcion,
-                lugar: a.lugar,
-                calendar: 'business', // Puedes cambiarlo si tienes categorías distintas
-                user: a.user && a.user.name ? a.user.name : '',
-                estatus: a.estatus && a.estatus.nombre ? a.estatus.nombre : ''
-
+                descripcion: a.descripcion || '',
+                lugar: a.lugar || '',
+                calendar: a.tipo || 'EventoPublico', // importante para colores
+                user: a.user?.name || '',
+                estatus: a.estatus?.nombre || ''
             }
         };
     });
-}
+
+    }
+    console.log("AUDIENCIAS PROCESADAS:", l);
 
 
     const p = new bootstrap.Offcanvas(D);
@@ -115,13 +137,15 @@ if (typeof audiencias !== 'undefined') {
 
     function y() {
         const e = document.querySelector(".fc-sidebarToggle-button");
-        e.classList.remove("fc-button-primary");
-        e.classList.add("d-lg-none", "d-inline-block", "ps-0");
-        while (e.firstChild) e.firstChild.remove();
-        e.setAttribute("data-bs-toggle", "sidebar");
-        e.setAttribute("data-overlay", "");
-        e.setAttribute("data-target", "#app-calendar-sidebar");
-        e.insertAdjacentHTML("beforeend", '<i class="bx bx-menu bx-sm text-body"></i>');
+        if (e) {
+            e.classList.remove("fc-button-primary");
+            e.classList.add("d-lg-none", "d-inline-block", "ps-0");
+            while (e.firstChild) e.firstChild.remove();
+            e.setAttribute("data-bs-toggle", "sidebar");
+            e.setAttribute("data-overlay", "");
+            e.setAttribute("data-target", "#app-calendar-sidebar");
+            e.insertAdjacentHTML("beforeend", '<i class="bx bx-menu bx-sm text-body"></i>');
+        }
     }
 
     u.length &&
@@ -179,57 +203,39 @@ if (typeof audiencias !== 'undefined') {
     //var { dayGrid: S, interaction: L, timeGrid: E, list: k } = calendarPlugins;
     
     let i = new FullCalendar.Calendar(x, {
+        themeSystem: 'standard',
         initialView: "dayGridMonth",
-        locale: "es",
-        //allDayText: 'Todo el día',
-        /*buttonText: {
-            today: "Hoy",
-            month: "Mes",
-            week: "Semana",
-            day: "Día",
-            list: "Lista"
-        },*/
-        noEventsContent: "No hay eventos para mostrar",
-        events: function (e, t) {
-            let n = (function () {
-                let t = [],
-                    e = [].slice.call(document.querySelectorAll(".input-filter:checked"));
-                e.forEach(e => {
-                    t.push(e.getAttribute("data-value"));
-                });
-                return t;
-            })();
-            t(
-                l.filter(function (e) {
-                    return n.includes(e.extendedProps.calendar.toLowerCase());
-                })
-            );
-        },
-        //plugins: [L, S, E, k],
-        plugins: [
-    FullCalendar.dayGridPlugin,
-    FullCalendar.timeGridPlugin,
-    FullCalendar.listPlugin,
-    FullCalendar.interactionPlugin
-],
-
-        editable: !0,
-        dragScroll: !0,
+        events: l, // por ahora vacío
+        editable: true,
+        dragScroll: true,
         dayMaxEvents: 2,
-        eventResizableFromStart: !0,
+        eventResizableFromStart: true,
         customButtons: {
             sidebarToggle: { text: "Sidebar" }
         },
         headerToolbar: {
-            start: "sidebarToggle, prev,next, title",
+            start: "sidebarToggle,prev,next, title",
             end: "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
         },
+        locale: "es",
         direction: direction,
         initialDate: new Date(),
-        navLinks: !0,
+        navLinks: true,
+        titleFormat: { month: 'short', year: 'numeric' },
         eventClassNames: function ({ event: e }) {
             return ["fc-event-" + M[e._def.extendedProps.calendar]];
         },
+        eventDidMount: function({ event, el }) {
+        // le asignamos el title al elemento DOM del evento
+        let tooltipContent = `<strong>${event.title}</strong><br>${event.extendedProps.descripcion || ''}`;
+        new bootstrap.Tooltip(el, {
+            title: tooltipContent,
+            html: true, // permite HTML dentro del tooltip
+            placement: 'top', // se puede cambiar a 'right', 'left', 'bottom'
+            trigger: 'hover',
+            container: 'body'
+        });
+    },
         dateClick: function (e) {
             p.show();
         },
@@ -238,6 +244,14 @@ if (typeof audiencias !== 'undefined') {
 
         },
         datesSet: function () {
+            // Cambia SOLO el hover de los botones, respetando el resto de estilos de Sneat
+            document.documentElement.style.setProperty('--fc-button-hover-bg-color', '#7b1fa2');
+            document.documentElement.style.setProperty('--fc-button-hover-border-color', '#7b1fa2');
+            document.documentElement.style.setProperty('--fc-button-hover-text-color', '#fff');
+            // Cambiar cursor en días del mes anterior/siguiente
+            document.querySelectorAll('.fc-day-other').forEach(cell => {
+                cell.style.cursor = 'not-allowed';
+            });
             y();
         },
         viewDidMount: function () {
@@ -255,44 +269,48 @@ if (typeof audiencias !== 'undefined') {
         v.val("").trigger("change");
         V.value = "";
     }
-
+    
     i.render();
+   
     y();
 
-    L = document.getElementById("eventForm");
-
-    FormValidation.formValidation(L, {
-        fields: {
-            eventTitle: {
-                validators: {
-                    notEmpty: { message: "Please enter event title " }
+    let eventFormEl = document.getElementById("eventForm");
+    if(eventFormEl ){
+        
+        FormValidation.formValidation(eventFormEl , {
+            fields: {
+                eventTitle: {
+                    validators: {
+                        notEmpty: { message: "Please enter event title " }
+                    }
+                },
+                eventStartDate: {
+                    validators: {
+                        notEmpty: { message: "Please enter start date " }
+                    }
+                },
+                eventEndDate: {
+                    validators: {
+                        notEmpty: { message: "Please enter end date " }
+                    }
                 }
             },
-            eventStartDate: {
-                validators: {
-                    notEmpty: { message: "Please enter start date " }
-                }
-            },
-            eventEndDate: {
-                validators: {
-                    notEmpty: { message: "Please enter end date " }
-                }
+            plugins: {
+                trigger: new FormValidation.plugins.Trigger(),
+                bootstrap5: new FormValidation.plugins.Bootstrap5({
+                    eleValidClass: "",
+                    rowSelector: function (e, t) {
+                        return ".mb-3";
+                    }
+                }),
+                submitButton: new FormValidation.plugins.SubmitButton(),
+                autoFocus: new FormValidation.plugins.AutoFocus()
             }
-        },
-        plugins: {
-            trigger: new FormValidation.plugins.Trigger(),
-            bootstrap5: new FormValidation.plugins.Bootstrap5({
-                eleValidClass: "",
-                rowSelector: function (e, t) {
-                    return ".mb-3";
-                }
-            }),
-            submitButton: new FormValidation.plugins.SubmitButton(),
-            autoFocus: new FormValidation.plugins.AutoFocus()
-        }
-    }).on("core.form.valid", function () {
-        r = !0;
-    });
+        }).on("core.form.valid", function () {
+            r = !0;
+        });
+    }
+
 
     T && T.addEventListener("click", e => {
         A.classList.remove("d-none");
