@@ -3,6 +3,7 @@
 use App\Http\Controllers\AudienciaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +20,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+// Mostrar el formulario
+Route::get('/login', [LoginController::class, 'index'])->name('login');
+
+// Procesar login
+Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+
+// Dashboard protegido
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
+
 //Route::get('/contacto', [ContactoController::class, 'index'])->name('contacto');
 
 
