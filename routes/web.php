@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\AudienciaController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AudienciaController;
+use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 
@@ -39,3 +40,11 @@ Route::post('/audiencia/guardar', [AudienciaController::class, 'store'])->name('
 Route::get('/audiencia/{audiencia}/editar', [AudienciaController::class, 'editar'])->name('audiencias.editar');
 // Actualizar audiencia (POST o PUT)
 Route::put('/audiencia/{audiencia}', [AudienciaController::class, 'actualizar'])->name('audiencias.actualizar');
+
+
+
+// Calendario
+Route::get('/calendario', [CalendarioController::class, 'index'])->name('calendario.index');
+//rutas de ejemplo para eliminar
+Route::delete('/audiencia/eliminar', [CalendarioController::class, 'destroyAudiencia'])->name('audiencias.eliminar');
+Route::delete('/evento/eliminar', [CalendarioController::class, 'destroyEvento'])->name('eventos.eliminar');
