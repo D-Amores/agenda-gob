@@ -7,18 +7,13 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth'); // Todas las acciones requieren login
-    }
-
-    // Mostrar formulario
+    // Mostrar formulario (accesible sin autenticación)
     public function index()
     {
         return view('auth.login');
     }
 
-    // Procesar login
+    // Procesar login (accesible sin autenticación)
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -36,7 +31,7 @@ class LoginController extends Controller
         ])->onlyInput('username');
     }
 
-    // Logout opcional
+    // Logout (requiere autenticación)
     public function logout(Request $request)
     {
         Auth::logout();
@@ -45,4 +40,3 @@ class LoginController extends Controller
         return redirect('/login');
     }
 }
-

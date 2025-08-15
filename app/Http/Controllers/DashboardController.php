@@ -9,6 +9,12 @@ use App\Models\Evento;
 
 class DashboardController extends Controller
 {
+        public function __construct()
+    {
+        // Solo aplica 'auth' a las rutas que NO sean login
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         $areaId = auth()->user()->area_id;

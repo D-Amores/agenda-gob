@@ -4,6 +4,7 @@ use App\Http\Controllers\AudienciaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\LogoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,9 +23,8 @@ Route::get('/', function () {
 
 // Mostrar el formulario
 Route::get('/login', [LoginController::class, 'index'])->name('login');
-
-// Procesar login
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+Route::post('/logout', [LogoutController::class, 'store'])->name('logout');
 
 // Dashboard protegido
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
