@@ -143,6 +143,27 @@ function llenarFormulario(event) {
     document.getElementById("vestimenta").innerText = event.extendedProps.vestimenta || "N/D";
 }
 
+function filtrarEventos() {
+    // Obtener todos los checkboxes activos
+    const filtrosActivos = Array.from(document.querySelectorAll(".input-filter:checked"))
+        .map(cb => ({
+            tipo: cb.dataset.tipo,
+            estatus: cb.dataset.estatus
+        }));
+
+    // Si no hay filtros, devolver todos
+    if (filtrosActivos.length === 0) return [];
+
+    // Filtrar la lista completa 'l'
+    return l.filter(evento => {
+        const tipoEvento = evento.tipo; // ahora está definido directamente
+        const estatusEvento = (evento.extendedProps.estatus || "").toLowerCase();
+
+        return filtrosActivos.some(f => f.tipo === tipoEvento && f.estatus === estatusEvento);
+    });
+}
+
+
 // Cargar audiencias desde la variable global `audiencias` generada en Blade
     if (typeof audiencias !== 'undefined') {
         console.log("AUDIENCIAS:", audiencias);
@@ -166,6 +187,7 @@ function llenarFormulario(event) {
 
         return {
             id: `audiencia-${a.id}`,
+            tipo: "audiencia",
             title: a.asunto_audiencia || 'Sin título',
             start: start,
             end: end,
@@ -199,6 +221,7 @@ function llenarFormulario(event) {
 
                 return {
                     id: `evento-${e.id}`, // prefijo para evitar colisiones con audiencias
+                    tipo: "evento",
                     title: e.nombre || 'Sin título',
                     start: start,
                     end: end,
@@ -312,7 +335,10 @@ function llenarFormulario(event) {
     let i = new FullCalendar.Calendar(x, {
         themeSystem: 'standard',
         initialView: "dayGridMonth",
-        events: l, // por ahora vacío
+            events: function(fetchInfo, successCallback, failureCallback) {
+            const eventosFiltrados = filtrarEventos();
+            successCallback(eventosFiltrados);
+        }, // por ahora vacío
         editable: true,
         dragScroll: true,
         dayMaxEvents: 2,
@@ -500,11 +526,11 @@ function llenarFormulario(event) {
 
     B &&
         B.addEventListener("click", e => {
-            e.currentTarget.checked
-                ? document.querySelectorAll(".input-filter").forEach(e => (e.checked = 1))
-                : document.querySelectorAll(".input-filter").forEach(e => (e.checked = 0));
-            i.refetchEvents();
+            const checked = e.currentTarget.checked;
+            document.querySelectorAll(".input-filter").forEach(cb => cb.checked = checked);
+            i.refetchEvents(); // Recarga eventos según el filtro
         });
+
 
     I &&
         I.forEach(e => {
