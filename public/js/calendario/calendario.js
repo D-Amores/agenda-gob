@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <strong>${evento.title}</strong>
                     <div class="small text-muted">${moment(evento.start).format('h:mm A')} - ${moment(evento.end).format('h:mm A')}</div>
                 </div>
-                <button class="btn btn-sm ${btnClass} btn-select-event" data-id="${evento.id}">
+                <button class="btn btn-sm ${btnClass} btn-select-event" data-id="${evento.id}" data-tipo="${evento.tipo}">
                     <i class="bx bx-check-circle"></i> Seleccionar
                 </button>
             `;
@@ -127,7 +127,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 btn.classList.add("btn-primary", "active");
 
                 const eventId = btn.getAttribute("data-id");
-                const evento = l.find(ev => ev.id == eventId);
+                const eventTipo = btn.getAttribute("data-tipo");
+                const evento = l.find(ev => ev.id == eventId && ev.tipo === eventTipo);
+
                 if (!evento) return;
 
                 llenarFormulario(evento);
@@ -149,6 +151,14 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("hora").innerText = `${moment(event.start).format('h:mm A')} - ${moment(event.end).format('h:mm A')}`;
         document.getElementById("estatus").innerText = event.extendedProps.estatus || "N/D";
         document.getElementById("vestimenta").innerText = event.extendedProps.vestimenta || "N/D";
+
+        // Establecer datos para acciones
+        const btnEditar = document.getElementById("btnEditar");
+        const btnEliminar = document.getElementById("btnEliminar");
+        btnEditar.dataset.id = event.id;
+        btnEditar.dataset.tipo = event.tipo;
+        btnEliminar.dataset.id = event.id;
+        btnEliminar.dataset.tipo = event.tipo;
     }
 
 // Cargar audiencias desde la variable global `audiencias` generada en Blade
@@ -171,8 +181,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 : moment(start).add(1, 'hours').toDate();
 
             return {
-                id: `audiencia-${a.id}`,
-                tipo: "audiencia",
+                id: Number(a.id),
+                tipo: 'audiencia',
                 title: a.asunto_audiencia || 'Sin título',
                 start: start,
                 end: end,
@@ -203,8 +213,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     : moment(start).add(1, 'hours').toDate();
 
                 return {
-                    id: `evento-${e.id}`, // prefijo para evitar colisiones con audiencias
-                    tipo: "evento",
+                    id: Number(e.id), // prefijo para evitar colisiones con audiencias
+                    tipo: 'evento',
                     title: e.nombre || 'Sin título',
                     start: start,
                     end: end,
@@ -365,9 +375,13 @@ document.addEventListener("DOMContentLoaded", function () {
         eventClick: function (info) {
             const fechaEvento = info.event.start;
             renderEventosDelDia(fechaEvento);
-            llenarFormulario(info.event);
-            p.show();
 
+            // Buscar el botón correspondiente al evento clicado
+            const lista = document.querySelector('.event-list-scroll ul');
+            const btn = lista.querySelector(`.btn-select-event[data-id="${info.event.id}"][data-tipo="${info.event.extendedProps?.tipo || info.event.tipo}"]`);
+
+            if (btn) btn.click(); // Simular clic para disparar el listener que ya hace todo
+            p.show();
         },
         datesSet: function () {
             y();
@@ -450,6 +464,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (r) {
             let e = {
                 id: i.getEvents().length + 1,
+                tipo: 'evento',
                 title: F.value,
                 start: s.value,
                 end: c.value,
@@ -477,6 +492,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (r) {
             t = {
                 id: a.id,
+                tipo: a.tipo || 'evento',
                 title: F.value,
                 start: s.value,
                 end: c.value,
@@ -518,7 +534,7 @@ document.addEventListener("DOMContentLoaded", function () {
         q.classList.remove("show");
         P.classList.remove("show");
     });
-    
+
     void e.config.onChange.push(function (e) {
         i.changeView(i.view.type, moment(e[0]).format("YYYY-MM-DD")), y(), q.classList.remove("show"), P.classList.remove("show");
     });

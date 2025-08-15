@@ -36,3 +36,6 @@ Route::put('/audiencia/{audiencia}', [AudienciaController::class, 'actualizar'])
 
 // Calendario
 Route::get('/calendario', [CalendarioController::class, 'index'])->name('calendario.index');
+//rutas de ejemplo para eliminar
+Route::delete('/audiencia/eliminar', [CalendarioController::class, 'destroyAudiencia'])->name('audiencias.eliminar');
+Route::delete('/evento/eliminar', [CalendarioController::class, 'destroyEvento'])->name('eventos.eliminar');
