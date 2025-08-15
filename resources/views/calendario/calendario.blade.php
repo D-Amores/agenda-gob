@@ -50,15 +50,15 @@
                     <!-- Grupo: Audiencias -->
                     <div class="app-calendar-events-filter">
                         <strong>Audiencias</strong>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input input-filter" type="checkbox" data-tipo="audiencia" data-estatus="reprogramado" checked>
+                        <div class="form-check form-check-warning mb-2">
+                            <input class="form-check-input input-filter estatus-reprogramado" type="checkbox" id="select-reprogramado"data-tipo="audiencia" data-estatus="reprogramado" checked>
                             <label class="form-check-label">Reprogramado</label>
                         </div>
-                        <div class="form-check mb-2">
+                        <div class="form-check form-check-success mb-2">
                             <input class="form-check-input input-filter" type="checkbox" data-tipo="audiencia" data-estatus="atendido" checked>
                             <label class="form-check-label">Atendido</label>
                         </div>
-                        <div class="form-check mb-2">
+                        <div class="form-check form-check-danger mb-2">
                             <input class="form-check-input input-filter" type="checkbox" data-tipo="audiencia" data-estatus="cancelado" checked>
                             <label class="form-check-label">Cancelado</label>
                         </div>
@@ -69,15 +69,15 @@
                     <!-- Grupo: Eventos -->
                     <div class="app-calendar-events-filter">
                         <strong>Eventos</strong>
-                        <div class="form-check mb-2">
+                        <div class="form-check form-check-warning mb-2">
                             <input class="form-check-input input-filter" type="checkbox" data-tipo="evento" data-estatus="reprogramado" checked>
                             <label class="form-check-label">Reprogramado</label>
                         </div>
-                        <div class="form-check mb-2">
+                        <div class="form-check form-check-success mb-2">
                             <input class="form-check-input input-filter" type="checkbox" data-tipo="evento" data-estatus="atendido" checked>
                             <label class="form-check-label">Atendido</label>
                         </div>
-                        <div class="form-check mb-2">
+                        <div class="form-check form-check-danger mb-2">
                             <input class="form-check-input input-filter" type="checkbox" data-tipo="evento" data-estatus="cancelado" checked>
                             <label class="form-check-label">Cancelado</label>
                         </div>

@@ -59,152 +59,135 @@ document.addEventListener("DOMContentLoaded", function () {
         V = document.querySelector("#eventDescription"),
         m = document.querySelector(".allDay-switch"),
         B = document.querySelector(".select-all"),
-        I = [].slice.call(document.querySelectorAll(".input-filter")),
+        //I = [].slice.call(document.querySelectorAll(".input-filter")),
         R = document.querySelector(".inline-calendar");
 
     let a, l = [], r = !1, e;
 
-function renderEventosDelDia(fechaSeleccionada) {
-    const lista = document.querySelector('.event-list-scroll ul');
-    lista.innerHTML = ''; // Limpiar lista previa
+    function renderEventosDelDia(fechaSeleccionada) {
+        const lista = document.querySelector('.event-list-scroll ul');
+        lista.innerHTML = ''; // Limpiar lista previa
 
-    const fechaFormateada = moment(fechaSeleccionada).format('YYYY-MM-DD');
+        const fechaFormateada = moment(fechaSeleccionada).format('YYYY-MM-DD');
 
-    const eventosDelDia = l.filter(evento =>
-        moment(evento.start).format('YYYY-MM-DD') === fechaFormateada
-    );
+        const tiposSeleccionados = Array.from(document.querySelectorAll('.input-filter:checked'))
+        .map(cb => ({ tipo: cb.dataset.tipo, estatus: cb.dataset.estatus }));
 
-    if (eventosDelDia.length === 0) {
-        lista.innerHTML = `<li class="list-group-item text-center text-muted">No hay eventos</li>`;
-        document.getElementById("eventForm").classList.add("d-none"); // Ocultar detalle
-        return;
+        const eventosDelDia = l.filter(evento => {
+            const mismaFecha = moment(evento.start).format('YYYY-MM-DD') === fechaFormateada;
+            const coincideFiltro = tiposSeleccionados.some(f =>
+                f.tipo === evento.tipo && f.estatus.toLowerCase() === (evento.extendedProps.estatus || '').toLowerCase()
+            );
+            return mismaFecha && coincideFiltro;
+        });
+
+
+        if (eventosDelDia.length === 0) {
+            lista.innerHTML = `<li class="list-group-item text-center text-muted">No hay eventos</li>`;
+            document.getElementById("eventForm").classList.add("d-none"); // Ocultar detalle
+            return;
+        }
+
+        eventosDelDia.forEach((evento, index) => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+            // Marca como seleccionado si es el primero
+            const isFirst = index === 0;
+            const btnClass = isFirst ? 'btn-primary active' : 'btn-outline-primary';
+
+            li.innerHTML = `
+                <div>
+                    <i class="bx bx-calendar me-2 text-primary"></i>
+                    <strong>${evento.title}</strong>
+                    <div class="small text-muted">${moment(evento.start).format('h:mm A')} - ${moment(evento.end).format('h:mm A')}</div>
+                </div>
+                <button class="btn btn-sm ${btnClass} btn-select-event" data-id="${evento.id}">
+                    <i class="bx bx-check-circle"></i> Seleccionar
+                </button>
+            `;
+
+            lista.appendChild(li);
+        });
+
+        // Mostrar detalles del primer evento (solo si hay eventos)
+        llenarFormulario(eventosDelDia[0]);
+        document.getElementById("eventForm").classList.remove("d-none");
+        // Agregar listeners a los botones
+        lista.querySelectorAll(".btn-select-event").forEach(btn => {
+            btn.addEventListener("click", e => {
+                // Quitar estilo de seleccionado de todos
+                lista.querySelectorAll(".btn-select-event").forEach(b => {
+                    b.classList.remove("btn-primary", "active");
+                    b.classList.add("btn-outline-primary");
+                });
+
+                // Aplicar estilo al seleccionado
+                btn.classList.remove("btn-outline-primary");
+                btn.classList.add("btn-primary", "active");
+
+                const eventId = btn.getAttribute("data-id");
+                const evento = l.find(ev => ev.id == eventId);
+                if (!evento) return;
+
+                llenarFormulario(evento);
+                p.show();
+                document.getElementById("eventForm").classList.remove("d-none");
+            });
+        });
     }
 
-    eventosDelDia.forEach((evento, index) => {
-        const li = document.createElement('li');
-        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+    function llenarFormulario(event) {
+        const eventForm = document.getElementById("eventForm");
 
-        // Marca como seleccionado si es el primero
-        const isFirst = index === 0;
-        const btnClass = isFirst ? 'btn-primary active' : 'btn-outline-primary';
+        if (!eventForm || !event) return;
 
-        li.innerHTML = `
-            <div>
-                <i class="bx bx-calendar me-2 text-primary"></i>
-                <strong>${evento.title}</strong>
-                <div class="small text-muted">${moment(evento.start).format('h:mm A')} - ${moment(evento.end).format('h:mm A')}</div>
-            </div>
-            <button class="btn btn-sm ${btnClass} btn-select-event" data-id="${evento.id}">
-                <i class="bx bx-check-circle"></i> Seleccionar
-            </button>
-        `;
+        // Asegurarse de mostrar el formulario
+        eventForm.classList.remove("d-none");
 
-        lista.appendChild(li);
-    });
-
-    // Mostrar detalles del primer evento (solo si hay eventos)
-    llenarFormulario(eventosDelDia[0]);
-    document.getElementById("eventForm").classList.remove("d-none");
-    // Agregar listeners a los botones
-    lista.querySelectorAll(".btn-select-event").forEach(btn => {
-        btn.addEventListener("click", e => {
-            // Quitar estilo de seleccionado de todos
-            lista.querySelectorAll(".btn-select-event").forEach(b => {
-                b.classList.remove("btn-primary", "active");
-                b.classList.add("btn-outline-primary");
-            });
-
-            // Aplicar estilo al seleccionado
-            btn.classList.remove("btn-outline-primary");
-            btn.classList.add("btn-primary", "active");
-
-            const eventId = btn.getAttribute("data-id");
-            const evento = l.find(ev => ev.id == eventId);
-            if (!evento) return;
-
-            llenarFormulario(evento);
-            p.show();
-            document.getElementById("eventForm").classList.remove("d-none");
-        });
-    });
-}
-
-function llenarFormulario(event) {
-    const eventForm = document.getElementById("eventForm");
-
-    if (!eventForm || !event) return;
-
-    // Asegurarse de mostrar el formulario
-    eventForm.classList.remove("d-none");
-
-    document.getElementById("asunto").innerText = event.title;
-    document.getElementById("hora").innerText = `${moment(event.start).format('h:mm A')} - ${moment(event.end).format('h:mm A')}`;
-    document.getElementById("estatus").innerText = event.extendedProps.estatus || "N/D";
-    document.getElementById("vestimenta").innerText = event.extendedProps.vestimenta || "N/D";
-}
-
-function filtrarEventos() {
-    // Obtener todos los checkboxes activos
-    const filtrosActivos = Array.from(document.querySelectorAll(".input-filter:checked"))
-        .map(cb => ({
-            tipo: cb.dataset.tipo,
-            estatus: cb.dataset.estatus
-        }));
-
-    // Si no hay filtros, devolver todos
-    if (filtrosActivos.length === 0) return [];
-
-    // Filtrar la lista completa 'l'
-    return l.filter(evento => {
-        const tipoEvento = evento.tipo; // ahora está definido directamente
-        const estatusEvento = (evento.extendedProps.estatus || "").toLowerCase();
-
-        return filtrosActivos.some(f => f.tipo === tipoEvento && f.estatus === estatusEvento);
-    });
-}
-
+        document.getElementById("asunto").innerText = event.title;
+        document.getElementById("hora").innerText = `${moment(event.start).format('h:mm A')} - ${moment(event.end).format('h:mm A')}`;
+        document.getElementById("estatus").innerText = event.extendedProps.estatus || "N/D";
+        document.getElementById("vestimenta").innerText = event.extendedProps.vestimenta || "N/D";
+    }
 
 // Cargar audiencias desde la variable global `audiencias` generada en Blade
     if (typeof audiencias !== 'undefined') {
-        console.log("AUDIENCIAS:", audiencias);
 
         l = audiencias
-    .filter(a => a && a.id)
-    .map(a => {
-        // Obtener solo la fecha en formato YYYY-MM-DD
-        const fecha = a.fecha_audiencia.split(' ')[0];
+        .filter(a => a && a.id)
+        .map(a => {
+            // Obtener solo la fecha en formato YYYY-MM-DD
+            const fecha = a.fecha_audiencia.split(' ')[0];
 
-        // Inicio
-        const start = a.hora_audiencia
-            ? moment(`${fecha} ${a.hora_audiencia}`, 'YYYY-MM-DD HH:mm').toDate()
-            : moment(`${fecha} 00:00`, 'YYYY-MM-DD HH:mm').toDate();
+            // Inicio
+            const start = a.hora_audiencia
+                ? moment(`${fecha} ${a.hora_audiencia}`, 'YYYY-MM-DD HH:mm').toDate()
+                : moment(`${fecha} 00:00`, 'YYYY-MM-DD HH:mm').toDate();
 
-        // Fin
-        const end = a.hora_fin_audiencia
-            ? moment(`${fecha} ${a.hora_fin_audiencia}`, 'YYYY-MM-DD HH:mm').toDate()
-            : moment(start).add(1, 'hours').toDate();
+            // Fin
+            const end = a.hora_fin_audiencia
+                ? moment(`${fecha} ${a.hora_fin_audiencia}`, 'YYYY-MM-DD HH:mm').toDate()
+                : moment(start).add(1, 'hours').toDate();
 
-
-        return {
-            id: `audiencia-${a.id}`,
-            tipo: "audiencia",
-            title: a.asunto_audiencia || 'Sin título',
-            start: start,
-            end: end,
-            allDay: false,
-            extendedProps: {
-                descripcion: a.descripcion || '',
-                lugar: a.lugar || '',
-                calendar: (a.estatus?.estatus || 'pendiente').toLowerCase(),
-                user: a.user?.name || '',
-                estatus: a.estatus?.estatus || '',
-                vestimenta: a.vestimenta?.tipo || 'No especificada'
-            }
-        };
-    });
-
+            return {
+                id: `audiencia-${a.id}`,
+                tipo: "audiencia",
+                title: a.asunto_audiencia || 'Sin título',
+                start: start,
+                end: end,
+                allDay: false,
+                extendedProps: {
+                    descripcion: a.descripcion || '',
+                    lugar: a.lugar || '',
+                    calendar: (a.estatus?.estatus || 'pendiente').toLowerCase(),
+                    user: a.user?.name || '',
+                    estatus: a.estatus?.estatus || '',
+                    vestimenta: a.vestimenta?.tipo || 'No especificada'
+                }
+            };
+        });
     }
-    console.log("AUDIENCIAS PROCESADAS:", l);
 
     if (typeof eventos !== 'undefined') {
         const eventosProcesados = eventos
@@ -236,12 +219,8 @@ function filtrarEventos() {
                     }
                 };
             });
-
-        // Combinar con las audiencias
-        l = l.concat(eventosProcesados);
+        l = l.concat(eventosProcesados); // Combinar con las audiencias
     }
-
-
 
     const p = new bootstrap.Offcanvas(D);
 
@@ -329,16 +308,20 @@ function filtrarEventos() {
             monthSelectorType: "static",
             inline: !0
         }));
-
-    //var { dayGrid: S, interaction: L, timeGrid: E, list: k } = calendarPlugins;
     
     let i = new FullCalendar.Calendar(x, {
         themeSystem: 'standard',
         initialView: "dayGridMonth",
-            events: function(fetchInfo, successCallback, failureCallback) {
-            const eventosFiltrados = filtrarEventos();
-            successCallback(eventosFiltrados);
-        }, // por ahora vacío
+        events: function (info, successCallback, failureCallback) {
+                const tiposSeleccionados = Array.from(document.querySelectorAll('.input-filter:checked'))
+                    .map(cb => ({ tipo: cb.dataset.tipo, estatus: cb.dataset.estatus }));
+                const eventosFiltrados = l.filter(ev => {
+                    return tiposSeleccionados.some(f =>
+                        f.tipo === ev.tipo && f.estatus.toLowerCase() === (ev.extendedProps.estatus || '').toLowerCase()
+                    );
+                });
+                successCallback(eventosFiltrados);
+         },
         editable: true,
         dragScroll: true,
         dayMaxEvents: 2,
@@ -404,14 +387,27 @@ function filtrarEventos() {
         v.val("").trigger("change");
         V.value = "";
     }
-    
     i.render();
-   
     y();
+    // Reasigna los inputs después de que el DOM ya esté montado
+    const filtros = document.querySelectorAll(".input-filter");
+    filtros.forEach(filtro => {
+        filtro.addEventListener("change", () => {
+            const total = filtros.length;
+            const checked = document.querySelectorAll(".input-filter:checked").length;
+            B.checked = total === checked;
+            i.refetchEvents();
+        });
+    });
+
+    B && B.addEventListener("click", e => {
+                const checked = e.currentTarget.checked;
+                document.querySelectorAll(".input-filter").forEach(cb => cb.checked = checked);
+                i.refetchEvents();
+            });
 
     let eventFormEl = document.getElementById("eventForm");
     if(eventFormEl ){
-        
         FormValidation.formValidation(eventFormEl , {
             fields: {
                 eventTitle: {
@@ -445,7 +441,6 @@ function filtrarEventos() {
             r = !0;
         });
     }
-
 
     T && T.addEventListener("click", e => {
         A.classList.remove("d-none");
@@ -523,26 +518,7 @@ function filtrarEventos() {
         q.classList.remove("show");
         P.classList.remove("show");
     });
-
-    B &&
-        B.addEventListener("click", e => {
-            const checked = e.currentTarget.checked;
-            document.querySelectorAll(".input-filter").forEach(cb => cb.checked = checked);
-            i.refetchEvents(); // Recarga eventos según el filtro
-        });
-
-
-    I &&
-        I.forEach(e => {
-            e.addEventListener("click", () => {
-                document.querySelectorAll(".input-filter:checked").length <
-                document.querySelectorAll(".input-filter").length
-                    ? (B.checked = !1)
-                    : (B.checked = !0);
-                i.refetchEvents();
-            });
-        });
-
+    
     void e.config.onChange.push(function (e) {
         i.changeView(i.view.type, moment(e[0]).format("YYYY-MM-DD")), y(), q.classList.remove("show"), P.classList.remove("show");
     });
