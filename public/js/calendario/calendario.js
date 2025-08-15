@@ -23,8 +23,6 @@ FullCalendar.globalLocales.push(function () {
      return es;
  }());
 
-
-
 let direction = "ltr";
 isRtl && (direction = "rtl");
 
@@ -34,16 +32,11 @@ document.addEventListener("DOMContentLoaded", function () {
         D = document.getElementById("addEventSidebar"),
         P = document.querySelector(".app-overlay"),
         M = {
-            reprogramado: "warning",  // amarillo
-            atendido: "success",      // verde
-            cancelado: "danger",       // rojo
-            Reunion: "primary",         // Reuniones internas de la secretaría
-            Audiencia: "success",       // Audiencias con ciudadanos o grupos
-            Sesion: "warning",          // Sesiones de consejo, comité o junta
-            Plazo: "danger",            // Fechas límite o vencimientos importantes
-            pendiente: "info"       // Eventos abiertos al público o comunicados
+            reprogramado: "warning",
+            atendido: "success",
+            cancelado: "danger",      
+            pendiente: "info"
         },
-        t = document.querySelector(".offcanvas-title"),
         T = document.querySelector(".btn-toggle-sidebar"),
         n = document.querySelector(".btn-add-event"),
         d = document.querySelector(".btn-update-event"),
@@ -59,7 +52,6 @@ document.addEventListener("DOMContentLoaded", function () {
         V = document.querySelector("#eventDescription"),
         m = document.querySelector(".allDay-switch"),
         B = document.querySelector(".select-all"),
-        //I = [].slice.call(document.querySelectorAll(".input-filter")),
         R = document.querySelector(".inline-calendar");
 
     let a, l = [], r = !1, e;
@@ -163,7 +155,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Cargar audiencias desde la variable global `audiencias` generada en Blade
     if (typeof audiencias !== 'undefined') {
-
         l = audiencias
         .filter(a => a && a.id)
         .map(a => {
@@ -234,26 +225,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const p = new bootstrap.Offcanvas(D);
 
-    function f(e) {
-        return e.id
-            ? "<span class='badge badge-dot bg-" + $(e.element).data("label") + " me-2'> </span>" + e.text
-            : e.text;
-    }
-
-    function g(e) {
-        return e.id
-            ? "<div class='d-flex flex-wrap align-items-center'><div class='avatar avatar-xs me-2'><img src='" +
-                  assetsPath +
-                  "img/avatars/" +
-                  $(e.element).data("avatar") +
-                  "' alt='avatar' class='rounded-circle' /></div>" +
-                  e.text +
-                  "</div>"
-            : e.text;
-    }
-
-    var h, b;
-
     function y() {
         const e = document.querySelector(".fc-sidebarToggle-button");
         if (e) {
@@ -266,58 +237,6 @@ document.addEventListener("DOMContentLoaded", function () {
             e.insertAdjacentHTML("beforeend", '<i class="bx bx-menu bx-sm text-body"></i>');
         }
     }
-
-    u.length &&
-        u
-            .wrap('<div class="position-relative"></div>')
-            .select2({
-                placeholder: "Select value",
-                dropdownParent: u.parent(),
-                templateResult: f,
-                templateSelection: f,
-                minimumResultsForSearch: -1,
-                escapeMarkup: function (e) {
-                    return e;
-                }
-            });
-
-    v.length &&
-        v
-            .wrap('<div class="position-relative"></div>')
-            .select2({
-                placeholder: "Select value",
-                dropdownParent: v.parent(),
-                closeOnSelect: !1,
-                templateResult: g,
-                templateSelection: g,
-                escapeMarkup: function (e) {
-                    return e;
-                }
-            });
-
-    s &&
-        (h = s.flatpickr({
-            enableTime: !0,
-            altFormat: "Y-m-dTH:i:S",
-            onReady: function (e, t, n) {
-                n.isMobile && n.mobileInput.setAttribute("step", null);
-            }
-        }));
-
-    c &&
-        (b = c.flatpickr({
-            enableTime: !0,
-            altFormat: "Y-m-dTH:i:S",
-            onReady: function (e, t, n) {
-                n.isMobile && n.mobileInput.setAttribute("step", null);
-            }
-        }));
-
-    R &&
-        (e = R.flatpickr({
-            monthSelectorType: "static",
-            inline: !0
-        }));
     
     let i = new FullCalendar.Calendar(x, {
         themeSystem: 'standard',
@@ -332,8 +251,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
                 successCallback(eventosFiltrados);
          },
-        editable: true,
-        dragScroll: true,
+        editable: false,
         dayMaxEvents: 2,
         eventResizableFromStart: true,
         customButtons: {
@@ -355,7 +273,7 @@ document.addEventListener("DOMContentLoaded", function () {
             hour12: false // o true si quieres 12h con AM/PM
         },
         eventClassNames: function ({ event: e }) {
-            return ["fc-event-" + M[e._def.extendedProps.calendar]];
+            return ["fc-event-" + M[e._def.extendedProps.estatus]];
         },
         eventDidMount: function({ event, el }) {
             // le asignamos el title al elemento DOM del evento
@@ -392,15 +310,16 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     function w() {
-        c.value = "";
-        Y.value = "";
-        s.value = "";
-        F.value = "";
-        C.value = "";
-        m.checked = !1;
-        v.val("").trigger("change");
-        V.value = "";
+        if (c) c.value = "";
+        if (Y) Y.value = "";
+        if (s) s.value = "";
+        if (F) F.value = "";
+        if (C) C.value = "";
+        if (m) m.checked = false;
+        if (v) v.val("").trigger("change");
+        if (V) V.value = "";
     }
+
     i.render();
     y();
     // Reasigna los inputs después de que el DOM ya esté montado
@@ -420,122 +339,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 i.refetchEvents();
             });
 
-    let eventFormEl = document.getElementById("eventForm");
-    if(eventFormEl ){
-        FormValidation.formValidation(eventFormEl , {
-            fields: {
-                eventTitle: {
-                    validators: {
-                        notEmpty: { message: "Please enter event title " }
-                    }
-                },
-                eventStartDate: {
-                    validators: {
-                        notEmpty: { message: "Please enter start date " }
-                    }
-                },
-                eventEndDate: {
-                    validators: {
-                        notEmpty: { message: "Please enter end date " }
-                    }
-                }
-            },
-            plugins: {
-                trigger: new FormValidation.plugins.Trigger(),
-                bootstrap5: new FormValidation.plugins.Bootstrap5({
-                    eleValidClass: "",
-                    rowSelector: function (e, t) {
-                        return ".mb-3";
-                    }
-                }),
-                submitButton: new FormValidation.plugins.SubmitButton(),
-                autoFocus: new FormValidation.plugins.AutoFocus()
-            }
-        }).on("core.form.valid", function () {
-            r = !0;
-        });
-    }
-
-    T && T.addEventListener("click", e => {
-        A.classList.remove("d-none");
-    });
-
-    n.addEventListener("click", e => {
-        if (r) {
-            let e = {
-                id: i.getEvents().length + 1,
-                tipo: 'evento',
-                title: F.value,
-                start: s.value,
-                end: c.value,
-                startStr: s.value,
-                endStr: c.value,
-                display: "block",
-                extendedProps: {
-                    location: C.value,
-                    guests: v.val(),
-                    calendar: u.val(),
-                    description: V.value
-                }
-            };
-            Y.value && (e.url = Y.value);
-            m.checked && (e.allDay = !0);
-            t = e;
-            l.push(t);
-            i.refetchEvents();
-            p.hide();
-        }
-    });
-
-    d.addEventListener("click", e => {
-        var t, n;
-        if (r) {
-            t = {
-                id: a.id,
-                tipo: a.tipo || 'evento',
-                title: F.value,
-                start: s.value,
-                end: c.value,
-                url: Y.value,
-                extendedProps: {
-                    location: C.value,
-                    guests: v.val(),
-                    calendar: u.val(),
-                    description: V.value
-                },
-                display: "block",
-                allDay: !!m.checked
-            };
-            (n = t).id = parseInt(n.id);
-            l[l.findIndex(e => e.id === n.id)] = n;
-            i.refetchEvents();
-            p.hide();
-        }
-    });
-
-    o.addEventListener("click", e => {
-        var t;
-        t = parseInt(a.id);
-        l = l.filter(function (e) {
-            return e.id != t;
-        });
-        i.refetchEvents();
-        p.hide();
-    });
-
     D.addEventListener("hidden.bs.offcanvas", function () {
         w();
     });
 
-    T.addEventListener("click", e => {
-        o.classList.add("d-none");
-        d.classList.add("d-none");
-        n.classList.remove("d-none");
-        q.classList.remove("show");
-        P.classList.remove("show");
-    });
-
-    void e.config.onChange.push(function (e) {
-        i.changeView(i.view.type, moment(e[0]).format("YYYY-MM-DD")), y(), q.classList.remove("show"), P.classList.remove("show");
-    });
+    if (T) {
+        T.addEventListener("click", e => {
+            o.classList.add("d-none");
+            d.classList.add("d-none");
+            n.classList.remove("d-none");
+            q.classList.remove("show");
+            P.classList.remove("show");
+        });
+    }
 });

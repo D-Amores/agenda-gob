@@ -141,7 +141,7 @@
                                     <div class="mb-2">
                                         <i class="bx bx-check-circle text-info fs-5 align-middle me-1"></i>
                                         <span class="fw-semibold">Estatus:</span>
-                                        <span class="badge bg-success align-middle" id="estatus"></span>
+                                        <span class="badge bg-info align-middle" id="estatus"></span>
                                     </div>
 
                                     <div>
