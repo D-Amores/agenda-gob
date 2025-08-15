@@ -105,8 +105,6 @@ function renderEventosDelDia(fechaSeleccionada) {
     // Mostrar detalles del primer evento (solo si hay eventos)
     llenarFormulario(eventosDelDia[0]);
     document.getElementById("eventForm").classList.remove("d-none");
-    p.show();
-
     // Agregar listeners a los botones
     lista.querySelectorAll(".btn-select-event").forEach(btn => {
         btn.addEventListener("click", e => {
@@ -130,9 +128,6 @@ function renderEventosDelDia(fechaSeleccionada) {
         });
     });
 }
-
-
-
 
 function llenarFormulario(event) {
     const eventForm = document.getElementById("eventForm");
@@ -355,12 +350,14 @@ function llenarFormulario(event) {
             });
         },
         dateClick: function (e) {
-            p.show();
             renderEventosDelDia(e.date);
-        },
-        eventClick: function (e) {
             p.show();
-            llenarFormulario(e.event);
+        },
+        eventClick: function (info) {
+            const fechaEvento = info.event.start;
+            renderEventosDelDia(fechaEvento);
+            llenarFormulario(info.event);
+            p.show();
 
         },
         datesSet: function () {

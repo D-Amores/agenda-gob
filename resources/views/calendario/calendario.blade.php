@@ -38,44 +38,52 @@
                     </div>
                 </div>
                 <div class="p-4">
-                    <!-- inline calendar (flatpicker) 
-                      <div class="ms-n2">
-                        <div class="inline-calendar"></div>
-                      </div>
-                      <hr class="container-m-nx my-4">
-                    -->
                     <!-- Filter -->
                     <div class="mb-4">
                         <small class="text-small text-muted text-uppercase align-middle">Filtros</small>
                     </div>
                     <div class="form-check mb-2">
-                        <input class="form-check-input select-all" type="checkbox" id="selectAll" data-value="all" checked>
+                        <input class="form-check-input select-all" type="checkbox" id="selectAll" checked>
                         <label class="form-check-label" for="selectAll">Ver todo</label>
                     </div>
+
+                    <!-- Grupo: Audiencias -->
                     <div class="app-calendar-events-filter">
-                        <div class="form-check form-check-danger mb-2">
-                            <input class="form-check-input input-filter" type="checkbox" id="select-personal" data-value="personal" checked>
-                            <label class="form-check-label" for="select-personal">Personal</label>
+                        <strong>Audiencias</strong>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input input-filter" type="checkbox" data-tipo="audiencia" data-estatus="reprogramado" checked>
+                            <label class="form-check-label">Reprogramado</label>
                         </div>
                         <div class="form-check mb-2">
-                            <input class="form-check-input input-filter" type="checkbox" id="select-business" data-value="business" checked>
-                            <label class="form-check-label" for="select-business">Business</label>
+                            <input class="form-check-input input-filter" type="checkbox" data-tipo="audiencia" data-estatus="atendido" checked>
+                            <label class="form-check-label">Atendido</label>
                         </div>
-                        <div class="form-check form-check-warning mb-2">
-                            <input class="form-check-input input-filter" type="checkbox" id="select-family" data-value="family" checked>
-                            <label class="form-check-label" for="select-family">Family</label>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input input-filter" type="checkbox" data-tipo="audiencia" data-estatus="cancelado" checked>
+                            <label class="form-check-label">Cancelado</label>
                         </div>
-                        <div class="form-check form-check-success mb-2">
-                            <input class="form-check-input input-filter" type="checkbox" id="select-holiday" data-value="holiday" checked>
-                            <label class="form-check-label" for="select-holiday">Holiday</label>
+                    </div>
+
+                    <hr>
+
+                    <!-- Grupo: Eventos -->
+                    <div class="app-calendar-events-filter">
+                        <strong>Eventos</strong>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input input-filter" type="checkbox" data-tipo="evento" data-estatus="reprogramado" checked>
+                            <label class="form-check-label">Reprogramado</label>
                         </div>
-                        <div class="form-check form-check-info">
-                            <input class="form-check-input input-filter" type="checkbox" id="select-etc" data-value="etc" checked>
-                            <label class="form-check-label" for="select-etc">ETC</label>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input input-filter" type="checkbox" data-tipo="evento" data-estatus="atendido" checked>
+                            <label class="form-check-label">Atendido</label>
                         </div>
-                        <hr class="container-m-nx">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input input-filter" type="checkbox" data-tipo="evento" data-estatus="cancelado" checked>
+                            <label class="form-check-label">Cancelado</label>
+                        </div>
                     </div>
                 </div>
+
             </div>
             <!-- /Calendar Sidebar -->
 
