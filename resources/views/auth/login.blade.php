@@ -7,7 +7,7 @@ data-template="horizontal-menu-template">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Login Basic - Pages | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>iniciar sesion</title>
     
     <meta name="description" content="Most Powerful &amp; Comprehensive Bootstrap 5 HTML Admin Dashboard Template built for developers!" />
     <meta name="keywords" content="dashboard, bootstrap 5 dashboard, bootstrap 5 design, bootstrap 5">
@@ -70,92 +70,91 @@ data-template="horizontal-menu-template">
 
   <!-- Content -->
 
-    <div class="container-xxl">
-        <div class="authentication-wrapper authentication-basic container-p-y">
-            <div class="authentication-inner">
-                <!-- Register -->
-                <div class="card">
-                    <div class="card-body">
-                        <!-- Logo -->
-                        <div class="app-brand justify-content-center">
-                            <div href="index-2.html" class="app-brand-link gap-2">
-                                <span class="app-brand-text demo text-body fw-bolder">Agenda</span>
-                            </div>
+   <div class="container-xxl">
+    <div class="authentication-wrapper authentication-basic d-flex align-items-center min-vh-100">
+        <div class="authentication-inner w-100 mx-auto" style="max-width: 420px;">
+            <!-- Login Card -->
+            <div class="card shadow-sm rounded-5 bg-white bg-opacity-75">
+                <div class="card-body p-5">
+
+                    <!-- Logo -->
+                    <div class="app-brand justify-content-center mb-4 text-center">
+                        <span class="app-brand-text fw-bold fs-4 text-primary">Agenda</span>
+                    </div>
+
+                    <h4 class="mb-2 text-center fw-semibold">Bienvenido a tu Agenda! 👋</h4>
+                    <p class="mb-4 text-center text-muted">Inicia sesión con tu cuenta y comienza a ver tus eventos</p>
+
+                    <form id="formAuthentications" action="{{ route('login') }}" method="POST" novalidate>
+                        @csrf
+
+                        {{-- Error general --}}
+                        @if($errors->any())
+                        <div id="login-error" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ $errors->first() }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                        <!-- /Logo -->
-                        <h4 class="mb-2">Bienvenido a tu Agenda! 👋</h4>
-                        <p class="mb-4">Porfavor inicia sesion con tu cuenta y comienza aver tus eventos</p>
+                        @endif
 
-                        <form id="formAuthentications" class="mb-3" action="{{ route('login') }}" method="POST" novalidate>
-                            @csrf
-
-                            {{-- Error general --}}
-                            @if($errors->any())
-                                <div id="login-error" class="alert alert-danger">
-                                    {{ $errors->first() }}
-                                </div>
-                            @endif
-
-                            <script>
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    const errorDiv = document.getElementById('login-error');
-                                    if (errorDiv) {
-                                        setTimeout(() => {
-                                            errorDiv.style.transition = "opacity 0.5s";
-                                            errorDiv.style.opacity = 0;
-                                            setTimeout(() => errorDiv.remove(), 500);
-                                        }, 3000); // 3000 ms = 3 segundos
-                                    }
-                                });
-                            </script>
-
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Usuario</label>
-                                <input type="text" class="form-control @error('username') is-invalid @enderror" 
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Usuario</label>
+                            <div class="input-group input-group-merge">
+                                <span class="input-group-text"><i class="bx bx-user"></i></span>
+                                <input type="text" 
+                                    class="form-control @error('username') is-invalid @enderror" 
                                     id="username" name="username" placeholder="Ingresa tu usuario" 
                                     value="{{ old('username') }}" autofocus>
                                 <!-- @error('username')
-                                    <span class="invalid-feedback">{{ $message }}</span>
+                                <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror -->
                             </div>
+                        </div>
 
-                            <div class="mb-3 form-password-toggle">
-                                <div class="d-flex justify-content-between">
-                                    <label class="form-label" for="password">Contraseña</label>
-                                </div>
-                                <div class="input-group input-group-merge">
-                                    <input type="password" 
-                                        class="form-control @error('password') is-invalid @enderror" 
-                                        id="password" name="password" 
-                                        placeholder="••••••••••••" aria-describedby="password" />
-                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
-                                    <!-- @error('password')
-                                        <span class="invalid-feedback">{{ $message }}</span>
-                                    @enderror -->
-                                </div>
+                        <div class="mb-3 form-password-toggle">
+                            <label class="form-label" for="password">Contraseña</label>
+                            <div class="input-group input-group-merge">
+                                <span class="input-group-text"><i class="bx bx-lock"></i></span>
+                                <input type="password" 
+                                    class="form-control @error('password') is-invalid @enderror" 
+                                    id="password" name="password" 
+                                    placeholder="••••••••••••" aria-describedby="password" />
+                                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                <!-- @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror -->
                             </div>
+                        </div>
 
-                            <div class="mb-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="remember-me" name="remember">
-                                    <label class="form-check-label" for="remember-me">
-                                        Remember Me
-                                    </label>
-                                </div>
-                            </div>
+                        <div class="mb-4 form-check">
+                            <input class="form-check-input" type="checkbox" id="remember-me" name="remember">
+                            <label class="form-check-label" for="remember-me">Recuérdame</label>
+                        </div>
 
-                            <div class="mb-3">
-                                <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
-                            </div>
-                        </form>
+                        <div class="d-grid">
+                            <button class="btn btn-primary btn-lg fw-semibold" type="submit">Iniciar Sesión</button>
+                        </div>
 
+                    </form>
 
-                    </div>
                 </div>
-                <!-- /Register -->
             </div>
+            <!-- /Login Card -->
         </div>
     </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const errorDiv = document.getElementById('login-error');
+    if (errorDiv) {
+        setTimeout(() => {
+            errorDiv.style.transition = "opacity 0.5s";
+            errorDiv.style.opacity = 0;
+            setTimeout(() => errorDiv.remove(), 500);
+        }, 3000);
+    }
+});
+</script>
 
     <!-- / Content -->    
 

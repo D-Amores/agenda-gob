@@ -9,37 +9,52 @@ use App\Models\Evento;
 
 class DashboardController extends Controller
 {
-    public function index(){
-        $numeroAudiencia = Audiencia::count();
-        $numeroEventos = Evento::count();
+        public function __construct()
+    {
+        // Solo aplica 'auth' a las rutas que NO sean login
+        $this->middleware('auth');
+    }
 
-        // Obtener las fechas de eventos últimos 7 días (o el rango que quieras)
+    public function index()
+    {
+        $areaId = auth()->user()->area_id;
+
+        $numeroEventos = Evento::where('area_id', $areaId)->count();
+        $numeroAudiencia = Audiencia::where('area_id', $areaId)->count();
+
+        // Fechas recientes de eventos del área
         $fechasEventos = Evento::select(DB::raw('DATE(fecha_evento) as fecha'))
+            ->where('area_id', $areaId)
             ->whereDate('fecha_evento', '>=', now()->subDays(6)->startOfDay())
-            ->groupBy('fecha')
+            ->groupBy(DB::raw('DATE(fecha_evento)'));
+
+        // Fechas recientes de audiencias del área
+        $fechasAudiencias = Audiencia::select(DB::raw('DATE(fecha_audiencia) as fecha'))
+            ->where('area_id', $areaId)
+            ->whereDate('fecha_audiencia', '>=', now()->subDays(6)->startOfDay())
+            ->groupBy(DB::raw('DATE(fecha_audiencia)'));
+
+        // Combinar fechas y ordenar
+        $fechasTodas = $fechasEventos
+            ->union($fechasAudiencias)
             ->orderBy('fecha', 'asc')
             ->pluck('fecha');
-
-        // Obtener el conteo de audiencias por fecha (solo las fechas donde hay eventos)
-        $audienciasPorFecha = Audiencia::select(DB::raw('DATE(fecha_audiencia) as fecha'), DB::raw('COUNT(*) as total'))
-            ->whereIn(DB::raw('DATE(fecha_audiencia)'), $fechasEventos)
-            ->groupBy('fecha')
-            ->pluck('total', 'fecha');
-
-        // Preparar datos para la vista
-        $labels = [];
+        
+        $eventosData = [];
         $audienciasData = [];
 
-        foreach ($fechasEventos as $fecha) {
-            $labels[] = \Carbon\Carbon::parse($fecha)->format('d/m');
-            $audienciasData[] = $audienciasPorFecha[$fecha] ?? 0; // si no hay audiencias, 0
+        foreach($fechasTodas as $fecha) {
+            $eventosData[] = Evento::where('area_id', $areaId)->whereDate('fecha_evento', $fecha)->count();
+            $audienciasData[] = Audiencia::where('area_id', $areaId)->whereDate('fecha_audiencia', $fecha)->count();
         }
 
         return view('tablero', compact(
             'numeroAudiencia',
             'numeroEventos',
-            'labels',
+            'fechasTodas',
+            'eventosData',
             'audienciasData'
         ));
+
     }
 }

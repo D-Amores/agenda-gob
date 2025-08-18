@@ -5,6 +5,7 @@ use App\Http\Controllers\AudienciaController;
 use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\LogoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,26 +22,24 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Mostrar el formulario
-Route::get('/login', [LoginController::class, 'index'])->name('login');
-
-// Procesar login
-Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
-
-// Dashboard protegido
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
-
-//Route::get('/contacto', [ContactoController::class, 'index'])->name('contacto');
+Route::middleware('guest')->group(function () {
+    // Mostrar el formulario
+    Route::get('/login', [LoginController::class, 'index'])->name('login');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+});
 
 
-//Audiencia
-Route::get('/audiencia', [AudienciaController::class, 'index'])->name('audiencias.registro');
-Route::post('/audiencia/guardar', [AudienciaController::class, 'store'])->name('audiencias.store');
-// Mostrar formulario de edición
-Route::get('/audiencia/{audiencia}/editar', [AudienciaController::class, 'editar'])->name('audiencias.editar');
-// Actualizar audiencia (POST o PUT)
-Route::put('/audiencia/{audiencia}', [AudienciaController::class, 'actualizar'])->name('audiencias.actualizar');
-
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [LogoutController::class, 'store'])->name('logout');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    //Audiencia
+    Route::get('/audiencia', [AudienciaController::class, 'index'])->name('audiencias.registro');
+    Route::post('/audiencia/guardar', [AudienciaController::class, 'store'])->name('audiencias.store');
+    // Mostrar formulario de edición
+    Route::get('/audiencia/{audiencia}/editar', [AudienciaController::class, 'editar'])->name('audiencias.editar');
+    // Actualizar audiencia (POST o PUT)
+    Route::put('/audiencia/{audiencia}', [AudienciaController::class, 'actualizar'])->name('audiencias.actualizar');
+});
 
 
 // Calendario
@@ -48,3 +47,4 @@ Route::get('/calendario', [CalendarioController::class, 'index'])->name('calenda
 //rutas de ejemplo para eliminar
 Route::delete('/audiencia/eliminar', [CalendarioController::class, 'destroyAudiencia'])->name('audiencias.eliminar');
 Route::delete('/evento/eliminar', [CalendarioController::class, 'destroyEvento'])->name('eventos.eliminar');
+
