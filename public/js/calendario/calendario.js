@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
         P = document.querySelector(".app-overlay"),
         M = {
             reprogramado: "warning",
+            programado: "primary",
             atendido: "success",
             cancelado: "danger",      
             pendiente: "info"
