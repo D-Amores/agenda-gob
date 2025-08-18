@@ -20,15 +20,18 @@ class CreateAudienciasTable extends Migration
             $table->string('asunto_audiencia'); // Asunto de la audiencia
             $table->text('descripcion')->nullable();
             $table->string('procedencia')->nullable();
-            $table->dateTime('fecha_audiencia');
-            $table->string('hora_audiencia');
-            $table->string('hora_fin_audiencia')->nullable();
+            $table->date('fecha_audiencia');
+            $table->time('hora_audiencia');
+            $table->time('hora_fin_audiencia')->nullable();
 
             $table->unsignedBigInteger('area_id')->nullable();
             
             // Claves foráneas
             $table->foreignId('estatus_id')->constrained('estatus')->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreign('area_id')->references('id')->on('c_area')->onDelete('set null');
+
+
             $table->timestamps();
         });
     }

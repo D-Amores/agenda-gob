@@ -19,10 +19,10 @@ class CreateEventosTable extends Migration
             $table->string('lugar');//Se puede cambiar a text el tipo de dato y cambiar el nombre del campo a 'ubicacion' si es necesario
             $table->text('descripcion')->nullable();
             $table->boolean('asistencia_de_gobernador');
-            $table->dateTime('fecha_evento');
-            $table->string('hora_evento');
-            $table->string('hora_fin_evento')->nullable();
-            $table->timestamps();
+            $table->date('fecha_evento');
+            $table->time('hora_evento');
+            $table->time('hora_fin_evento')->nullable();
+            
 
             $table->unsignedBigInteger('area_id')->nullable();
 
@@ -31,9 +31,10 @@ class CreateEventosTable extends Migration
             $table->foreignId('vestimenta_id')->constrained('vestimentas')->onDelete('cascade');
             $table->foreignId('estatus_id')->constrained('estatus')->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreign('area_id')->references('id')->on('c_area')->onDelete('set null');
 
             
-            
+            $table->timestamps();
         });
     }
 

@@ -37,7 +37,7 @@ class Evento extends Model
         return $this->belongsTo(Estatus::class);
     }
 
-    //public function area(){
-        //return $this->belongsTo(Area::class)->withDefault(); // opcional
-    //}
+    public function area(){
+        return $this->belongsTo(Area::class)->withDefault(); // opcional
+    }
 }

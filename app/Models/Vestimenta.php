@@ -11,4 +11,10 @@ class Vestimenta extends Model
 
     protected $fillable = ['tipo'];
 
+    public function eventos()
+    {
+        return $this->hasMany(Evento::class);
+    }
+
+
 }
