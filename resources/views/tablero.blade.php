@@ -7,54 +7,52 @@
 @section('content')
 
 <div class="row">
+  <!-- Tarjeta Audiencias -->
   <div class="col-md-6 mb-4">
-    <div class="card">
-      <div class="card-header d-flex align-items-center justify-content-between">
-        <h6 class="card-title m-0 me-2">Audiencia</h6>
-        <!-- <div class="dropdown">
-          <button class="btn btn-sm p-0" type="button" id="customersList" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Hoy <i class="bx bx-chevron-down"></i>
-          </button>
-          <div class="dropdown-menu dropdown-menu-end" aria-labelledby="customersList">
-            <a class="dropdown-item" href="javascript:void(0);">Ayer</a>
-            <a class="dropdown-item" href="javascript:void(0);">Ultima Semana</a>
-            <a class="dropdown-item" href="javascript:void(0);">Ultimo Mes</a>
-          </div>
-        </div> -->
-      </div>
-      <div class="card-body text-center">
-        <div class="avatar avatar-md border-5 border-light-success rounded-circle mx-auto mb-4">
-          <span class="avatar-initial rounded-circle bg-label-success"><i class="bx bx-user bx-sm"></i></span>
+    <div class="card shadow-sm border-0 h-100 hover-shadow" style="transition: all 0.3s ease;">
+      <div class="card-body text-center p-4">
+        <!-- Icono -->
+        <div class="avatar avatar-xl rounded-circle mx-auto mb-3" 
+             style="background: linear-gradient(135deg, #28c76f, #81fbb8); display: flex; align-items: center; justify-content: center;">
+          <i class="bx bx-user-voice bx-lg text-white"></i>
         </div>
-        <h3 class="card-title mb-1 me-2">{{$numeroAudiencia}}</h3>
+        
+        <!-- Número -->
+        <h2 class="fw-bold mb-1 text-success">{{$numeroAudiencia}}</h2>
+        
+        <!-- Subtítulo -->
+        <p class="text-muted mb-0">Audiencias Registradas</p>
       </div>
     </div>
   </div>
 
+  <!-- Tarjeta Eventos -->
   <div class="col-md-6 mb-4">
-    <div class="card">
-      <div class="card-header d-flex align-items-center justify-content-between">
-        <h6 class="card-title m-0 me-2">Eventos</h6>
-        <!-- <div class="dropdown">
-          <button class="btn btn-sm p-0" type="button" id="orderReceivedList" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Hoy <i class="bx bx-chevron-down"></i>
-          </button>
-          <div class="dropdown-menu dropdown-menu-end" aria-labelledby="orderReceivedList">
-            <a class="dropdown-item" href="javascript:void(0);">Ayer</a>
-            <a class="dropdown-item" href="javascript:void(0);">Ultima Semana</a>
-            <a class="dropdown-item" href="javascript:void(0);">Ultimo Mes</a>
-          </div>
-        </div> -->
-      </div>
-      <div class="card-body text-center">
-        <div class="avatar avatar-md border-5 border-light-warning rounded-circle mx-auto mb-4">
-          <span class="avatar-initial rounded-circle bg-label-warning"><i class="bx bx-archive bx-sm"></i></span>
+    <div class="card shadow-sm border-0 h-100 hover-shadow" style="transition: all 0.3s ease;">
+      <div class="card-body text-center p-4">
+        <!-- Icono -->
+        <div class="avatar avatar-xl rounded-circle mx-auto mb-3" 
+             style="background: linear-gradient(135deg, #ff9f43, #ffd26f); display: flex; align-items: center; justify-content: center;">
+          <i class="bx bx-calendar-event bx-lg text-white"></i>
         </div>
-        <h3 class="card-title mb-1 me-2">{{$numeroEventos}}</h3>
+        
+        <!-- Número -->
+        <h2 class="fw-bold mb-1 text-warning">{{$numeroEventos}}</h2>
+        
+        <!-- Subtítulo -->
+        <p class="text-muted mb-0">Eventos Registrados</p>
       </div>
     </div>
   </div>
 </div>
+
+<style>
+  .hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  }
+</style>
+
 
 <div class="row">
     <!-- Line Area Chart -->
@@ -64,20 +62,6 @@
                 <div>
                     <h5 class="card-title mb-0">Ultimas Actualizaciones</h5>
                 </div>
-                <!-- <div class="dropdown">
-                    <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="bx bx-calendar"></i></button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Hoy</a></li>
-                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Ayer</a></li>
-                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Ultimos 7 Dias</a></li>
-                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Ultimos 30 Dias</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Mes Actual</a></li>
-                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Ultimo Mes</a></li>
-                    </ul>
-                </div> -->
             </div>
             <div class="card-body">
                 <div id="chart"></div>
@@ -100,56 +84,77 @@
   var audiencias = @json($audienciasData);     
   var eventos = @json($eventosData);          
 
-  var options = {
-    chart: {
-      height: 380,
-      type: "area",
-      background: "transparent",
-      toolbar: { show: false }
-    },
-    stroke: {
-      curve: "smooth",
-      width: 3
-    },
-    dataLabels: { enabled: false },
-    colors: ["#4e73df", "#ff6b6b"], 
-    fill: {
-      type: "gradient",
-      gradient: {
-        shade: "light",
-        type: "vertical",
-        shadeIntensity: 0.5,
-        gradientToColors: ["#1cc88a", "#f6c23e"], 
-        opacityFrom: 0.6,
-        opacityTo: 0.1,
-        stops: [0, 100]
-      }
-    },
-    markers: {
-      size: 6,
-      colors: ["#fff"],
-      strokeColors: ["#4e73df", "#ff6b6b"],
-      strokeWidth: 3,
-      hover: { size: 8 }
-    },
-    series: [
-      { name: "Audiencia", data: audiencias },
-      { name: "Eventos", data: eventos }
-    ],
-    xaxis: { categories: fechasTodas },
-    yaxis: {
-        decimalsInFloat: 0, // fuerza que no haya decimales
-        labels: {
-            formatter: function (val) {
-                return Math.round(val);
-            }
-        }
-    },
-    tooltip: {
-      shared: true, // ahora usa tooltip por defecto compartido
-      intersect: false
+var options = {
+  chart: {
+    height: 380,
+    type: "area",
+    background: "transparent",
+    toolbar: { show: false }
+  },
+  stroke: {
+    curve: "smooth",
+    width: 3
+  },
+  dataLabels: { enabled: false },
+  colors: ["#28c76f", "#ff9f43"], // verde y naranja
+  fill: {
+    type: "gradient",
+    gradient: {
+      shade: "light",
+      type: "vertical",
+      shadeIntensity: 0.4,
+      gradientToColors: ["#81fbb8", "#ffd26f"], 
+      opacityFrom: 0.7,
+      opacityTo: 0.1,
+      stops: [0, 100]
     }
-  };
+  },
+  grid: {
+    borderColor: "#e7e7e7",
+    strokeDashArray: 4,
+    yaxis: { lines: { show: true } }
+  },
+  markers: {
+    size: 5,
+    colors: ["#fff"],
+    strokeColors: ["#28c76f", "#ff9f43"],
+    strokeWidth: 3,
+    hover: { size: 7 }
+  },
+  series: [
+    { name: "Audiencias", data: audiencias },
+    { name: "Eventos", data: eventos }
+  ],
+  xaxis: { 
+    categories: fechasTodas,
+    labels: { style: { fontSize: "12px" } }
+  },
+  yaxis: {
+    decimalsInFloat: 0,
+    labels: {
+      formatter: function (val) {
+        return Math.round(val);
+      }
+    }
+  },
+  tooltip: {
+    shared: true,
+    intersect: false,
+    x: { format: "dd MMM yyyy" },
+    y: {
+      formatter: function (val, opts) {
+          let icon = opts.seriesIndex === 0 ? "👥" : "📅"; // 👥 para Audiencias, 📅 para Eventos
+          return icon + " " + Math.round(val);
+      }
+    }
+  },
+  legend: {
+    position: "top",
+    horizontalAlign: "right",
+    markers: { radius: 12 }
+  }
+};
+
 
   var chart = new ApexCharts(document.querySelector("#chart"), options);
   chart.render();
