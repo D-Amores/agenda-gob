@@ -15,4 +15,19 @@ class Area extends Model
         'area',
         'responsable'
     ];
+
+    public function usuarios()
+    {
+        return $this->hasMany(User::class); // asumiendo que el modelo User tiene area_id
+    }
+
+    public function audiencias()
+    {
+        return $this->hasMany(Audiencia::class); // asumiendo que Audiencia tiene area_id
+    }
+
+    public function eventos()
+    {
+        return $this->hasMany(Evento::class); // asumiendo que Audiencia tiene area_id
+    }
 }
