@@ -17,35 +17,52 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $areaId = auth()->user()->area_id;
+        $user = auth()->user();
+        $areaId = $user->area_id;
+        $userId = $user->id;
 
-        $numeroEventos = Evento::where('area_id', $areaId)->count();
-        $numeroAudiencia = Audiencia::where('area_id', $areaId)->count();
+        // Número de eventos de ese usuario en su área
+        $numeroEventos = Evento::where('area_id', $areaId)
+                            ->where('user_id', $userId)
+                            ->count();
 
-        // Fechas recientes de eventos del área
+        // Número de audiencias de ese usuario en su área
+        $numeroAudiencia = Audiencia::where('area_id', $areaId)
+                                    ->where('user_id', $userId)
+                                    ->count();
+
+        // Fechas recientes de eventos del usuario
         $fechasEventos = Evento::select(DB::raw('DATE(fecha_evento) as fecha'))
             ->where('area_id', $areaId)
+            ->where('user_id', $userId)
             ->whereDate('fecha_evento', '>=', now()->subDays(6)->startOfDay())
             ->groupBy(DB::raw('DATE(fecha_evento)'));
 
-        // Fechas recientes de audiencias del área
+        // Fechas recientes de audiencias del usuario
         $fechasAudiencias = Audiencia::select(DB::raw('DATE(fecha_audiencia) as fecha'))
             ->where('area_id', $areaId)
+            ->where('user_id', $userId)
             ->whereDate('fecha_audiencia', '>=', now()->subDays(6)->startOfDay())
             ->groupBy(DB::raw('DATE(fecha_audiencia)'));
 
-        // Combinar fechas y ordenar
+        // Combinar fechas y obtener los datos
         $fechasTodas = $fechasEventos
             ->union($fechasAudiencias)
             ->orderBy('fecha', 'asc')
             ->pluck('fecha');
-        
+
         $eventosData = [];
         $audienciasData = [];
 
-        foreach($fechasTodas as $fecha) {
-            $eventosData[] = Evento::where('area_id', $areaId)->whereDate('fecha_evento', $fecha)->count();
-            $audienciasData[] = Audiencia::where('area_id', $areaId)->whereDate('fecha_audiencia', $fecha)->count();
+        foreach ($fechasTodas as $fecha) {
+            $eventosData[] = Evento::where('area_id', $areaId)
+                                    ->where('user_id', $userId)
+                                    ->whereDate('fecha_evento', $fecha)
+                                    ->count();
+            $audienciasData[] = Audiencia::where('area_id', $areaId)
+                                        ->where('user_id', $userId)
+                                        ->whereDate('fecha_audiencia', $fecha)
+                                        ->count();
         }
 
         return view('tablero', compact(
@@ -55,6 +72,5 @@ class DashboardController extends Controller
             'eventosData',
             'audienciasData'
         ));
-
     }
 }
