@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AudienciaController;
 use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EventoController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 
@@ -40,8 +41,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/audiencia/{audiencia}/editar', [AudienciaController::class, 'editar'])->name('audiencias.editar');
     // Actualizar audiencia (POST o PUT)
     Route::put('/audiencia/{audiencia}', [AudienciaController::class, 'actualizar'])->name('audiencias.actualizar');
-
+    
     Route::delete('/audiencia/eliminar/{audiencia}', [AudienciaController::class, 'eliminar'])->name('audiencias.eliminar');
+    
+    //Eventos
+    Route::get('/evento', [EventoController::class, 'registrar'])->name('eventos.registro');
+    Route::post('/evento/guardar', [AudienciaController::class, 'crear'])->name('eventos.store');
 });
 
 

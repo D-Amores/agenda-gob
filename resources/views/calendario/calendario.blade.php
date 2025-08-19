@@ -26,7 +26,7 @@
                 <div class="border-bottom p-4 my-sm-0 mb-3">
                     <div class="d-grid gap-2">
                         <!-- Botón Agregar Evento -->
-                        <a href="{{ route('audiencias.registro') }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('eventos.registro') }}" class="btn btn-primary btn-sm">
                             <i class="bx bx-plus"></i>
                             <span class="align-middle">Agregar Evento</span>
                         </a>
@@ -106,7 +106,7 @@
                         <!-- Botones de acción -->
                         <div class="d-flex justify-content-center gap-2 mb-3 flex-wrap">
                             <!-- Botón Agregar Evento -->
-                            <a href="{{ route('audiencias.registro') }}" class="btn btn-primary btn-sm w-auto px-3">
+                            <a href="{{ route('eventos.registro') }}" class="btn btn-primary btn-sm w-auto px-3">
                                 <i class="bx bx-plus"></i>
                                 <span class="align-middle">Agregar Evento</span>
                             </a>
