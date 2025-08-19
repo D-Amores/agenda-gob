@@ -134,4 +134,16 @@ class AudienciaController extends Controller
             return back()->withInput();
         }
     }
+
+    public function eliminar(Audiencia $audiencia){
+        try {
+            $audiencia->delete();
+            Alert::success('Éxito', 'Audiencia eliminada correctamente')->autoClose(5000)->timerProgressBar();
+            return redirect()->route('calendario.index'); // aquí Laravel mostrará el alert
+        } catch (\Exception $e) {
+            Alert::error('Error', 'No se pudo eliminar la audiencia')->autoClose(5000)->timerProgressBar();
+            return redirect()->route('calendario.index');
+        }
+    }
+
 }

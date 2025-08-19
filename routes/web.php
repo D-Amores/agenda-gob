@@ -40,6 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/audiencia/{audiencia}/editar', [AudienciaController::class, 'editar'])->name('audiencias.editar');
     // Actualizar audiencia (POST o PUT)
     Route::put('/audiencia/{audiencia}', [AudienciaController::class, 'actualizar'])->name('audiencias.actualizar');
+
+    Route::delete('/audiencia/eliminar/{audiencia}', [AudienciaController::class, 'eliminar'])->name('audiencias.eliminar');
 });
 
 

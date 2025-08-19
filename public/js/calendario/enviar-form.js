@@ -15,20 +15,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!confirm("¿Estás seguro de que deseas eliminar este elemento?")) return;
 
-            let url = '';
             if (tipo === 'evento') {
-                url = urlEvento;
+                url = `${urlEvento}/${id}`;
             } else if (tipo === 'audiencia') {
-                url = urlAudiencia;
+                url = `${urlAudiencia}/${id}`;
             }
 
             fetch(url, {
                 method: 'DELETE',
                 headers: {
-                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': csrfToken
                 },
-                body: JSON.stringify({ id })
             })
             .then(response => {
                 if (!response.ok) throw new Error("Error al eliminar");
