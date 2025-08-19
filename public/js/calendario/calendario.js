@@ -148,10 +148,27 @@ document.addEventListener("DOMContentLoaded", function () {
         // Establecer datos para acciones
         const btnEditar = document.getElementById("btnEditar");
         const btnEliminar = document.getElementById("btnEliminar");
-        btnEditar.dataset.id = event.id;
-        btnEditar.dataset.tipo = event.tipo;
-        btnEliminar.dataset.id = event.id;
-        btnEliminar.dataset.tipo = event.tipo;
+        const formEnviar = document.getElementById("formEnviar");
+
+        let urlEliminar = '', urlEditar = '', id = event.id, tipo = event.tipo;
+
+        if (tipo === 'evento') {
+            urlEliminar = `${urlEventoEliminar}/${event.id}`;
+            urlEditar = urlEventoEditar.replace('__ID__', id);
+        } else if (tipo === 'audiencia') {
+            urlEliminar = `${urlAudienciaEliminar}/${id}`;
+            urlEditar = urlAudienciaEditar.replace('__ID__', id);
+        }
+
+        console.log("URL de edición:", urlEditar);
+        console.log("URL de eliminación:", urlEliminar);
+
+        formEnviar.action = urlEliminar;
+        btnEditar.href = urlEditar;
+        btnEditar.dataset.id = id;
+        btnEditar.dataset.tipo = tipo;
+        btnEliminar.dataset.id = id;
+        btnEliminar.dataset.tipo = tipo;
     }
 
 // Cargar audiencias desde la variable global `audiencias` generada en Blade
@@ -175,7 +192,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return {
                 id: Number(a.id),
                 tipo: 'audiencia',
-                title: a.asunto_audiencia || 'Sin título',
+                title: a.nombre || 'Sin título',
+                asunto: a.asunto_audiencia || 'Sin título',
                 start: start,
                 end: end,
                 allDay: false,
@@ -253,6 +271,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 successCallback(eventosFiltrados);
          },
         editable: false,
+        contentHeight: 'parent',
         dayMaxEvents: 2,
         eventResizableFromStart: true,
         customButtons: {
