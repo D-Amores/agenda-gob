@@ -60,7 +60,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div>
-                    <h5 class="card-title mb-0">Ultimas Actualizaciones</h5>
+                    <h5 class="card-title mb-0">{{ $tituloGrafica }}</h5>
                 </div>
             </div>
             <div class="card-body">
