@@ -59,16 +59,19 @@
           <div id="account-details-validation" class="content">
             <div class="row g-3">
               <div class="col-sm-6">
-                <label class="form-label" for="formValidationName">Nombre</label>
-                <input type="text" name="formValidationName" id="formValidationName" class="form-control" placeholder="Reunion" required/>
+                <label class="form-label" for="formValidationName">Nombre de la audiencia</label>
+                <input type="text" name="formValidationName" id="formValidationName" class="form-control" placeholder="Reunion" required minlength="10"/>
+                <div class="invalid-feedback">Debe tener al menos 10 caracteres.</div>
               </div>
               <div class="col-sm-6">
                 <label class="form-label" for="formValidationAsunto">Asunto</label>
-                <input type="text" name="formValidationAsunto" id="formValidationAsunto" class="form-control" placeholder="ejemplo" aria-label="john.doe" required/>
+                <input type="text" name="formValidationAsunto" id="formValidationAsunto" class="form-control" placeholder="ejemplo" required minlength="10"/>
+                <div class="invalid-feedback">Debe tener al menos 10 caracteres.</div>
               </div>
               <div class="col-sm-6">
                 <label class="form-label" for="formValidationLugar">Lugar</label>
-                <input type="text" name="formValidationLugar" id="formValidationLugar" class="form-control" placeholder="ejemplo" aria-label="john.doe" required />
+                <input type="text" name="formValidationLugar" id="formValidationLugar" class="form-control" placeholder="ejemplo" aria-label="john.doe" required minlength="10"/>
+                <div class="invalid-feedback">Debe tener al menos 10 caracteres.</div>
               </div>
               <div class="col-sm-6">
                 <label class="form-label" for="formValidationFecha">Fecha</label>
@@ -99,22 +102,22 @@
 
               <!-- Hora de Audiencia -->
               <div class="col-sm-6">
-                <label class="form-label" for="hora_audiencia">Hora de Audiencia</label>
+                <label class="form-label" for="hora_audiencia">Hora de inicio</label>
                 <input type="time" id="hora_audiencia" name="hora_audiencia" class="form-control" required/>
               </div>
 
-
               <!-- Área (select) -->
               <div class="col-sm-6">
-                <label class="form-label" for="area_id">Área</label>
-                <select class="form-select" id="area_id" name="area_id">
-                  <option value="">Seleccione un área</option>
-                  <option value="1" selected>Área Legal</option>
-                  <option value="2">Área Administrativa</option>
-                  <option value="3">Área Técnica</option>
-                  <!-- Agrega más opciones si es necesario -->
-                </select>
+                <label class="form-label">Área</label>
+                <input type="text" class="form-control" value="{{ Auth::user()->area->area ?? 'Sin área' }}" readonly>
               </div>
+
+              <!-- Hora de Audiencia -->
+              <div class="col-sm-6">
+                <label class="form-label" for="hora_fin_audiencia">Hora de finalizacion</label>
+                <input type="time" id="hora_fin_audiencia" name="hora_fin_audiencia" class="form-control" required/>
+              </div>
+
 
               <!-- Botones de navegación -->
               <div class="col-12 d-flex justify-content-between">
@@ -137,9 +140,8 @@
               <div class="col-sm-6">
                 <label class="form-label" for="estatus_id">Estatus</label>
                 <select class="form-select" id="estatus_id" name="estatus_id" required>
-                  <option value="">Seleccione un estatus</option>
                   @foreach($estatusLista as $estatus)
-                    <option value="{{ $estatus->id }}">{{ $estatus->estatus }}</option>
+                    <option value="{{ $estatus->id }}">{{ ucfirst(strtolower($estatus->estatus)) }}</option>
                   @endforeach
                 </select>
               </div>
@@ -148,8 +150,7 @@
               <!-- Descripción (campo grande, opcional) -->
               <div class="col-sm-12">
                 <label class="form-label" for="descripcion">Descripción (opcional)</label>
-                <textarea class="form-control" id="descripcion" name="descripcion" rows="2" placeholder="Ingrese una descripción si es necesario...">
-                </textarea>
+                <textarea class="form-control" id="descripcion" name="descripcion" rows="2" placeholder="Ingrese una descripción si es necesario..."></textarea>
               </div>
 
               <!-- Botones -->
@@ -174,17 +175,11 @@
 
 @section('script') 
   <!-- Vendors JS -->
-  <script src="{{ asset('sneat/assets/vendor/libs/bs-stepper/bs-stepper.js') }}"></script>
+<script src="{{ asset('sneat/assets/vendor/libs/bs-stepper/bs-stepper.js') }}"></script>
 <script src="{{ asset('sneat/assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script>
 <script src="{{ asset('sneat/assets/vendor/libs/select2/select2.js') }}"></script>
+<script src="{{ asset('js/audiencia/establecer-hora-inicio-fin.js') }}"></script>
 
-<script>
-  // Establece la hora actual en formato HH:MM
-  const now = new Date();
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  document.getElementById('hora_audiencia').value = `${hours}:${minutes}`;
-</script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const wizardEl = document.querySelector('#wizard-validation');
@@ -206,15 +201,34 @@
       inputs.forEach(input => {
         input.classList.remove('is-invalid');
 
+        const value = input.value.trim();
+        const feedback = input.nextElementSibling;
+
         // Validar campos requeridos
-        if (input.hasAttribute('required') && !input.value.trim()) {
+        if (input.hasAttribute('required') && !value) {
           input.classList.add('is-invalid');
+          if (feedback && feedback.classList.contains('invalid-feedback')) {
+            feedback.textContent = 'Este campo es obligatorio.';
+          }
+          valid = false;
+          return;
+        }
+
+        // Validar minlength si aplica
+        const minlength = input.getAttribute('minlength');
+        if (minlength && value.length < parseInt(minlength)) {
+          input.classList.add('is-invalid');
+          if (feedback && feedback.classList.contains('invalid-feedback')) {
+            feedback.textContent = `Debe tener al menos ${minlength} caracteres.`;
+          }
           valid = false;
         }
       });
 
       return valid;
     }
+
+
 
     nextButtons.forEach(button => {
       button.addEventListener('click', function () {
@@ -237,6 +251,8 @@
 
       if (validateStep(currentStep)) {
         // Aquí puedes hacer envío AJAX si lo deseas
+        submitButton.disabled = true;
+        submitButton.innerHTML = 'Enviando...';
         form.submit();
       }
     });

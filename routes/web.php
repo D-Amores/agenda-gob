@@ -32,13 +32,16 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LogoutController::class, 'store'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
     //Audiencia
-    Route::get('/audiencia', [AudienciaController::class, 'index'])->name('audiencias.registro');
-    Route::post('/audiencia/guardar', [AudienciaController::class, 'store'])->name('audiencias.store');
+    Route::get('/audiencia', [AudienciaController::class, 'registrar'])->name('audiencias.registro');
+    Route::post('/audiencia/guardar', [AudienciaController::class, 'crear'])->name('audiencias.store');
     // Mostrar formulario de edición
     Route::get('/audiencia/{audiencia}/editar', [AudienciaController::class, 'editar'])->name('audiencias.editar');
     // Actualizar audiencia (POST o PUT)
     Route::put('/audiencia/{audiencia}', [AudienciaController::class, 'actualizar'])->name('audiencias.actualizar');
+
+    Route::delete('/audiencia/eliminar/{audiencia}', [AudienciaController::class, 'eliminar'])->name('audiencias.eliminar');
 });
 
 

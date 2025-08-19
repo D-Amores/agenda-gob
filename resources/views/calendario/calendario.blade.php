@@ -121,8 +121,8 @@
                         <hr class="my-3">
 
                         <!-- Detalles del evento -->
-                        <form id="eventForm" class="text-center mb-4 d-none">
-                            @csrf
+                        <div id="eventForm" class="text-center mb-4 d-none">
+                            
                             <div class="mx-auto" style="max-width: 320px;">
                                 <div class="mb-2">
                                     <i class="bx bx-calendar-event text-primary fs-5 align-middle me-1"></i>
@@ -152,20 +152,22 @@
                                 </div>
                             </div>
                             <!-- Botones de acción del detalle -->
-                            <div class="d-flex justify-content-end gap-2 mb-3 mt-3 flex-wrap">
+                            <form action="" method="POST" id="formEnviar" class="d-flex justify-content-end gap-2 mb-3 mt-3 flex-wrap">
+                                @csrf
+                                @method('DELETE')
                                 <!-- Botón Editar -->
-                                <button class="btn btn-warning btn-sm w-auto px-3" id="btnEditar" data-id="" data-tipo="">
+                                <a class="btn btn-warning btn-sm w-auto text-white px-3" id="btnEditar" data-id="" data-tipo="">
                                     <i class="bx bx-edit"></i>
                                     <span class="align-middle">Editar</span>
-                                </button>    
+                                </a>    
                                 <!-- Botón Eliminar -->
-                                <button class="btn btn-danger btn-sm w-auto px-3" id="btnEliminar" data-id="" data-tipo="">
+                                <button type="submit" class="btn btn-danger btn-sm w-auto px-3" id="btnEliminar" data-id="" data-tipo="">
                                     <i class="bx bx-trash"></i>
                                     <span class="align-middle">Eliminar</span>
                                 </button>
-                            </div>
+                            </form>
                             <hr class="my-3">
-                        </form>
+                        </div>
 
                         <h5 class="text-center mb-3 fw-semibold">Eventos del Día</h5>
                         <div class="event-list-scroll">
@@ -186,11 +188,10 @@
     <script>
         const audiencias = @json($audiencias);
         const eventos = @json($eventos);
-        const urlEvento = "{{ route('eventos.eliminar') }}";
-        const urlAudiencia = "{{ route('audiencias.eliminar') }}";
+        const urlEventoEliminar = "{{ route('eventos.eliminar') }}";
+        const urlAudienciaEliminar = "{{ route('audiencias.eliminar') }}";
         const csrfToken = "{{ csrf_token() }}";
-    </script>
-    <script>
+        const urlEventoEditar = "{{ route('audiencias.editar', ['audiencia' => '__ID__']) }}";
         const urlAudienciaEditar = "{{ route('audiencias.editar', ['audiencia' => '__ID__']) }}";
     </script>
 
@@ -212,5 +213,4 @@
     <script src="{{ asset('sneat/assets/js/app-calendar-events.js') }}"></script>
     <script src="{{ asset('js/calendario/calendario.js') }}"></script>
     <script src="{{ asset('js/calendario/calendar-sliderbar.js') }}"></script>
-    <script src="{{ asset('js/calendario/enviar-form.js') }}"></script>
 @endsection
