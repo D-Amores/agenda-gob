@@ -144,31 +144,42 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("hora").innerText = `${moment(event.start).format('h:mm A')} - ${moment(event.end).format('h:mm A')}`;
         document.getElementById("estatus").innerText = event.extendedProps.estatus || "N/D";
         document.getElementById("vestimenta").innerText = event.extendedProps.vestimenta || "N/D";
-
-        // Establecer datos para acciones
+        
         const btnEditar = document.getElementById("btnEditar");
         const btnEliminar = document.getElementById("btnEliminar");
         const formEnviar = document.getElementById("formEnviar");
 
-        let urlEliminar = '', urlEditar = '', id = event.id, tipo = event.tipo;
+        const puedeEditar = event.extendedProps.user_id == currentUserId;
 
-        if (tipo === 'evento') {
-            urlEliminar = `${urlEventoEliminar}/${event.id}`;
-            urlEditar = urlEventoEditar.replace('__ID__', id);
-        } else if (tipo === 'audiencia') {
-            urlEliminar = `${urlAudienciaEliminar}/${id}`;
-            urlEditar = urlAudienciaEditar.replace('__ID__', id);
+        if (puedeEditar) {
+            btnEditar.classList.remove("d-none");
+            btnEliminar.classList.remove("d-none");
+
+            let urlEliminar = '', urlEditar = '', id = event.id, tipo = event.tipo;
+
+            if (tipo === 'evento') {
+                urlEliminar = urlEventoEliminar.replace('__ID__', id);
+                urlEditar = urlEventoEditar.replace('__ID__', id);
+            } else if (tipo === 'audiencia') {
+                urlEliminar = urlAudienciaEliminar.replace('__ID__', id);
+                urlEditar = urlAudienciaEditar.replace('__ID__', id);
+            }
+
+            console.log("URL de edición:", urlEditar);
+            console.log("URL de eliminación:", urlEliminar);
+
+            formEnviar.action = urlEliminar;
+            btnEditar.href = urlEditar;
+            btnEditar.dataset.id = id;
+            btnEditar.dataset.tipo = tipo;
+            btnEliminar.dataset.id = id;
+            btnEliminar.dataset.tipo = tipo;
+
+        } else {
+            // Oculta los botones si no puede editar
+            btnEditar.classList.add("d-none");
+            btnEliminar.classList.add("d-none");
         }
-
-        console.log("URL de edición:", urlEditar);
-        console.log("URL de eliminación:", urlEliminar);
-
-        formEnviar.action = urlEliminar;
-        btnEditar.href = urlEditar;
-        btnEditar.dataset.id = id;
-        btnEditar.dataset.tipo = tipo;
-        btnEliminar.dataset.id = id;
-        btnEliminar.dataset.tipo = tipo;
     }
 
 // Cargar audiencias desde la variable global `audiencias` generada en Blade
@@ -203,7 +214,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     calendar: (a.estatus?.estatus || 'pendiente').toLowerCase(),
                     user: a.user?.name || '',
                     estatus: a.estatus?.estatus || '',
-                    vestimenta: a.vestimenta?.tipo || 'No especificada'
+                    vestimenta: a.vestimenta?.tipo || 'No especificada',
+                    user_id: a.user?.id || null
                 }
             };
         });
@@ -235,7 +247,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         calendar: (e.estatus?.estatus || 'pendiente').toLowerCase(),
                         user: e.user?.name || '',
                         estatus: e.estatus?.estatus || '',
-                        vestimenta: e.vestimenta?.tipo || 'No especificada'
+                        vestimenta: e.vestimenta?.tipo || 'No especificada',
+                        user_id: e.user?.id || null
                     }
                 };
             });
