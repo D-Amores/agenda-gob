@@ -21,6 +21,16 @@
         <small class="text-muted float-end">Formulario de edición</small>
       </div>
       <div class="card-body">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <form method="POST" action="{{ route('audiencias.actualizar', $audiencia->id) }}">
         @csrf
         @method('PUT')
@@ -45,30 +55,24 @@
           <!-- Fecha -->
           <div class="mb-3">
             <label class="form-label" for="formValidationFecha">Fecha</label>
-            <input type="date" name="formValidationFecha" id="formValidationFecha" class="form-control" value="{{ old('hora_audiencia', $audiencia->fecha_audiencia) }}" required />
+            <input type="date" name="formValidationFecha" id="formValidationFecha" class="form-control" value="{{ old('formValidationFecha', $audiencia->fecha_audiencia) }}" required />
           </div>
 
-          <!-- Hora -->
+          <!-- Hora inicio -->
           <div class="mb-3">
-            <label class="form-label" for="hora_audiencia">Hora de Audiencia</label>
+            <label class="form-label" for="hora_audiencia">Hora de inicio</label>
             <input type="time" name="hora_audiencia" id="hora_audiencia" class="form-control" value="{{ old('hora_audiencia', $audiencia->hora_audiencia) }}" required />
+          </div>
+          <!-- Hora fin -->
+          <div class="mb-3">
+            <lebel class="form-label" for="hora_fin_audiencia">Hora de finalizacion</lebel>
+            <input type="time" name="hora_fin_audiencia" id="hora_fin_audiencia" class="form-control" value="{{ old('hora_fin_audiencia', $audiencia->hora_fin_audiencia) }}" required />
           </div>
 
           <!-- Procedencia -->
           <div class="mb-3">
             <label class="form-label" for="procedencia">Procedencia</label>
             <input type="text" name="procedencia" id="procedencia" class="form-control" value="{{ old('procedencia', $audiencia->procedencia) }}"/>
-          </div>
-
-          <!-- Área -->
-          <div class="mb-3">
-            <label class="form-label" for="area_id">Área</label>
-            <select name="area_id" id="area_id" class="form-select" required>
-                <option value="">Seleccione un área</option>
-                <option value="1" {{ old('area_id', $audiencia->area_id) == 1 ? 'selected' : '' }}>Área Legal</option>
-                <option value="2" {{ old('area_id', $audiencia->area_id) == 2 ? 'selected' : '' }}>Área Administrativa</option>
-                <option value="3" {{ old('area_id', $audiencia->area_id) == 3 ? 'selected' : '' }}>Área Técnica</option>
-            </select>
           </div>
 
           <!-- Estatus -->
