@@ -156,10 +156,11 @@
                                 @csrf
                                 @method('DELETE')
                                 <!-- Botón Editar -->
-                                <a class="btn btn-warning btn-sm w-auto text-white px-3" id="btnEditar" data-id="" data-tipo="">
+                                <a class="btn btn-warning btn-sm w-auto text-white px-3 btnAccion" id="btnEditar">
                                     <i class="bx bx-edit"></i>
                                     <span class="align-middle">Editar</span>
-                                </a>    
+                                </a>
+                                
                                 <!-- Botón Eliminar -->
                                 <button type="submit" class="btn btn-danger btn-sm w-auto px-3" id="btnEliminar" data-id="" data-tipo="">
                                     <i class="bx bx-trash"></i>
@@ -213,4 +214,22 @@
     <script src="{{ asset('sneat/assets/js/app-calendar-events.js') }}"></script>
     <script src="{{ asset('js/calendario/calendario.js') }}"></script>
     <script src="{{ asset('js/calendario/calendar-sliderbar.js') }}"></script>
+
+    <script>
+        document.querySelectorAll('.btnAccion').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const tipo = this.dataset.tipo; // "evento" o "audiencia"
+
+            // Para Editar
+            let urlEditar = '';
+            if (tipo === 'audiencia') {
+                urlEditar = `/audiencia/${id}/editar`;
+            } else if (tipo === 'evento') {
+                urlEditar = `/evento/${id}/editar`;
+            }
+            document.getElementById('btnEditar').setAttribute('href', urlEditar);
+        });
+    });
+    </script>
 @endsection
