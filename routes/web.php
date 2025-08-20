@@ -46,7 +46,7 @@ Route::middleware('auth')->group(function () {
     
     //Eventos
     Route::get('/evento', [EventoController::class, 'registrar'])->name('eventos.registro');
-    Route::post('/evento/guardar', [AudienciaController::class, 'crear'])->name('eventos.store');
+    Route::post('/evento/guardar', [EventoController::class, 'crear'])->name('eventos.store');
 });
 
 

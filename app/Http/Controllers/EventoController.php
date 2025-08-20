@@ -18,12 +18,12 @@ class EventoController extends Controller
     public function crear(Request $request){
         $validated = $request->validate([
             'formValidationName' => 'required|string|min:10|max:255',
-            'asistenciaGobernador' => ['required', 'in:si,no'],
+            'asistenciaGobernador' => ['required', 'in:1,0'],
             'formValidationLugar' => 'required|string|min:10|max:255',
             'formValidationFecha' => 'required|date',
             'vestimenta' => ['required', 'exists:vestimentas,id'],
             'hora_evento' => 'required|date_format:H:i',
-            'hora_fin_evento' => 'required|date_format:H:i|after:hora_audiencia',
+            'hora_fin_evento' => 'required|date_format:H:i|after:hora_evento',
             'estatus_id' => 'required|exists:estatus,id',
             'descripcion' => 'nullable|string|max:500',
         ]);
@@ -45,18 +45,19 @@ class EventoController extends Controller
             return back()->withInput();
         }
 
+
         try {
             Evento::create([
                 'nombre' => $validated['formValidationName'],
-                'asunto_audiencia' => $validated['formValidationAsunto'],
+                'asistencia_de_gobernador' => $validated['asistenciaGobernador'],
                 'lugar' => $validated['formValidationLugar'],
-                'fecha_audiencia' => $validated['formValidationFecha'],
-                'procedencia' => $validated['procedencia'] ?? null,
-                'hora_audiencia' => $validated['hora_audiencia'],
-                'hora_fin_audiencia' => $validated['hora_fin_audiencia'],
-                'area_id' => Auth::user()->area_id,
+                'fecha_evento' => $validated['formValidationFecha'],
+                'hora_evento' => $validated['hora_evento'],
+                'hora_fin_evento' => $validated['hora_fin_evento'],
+                'vestimenta_id' => $validated['vestimenta'], // mapeo del input al campo
                 'estatus_id' => $validated['estatus_id'],
                 'descripcion' => $validated['descripcion'] ?? null,
+                'area_id' => Auth::user()->area_id,
                 'user_id' => Auth::id(),
             ]);
 
