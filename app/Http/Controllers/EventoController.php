@@ -131,4 +131,15 @@ class EventoController extends Controller
             return back()->withInput();
         }
     }
+
+    public function eliminar(Evento $evento){
+        try {
+            $evento->delete();
+            Alert::success('Éxito', 'Evento eliminado correctamente')->autoClose(5000)->timerProgressBar();
+            return redirect()->route('calendario.index'); // aquí Laravel mostrará el alert
+        } catch (\Exception $e) {
+            Alert::error('Error', 'No se pudo eliminar el Evento')->autoClose(5000)->timerProgressBar();
+            return redirect()->route('calendario.index');
+        }
+    }
 }
