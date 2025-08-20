@@ -159,8 +159,7 @@
                                 <a class="btn btn-warning btn-sm w-auto text-white px-3 btnAccion" id="btnEditar">
                                     <i class="bx bx-edit"></i>
                                     <span class="align-middle">Editar</span>
-                                </a>
-                                
+                                </a>  
                                 <!-- Botón Eliminar -->
                                 <button type="submit" class="btn btn-danger btn-sm w-auto px-3" id="btnEliminar" data-id="" data-tipo="">
                                     <i class="bx bx-trash"></i>
@@ -189,11 +188,12 @@
     <script>
         const audiencias = @json($audiencias);
         const eventos = @json($eventos);
-        const urlEventoEliminar = "{{ route('eventos.eliminar') }}";
-        const urlAudienciaEliminar = "{{ route('audiencias.eliminar') }}";
+        const urlEventoEliminar = "{{ route('audiencias.eliminar', ['audiencia' => '__ID__']) }}";
+        const urlAudienciaEliminar = "{{ route('audiencias.eliminar', ['audiencia' => '__ID__']) }}";
         const csrfToken = "{{ csrf_token() }}";
         const urlEventoEditar = "{{ route('audiencias.editar', ['audiencia' => '__ID__']) }}";
         const urlAudienciaEditar = "{{ route('audiencias.editar', ['audiencia' => '__ID__']) }}";
+        const currentUserId = {{ Auth::id() }};
     </script>
 
 

@@ -33,16 +33,22 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LogoutController::class, 'store'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-    //Audiencia
-    Route::get('/audiencia', [AudienciaController::class, 'registrar'])->name('audiencias.registro');
-    Route::post('/audiencia/guardar', [AudienciaController::class, 'crear'])->name('audiencias.store');
-    // Mostrar formulario de edición
-    Route::get('/audiencia/{audiencia}/editar', [AudienciaController::class, 'editar'])->name('audiencias.editar');
-    // Actualizar audiencia (POST o PUT)
-    Route::put('/audiencia/{audiencia}', [AudienciaController::class, 'actualizar'])->name('audiencias.actualizar');
     
-    Route::delete('/audiencia/eliminar/{audiencia}', [AudienciaController::class, 'eliminar'])->name('audiencias.eliminar');
+    // Audiencias
+    Route::get('/audiencia', [AudienciaController::class, 'registrar'])->name('audiencias.registro');
+    Route::middleware('permission:crear audiencia')->group(function () {
+        Route::post('/audiencia/guardar', [AudienciaController::class, 'crear'])->name('audiencias.store');
+    });
+    Route::middleware('permission:editar audiencia')->group(function () {
+        Route::get('/audiencia/{audiencia}/editar', [AudienciaController::class, 'editar'])->name('audiencias.editar');
+        Route::put('/audiencia/{audiencia}', [AudienciaController::class, 'actualizar'])->name('audiencias.actualizar');
+    });
+    Route::middleware('permission:eliminar audiencia')->group(function () {
+        Route::delete('/audiencia/eliminar/{audiencia}', [AudienciaController::class, 'eliminar'])->name('audiencias.eliminar');
+    });
+
+    // Calendario
+    Route::get('/calendario', [CalendarioController::class, 'index'])->name('calendario.index');
     
     //Eventos
     Route::get('/evento', [EventoController::class, 'registrar'])->name('eventos.registro');
@@ -51,11 +57,4 @@ Route::middleware('auth')->group(function () {
     Route::put('/evento/{evento}', [EventoController::class, 'actualizar'])->name('eventos.actualizar');
     Route::delete('/evento/eliminar/{evento}', [EventoController::class, 'eliminar'])->name('eventos.eliminar');
 });
-
-
-// Calendario
-Route::get('/calendario', [CalendarioController::class, 'index'])->name('calendario.index');
-//rutas de ejemplo para eliminar
-Route::delete('/audiencia/eliminar', [CalendarioController::class, 'destroyAudiencia'])->name('audiencias.eliminar');
-Route::delete('/evento/eliminar', [CalendarioController::class, 'destroyEvento'])->name('eventos.eliminar');
 

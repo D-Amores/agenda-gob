@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Auth;
 
 class AudienciaController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Audiencia::class, 'audiencia');
+    }
+
     public function index(){
         $estatusLista = Estatus::all(); 
 
@@ -78,6 +83,7 @@ class AudienciaController extends Controller
     }
 
     public function editar(Audiencia $audiencia){
+        $this->authorize('update', $audiencia);
         $estatusLista = Estatus::all();
         $audiencia->fecha_audiencia = \Carbon\Carbon::parse($audiencia->fecha_audiencia)->format('Y-m-d');
         return view('audiencia.editar', compact('audiencia', 'estatusLista'));
@@ -136,6 +142,7 @@ class AudienciaController extends Controller
     }
 
     public function eliminar(Audiencia $audiencia){
+        $this->authorize('delete', $audiencia);
         try {
             $audiencia->delete();
             Alert::success('Éxito', 'Audiencia eliminada correctamente')->autoClose(5000)->timerProgressBar();
