@@ -35,14 +35,14 @@ Route::middleware('auth')->group(function () {
     
     // Audiencias
     Route::get('/audiencia', [AudienciaController::class, 'registrar'])->name('audiencias.registro');
-    Route::middleware(['auth', 'permission:crear audiencia'])->group(function () {
+    Route::middleware('permission:crear audiencia')->group(function () {
         Route::post('/audiencia/guardar', [AudienciaController::class, 'crear'])->name('audiencias.store');
     });
-    Route::middleware(['auth', 'permission:editar audiencia'])->group(function () {
+    Route::middleware('permission:editar audiencia')->group(function () {
         Route::get('/audiencia/{audiencia}/editar', [AudienciaController::class, 'editar'])->name('audiencias.editar');
         Route::put('/audiencia/{audiencia}', [AudienciaController::class, 'actualizar'])->name('audiencias.actualizar');
     });
-    Route::middleware(['auth', 'permission:eliminar audiencia'])->group(function () {
+    Route::middleware('permission:eliminar audiencia')->group(function () {
         Route::delete('/audiencia/eliminar/{audiencia}', [AudienciaController::class, 'eliminar'])->name('audiencias.eliminar');
     });
 
