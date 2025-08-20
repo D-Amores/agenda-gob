@@ -16,15 +16,15 @@
     <div class="row">
         <!-- Validation Wizard -->
         <div class="col-12 mb-4">
-            <small class="text-light fw-semibold">Audiencia</small>
+            <small class="text-light fw-semibold">Evento</small>
             <div id="wizard-validation" class="bs-stepper mt-2">
                 <div class="bs-stepper-header">
                     <div class="step" data-target="#account-details-validation">
                         <button type="button" class="step-trigger">
                             <span class="bs-stepper-circle">1</span>
                             <span class="bs-stepper-label mt-1">
-                                <span class="bs-stepper-title">Detalles de la Audiencia</span>
-                                <span class="bs-stepper-subtitle">Audiencia</span>
+                                <span class="bs-stepper-title">Detalles del Evento</span>
+                                <span class="bs-stepper-subtitle">Evento</span>
                             </span>
                         </button>
                     </div>
@@ -35,8 +35,8 @@
                         <button type="button" class="step-trigger">
                             <span class="bs-stepper-circle">2</span>
                             <span class="bs-stepper-label mt-1">
-                                <span class="bs-stepper-title">Informacion de la Audiencia</span>
-                                <span class="bs-stepper-subtitle">Agrega Informacion de la Audiencia</span>
+                                <span class="bs-stepper-title">Informacion del Evento</span>
+                                <span class="bs-stepper-subtitle">Agrega Informacion del Evento</span>
                             </span>
                         </button>
                     </div>
@@ -55,23 +55,28 @@
                     </div>
                 </div>
                 <div class="bs-stepper-content">
-                    <form id="wizard-validation-form" method="POST" action="{{ route('audiencias.store') }}">
+                    <form id="wizard-validation-form" method="POST" action="{{ route('eventos.store') }}">
                         @csrf
                         <!-- Audiencia Details -->
                         <div id="account-details-validation" class="content">
                             <div class="row g-3">
                                 <div class="col-sm-6">
-                                    <label class="form-label" for="formValidationName">Nombre de la audiencia</label>
+                                    <label class="form-label" for="formValidationName">Nombre del Evento</label>
                                     <input type="text" name="formValidationName" id="formValidationName"
                                         class="form-control" placeholder="Reunion" required minlength="10" />
                                     <div class="invalid-feedback">Debe tener al menos 10 caracteres.</div>
                                 </div>
                                 <div class="col-sm-6">
-                                    <label class="form-label" for="formValidationAsunto">Asunto</label>
-                                    <input type="text" name="formValidationAsunto" id="formValidationAsunto"
-                                        class="form-control" placeholder="ejemplo" required minlength="10" />
-                                    <div class="invalid-feedback">Debe tener al menos 10 caracteres.</div>
+                                    <label class="form-label" for="asistenciaGobernador">Asistencia del Gobernador</label>
+                                    <select name="asistenciaGobernador" id="asistenciaGobernador" class="form-control"
+                                        required>
+                                        <option value="" disabled selected>Seleccione...</option>
+                                        <option value="1">Sí</option>
+                                        <option value="0">No</option>
+                                    </select>
+                                    <div class="invalid-feedback">Debe seleccionar una opción.</div>
                                 </div>
+
                                 <div class="col-sm-6">
                                     <label class="form-label" for="formValidationLugar">Lugar</label>
                                     <input type="text" name="formValidationLugar" id="formValidationLugar"
@@ -101,17 +106,21 @@
                         <div id="personal-info-validation" class="content">
                             <div class="row g-3">
 
-                                <!-- Procedencia -->
                                 <div class="col-sm-6">
-                                    <label class="form-label" for="procedencia">Procedencia</label>
-                                    <input type="text" id="procedencia" name="procedencia" class="form-control"
-                                        placeholder="Ingrese la procedencia" />
+                                    <label class="form-label" for="vestimenta">Tipo de vestimenta</label>
+                                    <select id="vestimenta" name="vestimenta" class="form-control" required>
+                                        <option value="" disabled selected>Seleccione un tipo</option>
+                                        <option value="1">Formal</option>
+                                        <option value="2">Casual</option>
+                                        <option value="3">Uniforme</option>
+                                        <option value="4">Deportivo</option>
+                                    </select>
                                 </div>
 
                                 <!-- Hora de Audiencia -->
                                 <div class="col-sm-6">
-                                    <label class="form-label" for="hora_audiencia">Hora de inicio</label>
-                                    <input type="time" id="hora_audiencia" name="hora_audiencia" class="form-control"
+                                    <label class="form-label" for="hora_evento">Hora de inicio</label>
+                                    <input type="time" id="hora_evento" name="hora_evento" class="form-control"
                                         required />
                                 </div>
 
@@ -124,8 +133,8 @@
 
                                 <!-- Hora de Audiencia -->
                                 <div class="col-sm-6">
-                                    <label class="form-label" for="hora_fin_audiencia">Hora de finalizacion</label>
-                                    <input type="time" id="hora_fin_audiencia" name="hora_fin_audiencia"
+                                    <label class="form-label" for="hora_fin_evento">Hora de finalizacion</label>
+                                    <input type="time" id="hora_fin_evento" name="hora_fin_evento"
                                         class="form-control" required />
                                 </div>
 
