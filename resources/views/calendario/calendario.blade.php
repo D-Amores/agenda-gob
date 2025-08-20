@@ -188,10 +188,10 @@
     <script>
         const audiencias = @json($audiencias);
         const eventos = @json($eventos);
-        const urlEventoEliminar = "{{ route('audiencias.eliminar', ['audiencia' => '__ID__']) }}";
+        const urlEventoEliminar = "{{ route('eventos.eliminar', ['evento' => '__ID__']) }}";
         const urlAudienciaEliminar = "{{ route('audiencias.eliminar', ['audiencia' => '__ID__']) }}";
         const csrfToken = "{{ csrf_token() }}";
-        const urlEventoEditar = "{{ route('audiencias.editar', ['audiencia' => '__ID__']) }}";
+        const urlEventoEditar = "{{ route('eventos.editar', ['evento' => '__ID__']) }}";
         const urlAudienciaEditar = "{{ route('audiencias.editar', ['audiencia' => '__ID__']) }}";
         const currentUserId = {{ Auth::id() }};
     </script>
@@ -214,22 +214,4 @@
     <script src="{{ asset('sneat/assets/js/app-calendar-events.js') }}"></script>
     <script src="{{ asset('js/calendario/calendario.js') }}"></script>
     <script src="{{ asset('js/calendario/calendar-sliderbar.js') }}"></script>
-
-    <script>
-        document.querySelectorAll('.btnAccion').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const id = this.dataset.id;
-            const tipo = this.dataset.tipo; // "evento" o "audiencia"
-
-            // Para Editar
-            let urlEditar = '';
-            if (tipo === 'audiencia') {
-                urlEditar = `/audiencia/${id}/editar`;
-            } else if (tipo === 'evento') {
-                urlEditar = `/evento/${id}/editar`;
-            }
-            document.getElementById('btnEditar').setAttribute('href', urlEditar);
-        });
-    });
-    </script>
 @endsection
