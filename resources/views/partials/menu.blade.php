@@ -4,7 +4,7 @@
 
       <!-- Página Principal -->
       <li class="menu-item">
-        <a href="#" class="menu-link active">
+        <a href="{{ route('dashboard') }}" class="menu-link active">
           <i class="menu-icon tf-icons bx bx-home"></i>
           <span class="menu-title text-uppercase fw-semibold">Página Principal</span>
         </a>
@@ -14,14 +14,14 @@
       <li class="menu-header small text-muted">Registros</li>
 
       <li class="menu-item">
-        <a href="#" class="menu-link">
+        <a href="{{ route('eventos.registro') }}" class="menu-link">
           <i class="menu-icon tf-icons bx bx-calendar-event"></i>
           <span class="menu-title text-uppercase fw-semibold">Registro de Evento</span>
         </a>
       </li>
 
       <li class="menu-item">
-        <a href="#" class="menu-link">
+        <a href="{{ route('audiencias.registro') }}" class="menu-link">
           <i class="menu-icon tf-icons bx bx-group"></i>
           <span class="menu-title text-uppercase fw-semibold">Registro de Audiencia</span>
         </a>
@@ -31,7 +31,7 @@
       <li class="menu-header small text-muted">Consultas</li>
 
       <li class="menu-item">
-        <a href="#" class="menu-link">
+        <a href="{{ route('calendario.index') }}" class="menu-link">
           <i class="menu-icon tf-icons bx bx-calendar"></i>
           <span class="menu-title text-uppercase fw-semibold">Calendario de Actividades</span>
         </a>
