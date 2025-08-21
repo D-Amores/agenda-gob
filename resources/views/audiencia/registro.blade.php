@@ -81,8 +81,8 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <label class="form-label" for="formValidationFecha">Fecha</label>
-                                    <input type="date" name="formValidationFecha" id="formValidationFecha"
-                                        class="form-control" value="<?php echo date('Y-m-d'); ?>" aria-label="Fecha" required />
+                                    <input type="text" name="formValidationFecha" id="formValidationFecha"
+                                        class="form-control" aria-label="Fecha" required />
                                 </div>
 
                                 <div class="col-12 d-flex justify-content-between">
@@ -192,6 +192,7 @@
     <script src="{{ asset('sneat/assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/select2/select2.js') }}"></script>
     <script src="{{ asset('js/audiencia/establecer-hora-inicio-fin.js') }}"></script>
+    <script src="{{ asset('js/flatpickr.js') }}"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
