@@ -22,7 +22,7 @@
         <div class="row g-0">
             <!-- Calendar Sidebar -->
             <div class="col app-calendar-sidebar personalizado"
-            style="background-color: white !important; box-shadow: 3px 7px 15px -3px rgba(0, 0, 0, 0.15) !important;">            
+            style="background-color: white !important; box-shadow: 3px 7px 15px -3px rgba(0, 0, 0, 0.15) !important;">
                 <div class="border-bottom p-4 my-sm-0 mb-3">
                     <div class="d-grid gap-2">
                         <!-- Botón Agregar Evento -->
@@ -31,7 +31,7 @@
                             <span class="align-middle">Agregar Evento</span>
                         </a>
                         <!-- Botón Agregar Audiencia -->
-                        <a href="{{ route('audiencias.registro') }}" class="btn btn-outline-secondary btn-sm">
+                        <a href="{{ route('audiencias.create') }}" class="btn btn-outline-secondary btn-sm">
                             <i class="bx bx-user-plus"></i>
                             <span class="align-middle">Agregar Audiencia</span>
                         </a>
@@ -112,7 +112,7 @@
                             </a>
 
                             <!-- Botón Agregar Audiencia -->
-                            <a href="{{ route('audiencias.registro') }}" class="btn btn-outline-secondary btn-sm w-auto px-3">
+                            <a href="{{ route('audiencias.create') }}" class="btn btn-outline-secondary btn-sm w-auto px-3">
                                 <i class="bx bx-user-plus"></i>
                                 <span class="align-middle">Agregar Audiencia</span>
                             </a>
@@ -122,7 +122,7 @@
 
                         <!-- Detalles del evento -->
                         <div id="eventForm" class="text-center mb-4 d-none">
-                            
+
                             <div class="mx-auto" style="max-width: 320px;">
                                 <div class="mb-2">
                                     <i class="bx bx-calendar-event text-primary fs-5 align-middle me-1"></i>
@@ -159,7 +159,7 @@
                                 <a class="btn btn-warning btn-sm w-auto text-white px-3 btnAccion" id="btnEditar">
                                     <i class="bx bx-edit"></i>
                                     <span class="align-middle">Editar</span>
-                                </a>  
+                                </a>
                                 <!-- Botón Eliminar -->
                                 <button type="submit" class="btn btn-danger btn-sm w-auto px-3" id="btnEliminar" data-id="" data-tipo="">
                                     <i class="bx bx-trash"></i>
@@ -181,7 +181,7 @@
             <!-- /Calendar & Modal -->
         </div>
     </div>
-    
+
 @endsection
 
 @section('script')
@@ -189,10 +189,10 @@
         const audiencias = @json($audiencias);
         const eventos = @json($eventos);
         const urlEventoEliminar = "{{ route('eventos.eliminar', ['evento' => '__ID__']) }}";
-        const urlAudienciaEliminar = "{{ route('audiencias.eliminar', ['audiencia' => '__ID__']) }}";
+        const urlAudienciaEliminar = "{{ route('audiencias.destroy', ['audiencia' => '__ID__']) }}";
         const csrfToken = "{{ csrf_token() }}";
         const urlEventoEditar = "{{ route('eventos.editar', ['evento' => '__ID__']) }}";
-        const urlAudienciaEditar = "{{ route('audiencias.editar', ['audiencia' => '__ID__']) }}";
+        const urlAudienciaEditar = "{{ route('audiencias.edit', ['audiencia' => '__ID__']) }}";
         const currentUserId = {{ Auth::id() }};
     </script>
 
@@ -200,9 +200,9 @@
 <!-- FullCalendar Core -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.global.min.js"></script>
-    
+
     <!-- Vendors JS -->
-    
+
     <script src="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js') }}"></script>
