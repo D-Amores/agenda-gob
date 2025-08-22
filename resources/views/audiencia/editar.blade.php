@@ -2,13 +2,13 @@
 
 @section('title') Audiencia @endsection
 
-@section('link') 
+@section('link')
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/bs-stepper/bs-stepper.css') }}" />
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/bootstrap-select/bootstrap-select.css') }}" />
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/select2/select2.css') }}" />
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/css/formValidation.min.css') }}" />
- 
+
 @endsection
 
 @section('content')
@@ -31,7 +31,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('audiencias.actualizar', $audiencia->id) }}">
+        <form method="POST" action="{{ route('audiencias.update', $audiencia->id) }}">
         @csrf
         @method('PUT')
           <!-- Nombre -->
@@ -110,7 +110,7 @@
 @endsection
 
 
-@section('script') 
+@section('script')
   <!-- Vendors JS -->
   <script src="{{ asset('sneat/assets/vendor/libs/bs-stepper/bs-stepper.js') }}"></script>
 <script src="{{ asset('sneat/assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script>

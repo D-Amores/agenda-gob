@@ -10,7 +10,8 @@
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/bootstrap-select/bootstrap-select.css') }}" />
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/select2/select2.css') }}" />
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/css/formValidation.min.css') }}" />
-@endsection
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+ @endsection
 
 @section('content')
     <div class="row">
@@ -86,8 +87,8 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <label class="form-label" for="formValidationFecha">Fecha</label>
-                                    <input type="date" name="formValidationFecha" id="formValidationFecha"
-                                        class="form-control" value="<?php echo date('Y-m-d'); ?>" aria-label="Fecha" required />
+                                    <input type="text" name="formValidationFecha" id="formValidationFecha"
+                                        class="form-control" aria-label="Fecha" required />
                                 </div>
 
                                 <div class="col-12 d-flex justify-content-between">
@@ -120,7 +121,7 @@
                                 <!-- Hora de Audiencia -->
                                 <div class="col-sm-6">
                                     <label class="form-label" for="hora_evento">Hora de inicio</label>
-                                    <input type="time" id="hora_evento" name="hora_evento" class="form-control"
+                                    <input type="text" id="hora_evento" name="hora_evento" class="form-control"
                                         required />
                                 </div>
 
@@ -134,8 +135,8 @@
                                 <!-- Hora de Audiencia -->
                                 <div class="col-sm-6">
                                     <label class="form-label" for="hora_fin_evento">Hora de finalizacion</label>
-                                    <input type="time" id="hora_fin_evento" name="hora_fin_evento"
-                                        class="form-control" required />
+                                    <input type="text" id="hora_fin_evento" name="hora_fin_evento"
+                                        class="form-control timepickr" required />
                                 </div>
 
 
@@ -200,7 +201,12 @@
     <script src="{{ asset('sneat/assets/vendor/libs/bs-stepper/bs-stepper.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/select2/select2.js') }}"></script>
-    <script src="{{ asset('js/audiencia/establecer-hora-inicio-fin.js') }}"></script>
+    <!-- <script src="{{ asset('js/evento/establecer-hora-inicio-fin.js') }}"></script> -->
+    <!-- jQuery y ClockPicker JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.js"></script>
+
+    <script src="{{ asset('js/flatpickr.js') }}"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

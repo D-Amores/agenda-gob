@@ -21,7 +21,7 @@
       </li>
 
       <li class="menu-item">
-        <a href="{{ route('audiencias.registro') }}" class="menu-link">
+        <a href="{{ route('audiencias.create') }}" class="menu-link">
           <i class="menu-icon tf-icons bx bx-group"></i>
           <span class="menu-title text-uppercase fw-semibold">Registro de Audiencia</span>
         </a>
