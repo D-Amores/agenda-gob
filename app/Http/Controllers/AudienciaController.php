@@ -2,27 +2,43 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Area;
 use Illuminate\Http\Request;
-use RealRashid\SweetAlert\Facades\Alert;
 use App\Models\Estatus;
 use App\Models\Audiencia;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class AudienciaController extends Controller
 {
-    public function __construct()
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
     {
-        $this->authorizeResource(Audiencia::class, 'audiencia');
+        //
     }
 
-    public function index(){
-        $estatusLista = Estatus::all(); 
-
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        $estatusLista = Estatus::all();
         return view('audiencia.registro', compact('estatusLista'));
     }
 
-    public function crear(Request $request){
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
         $validated = $request->validate([
             'formValidationName' => 'required|string|min:10|max:255',
             'formValidationAsunto' => 'required|string|min:10|max:255',
@@ -42,11 +58,7 @@ class AudienciaController extends Controller
             return redirect()->back()->withInput();
         }
 
-        $exists = Audiencia::where('nombre', $request->formValidationName)
-        ->where('asunto_audiencia', $request->formValidationAsunto)
-        ->whereDate('fecha_audiencia', $request->formValidationFecha)
-        ->where('hora_audiencia', $request->hora_audiencia)
-        ->exists();
+        $exists = Audiencia::isAudienciaDuplicated($validated, Auth::user()->area_id);
 
         if ($exists) {
             Alert::warning('Advertencia', 'Ya existe una audiencia con ese nombre en esa fecha y hora.')->autoClose(5000)->timerProgressBar();
@@ -70,26 +82,46 @@ class AudienciaController extends Controller
 
             Alert::success('Éxito', 'Guardado correctamente')->autoClose(5000)->timerProgressBar();
             return redirect()->route('calendario.index');
-
         } catch (\Exception $e) {
             Alert::error('Error', 'Ocurrió un problema al guardar.')->autoClose(7000)->timerProgressBar();
             return back()->withInput();
         }
     }
 
-    public function registrar(){
-        $estatusLista = Estatus::all(); 
-        return view('audiencia.registro', compact('estatusLista'));
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
     }
 
-    public function editar(Audiencia $audiencia){
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Audiencia $audiencia)
+    {
         $this->authorize('update', $audiencia);
         $estatusLista = Estatus::all();
         $audiencia->fecha_audiencia = \Carbon\Carbon::parse($audiencia->fecha_audiencia)->format('Y-m-d');
         return view('audiencia.editar', compact('audiencia', 'estatusLista'));
     }
 
-    public function actualizar(Request $request, Audiencia $audiencia){
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Audiencia $audiencia)
+    {
         $request->merge([
             'hora_audiencia' => substr($request->hora_audiencia, 0, 5), // Recorta a H:i
             'hora_fin_audiencia' => substr($request->hora_fin_audiencia, 0, 5),
@@ -107,12 +139,7 @@ class AudienciaController extends Controller
             'descripcion' => 'nullable|string|max:500',
         ]);
 
-        $exists = Audiencia::where('nombre', $request->formValidationName)
-        ->where('asunto_audiencia', $request->formValidationAsunto)
-        ->whereDate('fecha_audiencia', $request->formValidationFecha)
-        ->where('hora_audiencia', $request->hora_audiencia)
-        ->where('id', '!=', $audiencia->id)
-        ->exists();
+        $exists = Audiencia::isAudienciaDuplicated($validated, Auth::user()->area_id, $audiencia->id);
 
         if ($exists) {
             Alert::warning('Advertencia', 'Ya existe una audiencia con ese nombre en esa fecha y hora.')->autoClose(5000)->timerProgressBar();
@@ -134,14 +161,20 @@ class AudienciaController extends Controller
 
             Alert::success('Éxito', 'Audiencia actualizada correctamente')->autoClose(5000)->timerProgressBar();
             return redirect()->route('calendario.index');
-
         } catch (\Exception $e) {
             Alert::error('Error', 'No se pudo actualizar la audiencia')->autoClose(5000)->timerProgressBar();
             return back()->withInput();
         }
     }
 
-    public function eliminar(Audiencia $audiencia){
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Audiencia $audiencia)
+    {
         $this->authorize('delete', $audiencia);
         try {
             $audiencia->delete();
@@ -152,5 +185,4 @@ class AudienciaController extends Controller
             return redirect()->route('calendario.index');
         }
     }
-
 }
