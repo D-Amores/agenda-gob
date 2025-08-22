@@ -25,6 +25,32 @@ class Audiencia extends Model
         'user_id',
     ];
 
+    public function isAudienciaDuplicated($validated, $areaId, $audienciaId = null)
+    {
+        $query = self::where('area_id', $areaId)
+            ->whereDate('fecha_audiencia', $validated['formValidationFecha'])
+            ->where(function ($q) use ($validated) {
+                // Inicio dentro del rango existente
+                $q->whereBetween('hora_audiencia', [$validated['hora_audiencia'], $validated['hora_fin_audiencia']])
+                    // Fin dentro del rango existente
+                    ->orWhereBetween('hora_fin_audiencia', [$validated['hora_audiencia'], $validated['hora_fin_audiencia']])
+                    // Rango nuevo cubre rango existente
+                    ->orWhere(function ($q2) use ($validated) {
+                        $q2->where('hora_audiencia', '<=', $validated['hora_audiencia'])
+                            ->where('hora_fin_audiencia', '>=', $validated['hora_fin_audiencia']);
+                    });
+            })
+            ->where('nombre', $validated['formValidationName'])
+            ->where('asunto_audiencia', $validated['formValidationAsunto']);
+
+        if ($audienciaId) {
+            $query->where('id', '!=', $audienciaId);
+        }
+
+        return $query->exists(); // true si hay conflicto, false si no
+    }
+
+
     // Relaciones
     public function estatus()
     {

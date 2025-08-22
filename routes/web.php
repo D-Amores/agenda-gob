@@ -33,9 +33,14 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LogoutController::class, 'store'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     // Audiencias
-    Route::get('/audiencia', [AudienciaController::class, 'registrar'])->name('audiencias.registro');
+    Route::resource('audiencias', AudienciaController::class)->parameters([
+        'audiencia' => 'audiencia'
+    ])->except(['index', 'show']);
+
+    // Audiencias
+    /*Route::get('/audiencia', [AudienciaController::class, 'registrar'])->name('audiencias.registro');
     Route::middleware('permission:crear audiencia')->group(function () {
         Route::post('/audiencia/guardar', [AudienciaController::class, 'crear'])->name('audiencias.store');
     });
@@ -46,10 +51,12 @@ Route::middleware('auth')->group(function () {
     Route::middleware('permission:eliminar audiencia')->group(function () {
         Route::delete('/audiencia/eliminar/{audiencia}', [AudienciaController::class, 'eliminar'])->name('audiencias.eliminar');
     });
+    */
+
 
     // Calendario
     Route::get('/calendario', [CalendarioController::class, 'index'])->name('calendario.index');
-    
+
     //Eventos
     Route::get('/evento', [EventoController::class, 'registrar'])->name('eventos.registro');
     Route::post('/evento/guardar', [EventoController::class, 'crear'])->name('eventos.store');
@@ -57,4 +64,3 @@ Route::middleware('auth')->group(function () {
     Route::put('/evento/{evento}', [EventoController::class, 'actualizar'])->name('eventos.actualizar');
     Route::delete('/evento/eliminar/{evento}', [EventoController::class, 'eliminar'])->name('eventos.eliminar');
 });
-
