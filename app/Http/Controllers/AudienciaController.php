@@ -10,6 +10,10 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class AudienciaController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Audiencia::class, 'audiencia');
+    }
     /**
      * Display a listing of the resource.
      *
