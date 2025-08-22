@@ -111,7 +111,7 @@
                                 <!-- Hora de Audiencia -->
                                 <div class="col-sm-6">
                                     <label class="form-label" for="hora_audiencia">Hora de inicio</label>
-                                    <input type="time" id="hora_audiencia" name="hora_audiencia" class="form-control"
+                                    <input type="text" id="hora_audiencia" name="hora_audiencia" class="form-control"
                                         required />
                                 </div>
 
@@ -125,7 +125,7 @@
                                 <!-- Hora de Audiencia -->
                                 <div class="col-sm-6">
                                     <label class="form-label" for="hora_fin_audiencia">Hora de finalizacion</label>
-                                    <input type="time" id="hora_fin_audiencia" name="hora_fin_audiencia"
+                                    <input type="text" id="hora_fin_audiencia" name="hora_fin_audiencia"
                                         class="form-control" required />
                                 </div>
 
@@ -191,8 +191,12 @@
     <script src="{{ asset('sneat/assets/vendor/libs/bs-stepper/bs-stepper.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/select2/select2.js') }}"></script>
-    <script src="{{ asset('js/audiencia/establecer-hora-inicio-fin.js') }}"></script>
+    <!--<script src="{{ asset('js/audiencia/establecer-hora-inicio-fin.js') }}"></script>-->
     <script src="{{ asset('js/flatpickr.js') }}"></script>
+    <!-- jQuery y ClockPicker JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.js"></script>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
