@@ -12,14 +12,14 @@
     <div class="card shadow-sm border-0 h-100 hover-shadow" style="transition: all 0.3s ease;">
       <div class="card-body text-center p-4">
         <!-- Icono -->
-        <div class="avatar avatar-xl rounded-circle mx-auto mb-3" 
+        <div class="avatar avatar-xl rounded-circle mx-auto mb-3"
              style="background: linear-gradient(135deg, #28c76f, #81fbb8); display: flex; align-items: center; justify-content: center;">
           <i class="bx bx-user-voice bx-lg text-white"></i>
         </div>
-        
+
         <!-- Número -->
         <h2 class="fw-bold mb-1 text-success">{{$numeroAudiencia}}</h2>
-        
+
         <!-- Subtítulo -->
         <p class="text-muted mb-0">Audiencias Registradas</p>
       </div>
@@ -31,14 +31,14 @@
     <div class="card shadow-sm border-0 h-100 hover-shadow" style="transition: all 0.3s ease;">
       <div class="card-body text-center p-4">
         <!-- Icono -->
-        <div class="avatar avatar-xl rounded-circle mx-auto mb-3" 
+        <div class="avatar avatar-xl rounded-circle mx-auto mb-3"
              style="background: linear-gradient(135deg, #ff9f43, #ffd26f); display: flex; align-items: center; justify-content: center;">
           <i class="bx bx-calendar-event bx-lg text-white"></i>
         </div>
-        
+
         <!-- Número -->
         <h2 class="fw-bold mb-1 text-warning">{{$numeroEventos}}</h2>
-        
+
         <!-- Subtítulo -->
         <p class="text-muted mb-0">Eventos Registrados</p>
       </div>
@@ -62,7 +62,21 @@
                 <div>
                     <h5 class="card-title mb-0">{{ $tituloGrafica }}</h5>
                 </div>
+
+                <div class="dropdown">
+                    <div>
+                        <h5 class="card-title mb-0"> Eventos y Audiencias </h5>
+                    </div>
+                    <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="bx bx-calendar"></i></button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Today</a></li>
+                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Yesterday</a></li>
+                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Last 7 Days</a></li>
+                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center">Last 30 Days</a></li>
+                    </ul>
+                </div>
             </div>
+
             <div class="card-body">
                 <div id="chart"></div>
             </div>
@@ -80,9 +94,9 @@
 
   <script type="text/javascript">
 
-  var fechasTodas = @json($fechasTodas);       
-  var audiencias = @json($audienciasData);     
-  var eventos = @json($eventosData);          
+  var fechasTodas = @json($fechasTodas);
+  var audiencias = @json($audienciasData);
+  var eventos = @json($eventosData);
 
 var options = {
   chart: {
@@ -103,7 +117,7 @@ var options = {
       shade: "light",
       type: "vertical",
       shadeIntensity: 0.4,
-      gradientToColors: ["#81fbb8", "#ffd26f"], 
+      gradientToColors: ["#81fbb8", "#ffd26f"],
       opacityFrom: 0.7,
       opacityTo: 0.1,
       stops: [0, 100]
@@ -125,7 +139,7 @@ var options = {
     { name: "Audiencias", data: audiencias },
     { name: "Eventos", data: eventos }
   ],
-  xaxis: { 
+  xaxis: {
     categories: fechasTodas,
     labels: { style: { fontSize: "12px" } }
   },
