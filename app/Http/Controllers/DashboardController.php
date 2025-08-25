@@ -9,7 +9,7 @@ use App\Models\Evento;
 
 class DashboardController extends Controller
 {
-        public function __construct()
+    public function __construct()
     {
         $this->middleware('auth');
     }
@@ -22,9 +22,9 @@ class DashboardController extends Controller
 
         // Queries base (toda el área, futuros)
         $eventosQueryBase = Evento::where('area_id', $areaId)
-                                ->whereDate('fecha_evento', '>=', now()->startOfDay());
+            ->whereDate('fecha_evento', '>=', now()->startOfDay());
         $audienciasQueryBase = Audiencia::where('area_id', $areaId)
-                                        ->whereDate('fecha_audiencia', '>=', now()->startOfDay());
+            ->whereDate('fecha_audiencia', '>=', now()->startOfDay());
 
         // Contar eventos y audiencias personales
         $numeroEventos = (clone $eventosQueryBase)->where('user_id', $userId)->count();
@@ -70,11 +70,11 @@ class DashboardController extends Controller
 
         foreach ($fechasTodas as $fecha) {
             $eventosData[] = (clone $eventosQuery)
-                                ->whereDate('fecha_evento', $fecha)
-                                ->count();
+                ->whereDate('fecha_evento', $fecha)
+                ->count();
             $audienciasData[] = (clone $audienciasQuery)
-                                ->whereDate('fecha_audiencia', $fecha)
-                                ->count();
+                ->whereDate('fecha_audiencia', $fecha)
+                ->count();
         }
 
         return view('tablero', compact(
