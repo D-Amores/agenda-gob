@@ -65,7 +65,7 @@
           </div>
           <!-- Hora fin -->
           <div class="mb-3">
-            <lebel class="form-label" for="hora_fin_audiencia">Hora de finalizacion</lebel>
+            <label class="form-label" for="hora_fin_audiencia">Hora de finalizacion</label>
             <input type="time" name="hora_fin_audiencia" id="hora_fin_audiencia" class="form-control" value="{{ old('hora_fin_audiencia', $audiencia->hora_fin_audiencia) }}" required />
           </div>
 
@@ -97,7 +97,7 @@
 
           <!-- Botón -->
           <div class="text-end">
-            <a href="{{ route('audiencias.registro') }}" class="btn btn-warning text-white">Cancelar</a>
+            <a href="{{ route('dashboard') }}" class="btn btn-warning text-white">Cancelar</a>
             <button type="submit" class="btn btn-primary">Guardar cambios</button>
           </div>
 

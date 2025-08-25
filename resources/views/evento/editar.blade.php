@@ -80,7 +80,7 @@
                         </div>
                         <!-- Hora fin -->
                         <div class="mb-3">
-                            <lebel class="form-label" for="hora_fin_evento">Hora de finalizacion</lebel>
+                            <label class="form-label" for="hora_fin_evento">Hora de finalizacion</label>
                             <input type="time" name="hora_fin_evento" id="hora_fin_evento" class="form-control"
                                 value="{{ old('hora_fin_evento', $evento->hora_fin_evento) }}" required />
                         </div>
@@ -126,7 +126,7 @@
 
                         <!-- Botón -->
                         <div class="text-end">
-                            <a href="{{ route('eventos.registro') }}" class="btn btn-warning text-white">Cancelar</a>
+                            <a href="{{ route('dashboard') }}" class="btn btn-warning text-white">Cancelar</a>
                             <button type="submit" class="btn btn-primary">Guardar cambios</button>
                         </div>
 

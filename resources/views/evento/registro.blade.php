@@ -207,7 +207,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    <script src="{{ asset('js/flatpickr.js') }}"></script>
+    <script src="{{ asset('js/flatpicker/evento.js') }}"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
