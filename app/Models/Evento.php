@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Evento extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'eventos';
     protected $fillable = [
         'nombre',
@@ -23,12 +23,38 @@ class Evento extends Model
         'estatus_id',
         'area_id',
     ];
-    
-    public function user(){
+
+    public function isEventoDuplicated($validated, $areaId, $eventoId = null)
+    {
+        $query = self::where('area_id', $areaId)
+            ->whereDate('fecha_evento', $validated['formValidationFecha'])
+            ->where(function ($q) use ($validated) {
+                // Inicio dentro de un rango existente
+                $q->whereBetween('hora_evento', [$validated['hora_evento'], $validated['hora_fin_evento']])
+                    // Fin dentro de un rango existente
+                    ->orWhereBetween('hora_fin_evento', [$validated['hora_evento'], $validated['hora_fin_evento']])
+                    // Rango nuevo cubre un rango existente
+                    ->orWhere(function ($q2) use ($validated) {
+                        $q2->where('hora_evento', '<=', $validated['hora_evento'])
+                            ->where('hora_fin_evento', '>=', $validated['hora_fin_evento']);
+                    });
+            })
+            ->where('nombre', $validated['formValidationName']); // mismo nombre
+
+        if ($eventoId) {
+            $query->where('id', '!=', $eventoId); // excluir evento actual al actualizar
+        }
+
+        return $query->exists(); // true si hay conflicto
+    }
+
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function vestimenta(){
+    public function vestimenta()
+    {
         return $this->belongsTo(Vestimenta::class);
     }
 
@@ -37,7 +63,8 @@ class Evento extends Model
         return $this->belongsTo(Estatus::class);
     }
 
-    public function area(){
+    public function area()
+    {
         return $this->belongsTo(Area::class)->withDefault(); // opcional
     }
 }

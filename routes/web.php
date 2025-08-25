@@ -44,16 +44,6 @@ Route::middleware('auth')->group(function () {
         'evento' => 'evento'
     ])->except(['index', 'show']);
 
-
     // Calendario
     Route::get('/calendario', [CalendarioController::class, 'index'])->name('calendario.index');
-
-    /*
-    //Eventos
-    Route::get('/evento', [EventoController::class, 'registrar'])->name('eventos.registro');
-    Route::post('/evento/guardar', [EventoController::class, 'crear'])->name('eventos.store');
-    Route::get('/evento/{evento}/editar', [EventoController::class, 'editar'])->name('eventos.editar');
-    Route::put('/evento/{evento}', [EventoController::class, 'actualizar'])->name('eventos.actualizar');
-    Route::delete('/evento/eliminar/{evento}', [EventoController::class, 'eliminar'])->name('eventos.eliminar');
-    */
 });

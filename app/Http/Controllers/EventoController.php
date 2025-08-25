@@ -49,10 +49,7 @@ class EventoController extends Controller
             return redirect()->back()->withInput();
         }
 
-        $exists = Evento::where('nombre', $request->formValidationName)
-            ->whereDate('fecha_evento', $request->formValidationFecha)
-            ->where('hora_evento', $request->hora_evento)
-            ->exists();
+        $exists = Evento::isEventoDuplicated($validated, Auth::user()->area_id);
 
         if ($exists) {
             Alert::warning('Advertencia', 'Ya existe un Evento con ese nombre en esa fecha y hora.')->autoClose(5000)->timerProgressBar();
@@ -119,11 +116,7 @@ class EventoController extends Controller
 
         $validated = $request->validated();
 
-        $exists = Evento::where('nombre', $request->formValidationName)
-            ->whereDate('fecha_evento', $request->formValidationFecha)
-            ->where('hora_evento', $request->hora_evento)
-            ->where('id', '!=', $evento->id)
-            ->exists();
+        $exists = Evento::isEventoDuplicated($validated, Auth::user()->area_id, $evento->id);
 
         if ($exists) {
             Alert::warning('Advertencia', 'Ya existe un Evento con ese nombre en esa fecha y hora.')->autoClose(5000)->timerProgressBar();
