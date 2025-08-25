@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/bootstrap-select/bootstrap-select.css') }}" />
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/select2/select2.css') }}" />
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/css/formValidation.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 @endsection
 
 @section('content')
@@ -68,24 +69,25 @@
                         <!-- Fecha -->
                         <div class="mb-3">
                             <label class="form-label" for="formValidationFecha">Fecha</label>
-                            <input type="date" name="formValidationFecha" id="formValidationFecha" class="form-control"
+                            <input type="text" name="formValidationFecha" id="formValidationFecha" class="form-control"
                                 value="{{ old('formValidationFecha', $evento->fecha_evento) }}" required />
                         </div>
 
                         <!-- Hora inicio -->
-                        <div class="mb-3">
-                            <label class="form-label" for="hora_evento">Hora de inicio</label>
-                            <input type="time" name="hora_evento" id="hora_evento" class="form-control"
-                                value="{{ old('hora_evento', $evento->hora_evento) }}" required />
-                        </div>
-                        <!-- Hora fin -->
-                        <div class="mb-3">
-                            <label class="form-label" for="hora_fin_evento">Hora de finalizacion</label>
-                            <input type="time" name="hora_fin_evento" id="hora_fin_evento" class="form-control"
-                                value="{{ old('hora_fin_evento', $evento->hora_fin_evento) }}" required />
+                       <div class="mb-3 d-flex align-items-center gap-2">
+                            <div class="flex-grow-1">
+                                <label class="form-label" for="hora_evento">Hora de inicio</label>
+                                <input type="text" name="hora_evento" id="hora_evento" class="form-control timepicker"
+                                    value="{{ old('hora_evento', $evento->hora_evento) }}" required />
+                            </div>
+                            <div class="flex-grow-1">
+                                <label class="form-label" for="hora_fin_evento">Hora de finalizacion</label>
+                                <input type="text" name="hora_fin_evento" id="hora_fin_evento" class="form-control timepicker"
+                                    value="{{ old('hora_fin_evento', $evento->hora_fin_evento) }}" required />
+                            </div>
                         </div>
 
-                        <div class="col-sm-6">
+                        <div class="mb-3">
                             <label class="form-label" for="vestimenta">Tipo de vestimenta</label>
                             <select id="vestimenta" name="vestimenta" class="form-control" required>
                                 <option value="" disabled>Seleccione un tipo</option>
@@ -144,6 +146,11 @@
     <script src="{{ asset('sneat/assets/vendor/libs/bs-stepper/bs-stepper.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/select2/select2.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script src="{{ asset('js/flatpicker/editar-evento.js') }}"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
