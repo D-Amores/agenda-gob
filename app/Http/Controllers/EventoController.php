@@ -148,13 +148,29 @@ class EventoController extends Controller
      */
     public function destroy(Evento $evento)
     {
+        if (auth()->id() !== $evento->user_id) {
+            return response()->json([
+                'ok'      => false,
+                'message' => 'No autorizado.',
+            ], 403);
+        }
+
         try {
             $evento->delete();
-            Alert::success('Éxito', 'Evento eliminado correctamente')->autoClose(5000)->timerProgressBar();
-            return redirect()->route('calendario.index'); // aquí Laravel mostrará el alert
-        } catch (\Exception $e) {
-            Alert::error('Error', 'No se pudo eliminar el Evento')->autoClose(5000)->timerProgressBar();
-            return redirect()->route('calendario.index');
+
+            return response()->json([
+                'ok'      => true,
+                'message' => 'Evento eliminado correctamente.',
+                'id'      => $evento->id,
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'ok'      => false,
+                'message' => 'No se pudo eliminar el Evento.',
+                'error'   => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
         }
     }
 }

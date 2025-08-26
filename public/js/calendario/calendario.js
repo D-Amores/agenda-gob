@@ -346,66 +346,66 @@ document.addEventListener("DOMContentLoaded", function () {
     const formEliminar = document.getElementById("formEnviar");
     const btnEliminar = document.getElementById("btnEliminar");
 
-    async function eliminarAudiencia(id, url) {
-        UI.confirm({
-            title: 'Eliminar audiencia',
-            message: '¿Deseas eliminar esta audiencia? Esta acción no se puede deshacer.',
-            type: 'red',
-            text: 'Eliminar',
-            class: 'btn-danger',
-            onConfirm: async () => {
-                try {
-                    const body = new URLSearchParams();
-                    body.append('_method', 'DELETE');
-                    body.append('_token', csrfToken);
+    // Generaliza: elimina audiencia o evento por fetch
+    async function eliminarItem(tipo, id, url) {
+      const titulo = tipo === 'evento' ? 'Eliminar evento' : 'Eliminar audiencia';
+      UI.confirm({
+        title: titulo,
+        message: '¿Deseas eliminar este registro? Esta acción no se puede deshacer.',
+        type: 'red',
+        text: 'Eliminar',
+        class: 'btn-danger',
+        onConfirm: async () => {
+          try {
+            const body = new URLSearchParams();
+            body.append('_method', 'DELETE');
+            body.append('_token', csrfToken);
 
-                    const resp = await fetch(url, {
-                        method: 'POST',              // usamos POST + _method=DELETE
-                        headers: { 'Accept': 'application/json' },
-                        body
-                    });
+            const resp = await fetch(url, {
+              method: 'POST', // DELETE con method spoofing
+              headers: { 'Accept': 'application/json' },
+              body
+            });
 
-                    const data = await resp.json().catch(() => ({}));
-
-                    if (!resp.ok || data.ok === false) {
-                        const msg = (data && (data.message || data.error)) || 'No se pudo eliminar la audiencia.';
-                        UI.alert(msg, 'red', 'Error');
-                        return;
-                    }
-
-                    // Quitar del arreglo local y refrescar calendario
-                    l = l.filter(ev => !(ev.tipo === 'audiencia' && Number(ev.id) === Number(id)));
-                    i.refetchEvents();
-
-                    // Limpiar panel de detalles y lista
-                    const lista = document.querySelector('.event-list-scroll ul');
-                    if (lista) lista.innerHTML = `<li class="list-group-item text-center text-muted">No hay eventos</li>`;
-                    const eventForm = document.getElementById("eventForm");
-                    if (eventForm) eventForm.classList.add("d-none");
-
-                    UI.alert(data.message || 'Audiencia eliminada correctamente.', 'green', 'Éxito');
-                } catch (e) {
-                    UI.alert('Error de red al eliminar la audiencia.', 'red', 'Error');
-                }
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok || data.ok === false) {
+              const msg = (data && (data.message || data.error)) || 'No se pudo eliminar.';
+              UI.alert(msg, 'red', 'Error');
+              return;
             }
-        });
+
+            // Remueve del arreglo y refresca calendario
+            l = l.filter(ev => !(ev.tipo === tipo && Number(ev.id) === Number(id)));
+            i.refetchEvents();
+
+            // Limpia panel de detalles y lista
+            const lista = document.querySelector('.event-list-scroll ul');
+            if (lista) lista.innerHTML = `<li class="list-group-item text-center text-muted">No hay eventos</li>`;
+            const eventForm = document.getElementById("eventForm");
+            if (eventForm) eventForm.classList.add("d-none");
+
+            UI.alert(data.message || 'Eliminado correctamente.', 'green', 'Éxito');
+          } catch (e) {
+            UI.alert('Error de red al eliminar.', 'red', 'Error');
+          }
+        }
+      });
     }
 
     // Intercepta el submit del form para eliminar vía fetch
     if (formEliminar) {
-        formEliminar.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (!btnEliminar) return;
+      formEliminar.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!btnEliminar) return;
 
-            const id = btnEliminar.dataset.id;
-            const tipo = btnEliminar.dataset.tipo;
-            const url = formEliminar.action;
+        const id = btnEliminar.dataset.id;
+        const tipo = btnEliminar.dataset.tipo; // 'audiencia' | 'evento'
+        const url = formEliminar.action;
 
-            // Solo audiencias (eventos puedes tratarlos similar si quieres)
-            if (tipo === 'audiencia' && id && url) {
-                eliminarAudiencia(id, url);
-            }
-        });
+        if ((tipo === 'audiencia' || tipo === 'evento') && id && url) {
+          eliminarItem(tipo, id, url);
+        }
+      });
     }
 
     function w() {
