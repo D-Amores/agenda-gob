@@ -26,8 +26,6 @@
 
     <title>@yield('title')</title>
 
-    @yield('link')
-
     <meta name="description" content="Most Powerful &amp; Comprehensive Bootstrap 5 HTML Admin Dashboard Template built for developers!" />
     <meta name="keywords" content="dashboard, bootstrap 5 dashboard, bootstrap 5 design, bootstrap 5">
     <!-- Canonical SEO -->
@@ -56,6 +54,12 @@
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/typeahead-js/typeahead.css') }}" />
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/apex-charts/apex-charts.css') }}" />
 
+    <!-- JQUERY CONFIRM -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.css">
+
+    <!-- custom styles -->
+    @yield('link')
+
     <!-- FaltPickr -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -74,13 +78,13 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async="async" src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
     <script>
-    window.dataLayer = window.dataLayer || [];
+        window.dataLayer = window.dataLayer || [];
 
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag('js', new Date());
-    gtag('config', 'GA_MEASUREMENT_ID');
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
     </script>
 
 </head>
@@ -157,6 +161,9 @@
 
 <!-- Page JS -->
 <script src="{{ asset('sneat/assets/js/dashboards-analytics.js') }}"></script>
+
+<!-- JQUERY CONFIRM -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js"></script>
 
 @yield('script')
 
