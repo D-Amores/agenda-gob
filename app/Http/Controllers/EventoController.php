@@ -31,7 +31,6 @@ class EventoController extends Controller
         $estatusLista = Estatus::all();
         return view('evento.registro', compact('estatusLista'));
     }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -79,7 +78,6 @@ class EventoController extends Controller
             return back()->withInput();
         }
     }
-
     /**
      * Display the specified resource.
      *
@@ -103,7 +101,6 @@ class EventoController extends Controller
         $evento->fecha_evento = \Carbon\Carbon::parse($evento->fecha_evento)->format('Y-m-d');
         return view('evento.editar', compact('evento', 'estatusLista'));
     }
-
     /**
      * Update the specified resource in storage.
      *
@@ -143,7 +140,6 @@ class EventoController extends Controller
             return back()->withInput();
         }
     }
-
     /**
      * Remove the specified resource from storage.
      *
