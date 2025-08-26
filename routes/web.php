@@ -6,6 +6,7 @@ use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LogoutController;
 
 /*
@@ -34,33 +35,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LogoutController::class, 'store'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    // Perfil (URIs: profile/{user}/edit, profile/{user})
+    Route::resource('profile', ProfileController::class)->parameters(['profile' => 'user'])
+        ->only(['edit', 'update']);
+
     // Audiencias
     Route::resource('audiencias', AudienciaController::class)->parameters([
         'audiencia' => 'audiencia'
     ])->except(['index', 'show']);
 
-    // Audiencias
-    /*Route::get('/audiencia', [AudienciaController::class, 'registrar'])->name('audiencias.registro');
-    Route::middleware('permission:crear audiencia')->group(function () {
-        Route::post('/audiencia/guardar', [AudienciaController::class, 'crear'])->name('audiencias.store');
-    });
-    Route::middleware('permission:editar audiencia')->group(function () {
-        Route::get('/audiencia/{audiencia}/editar', [AudienciaController::class, 'editar'])->name('audiencias.editar');
-        Route::put('/audiencia/{audiencia}', [AudienciaController::class, 'actualizar'])->name('audiencias.actualizar');
-    });
-    Route::middleware('permission:eliminar audiencia')->group(function () {
-        Route::delete('/audiencia/eliminar/{audiencia}', [AudienciaController::class, 'eliminar'])->name('audiencias.eliminar');
-    });
-    */
-
+    //Eventos
+    Route::resource('eventos', EventoController::class)->parameters([
+        'evento' => 'evento'
+    ])->except(['index', 'show']);
 
     // Calendario
     Route::get('/calendario', [CalendarioController::class, 'index'])->name('calendario.index');
-
-    //Eventos
-    Route::get('/evento', [EventoController::class, 'registrar'])->name('eventos.registro');
-    Route::post('/evento/guardar', [EventoController::class, 'crear'])->name('eventos.store');
-    Route::get('/evento/{evento}/editar', [EventoController::class, 'editar'])->name('eventos.editar');
-    Route::put('/evento/{evento}', [EventoController::class, 'actualizar'])->name('eventos.actualizar');
-    Route::delete('/evento/eliminar/{evento}', [EventoController::class, 'eliminar'])->name('eventos.eliminar');
 });

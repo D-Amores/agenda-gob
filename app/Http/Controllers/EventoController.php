@@ -2,33 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreEventoRequest;
+use App\Http\Requests\UpdateEventoRequest;
 use App\Models\Evento;
 use App\Models\Estatus;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class EventoController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
+    {
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
     {
         $estatusLista = Estatus::all();
         return view('evento.registro', compact('estatusLista'));
     }
-
-    public function crear(Request $request)
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \App\Http\Requests\StoreEventoRequest  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(StoreEventoRequest $request)
     {
-        $validated = $request->validate([
-            'formValidationName' => 'required|string|min:10|max:255',
-            'asistenciaGobernador' => ['required', 'in:1,0'],
-            'formValidationLugar' => 'required|string|min:10|max:255',
-            'formValidationFecha' => 'required',
-            'vestimenta' => ['required', 'exists:vestimentas,id'],
-            'hora_evento' => 'required|date_format:H:i',
-            'hora_fin_evento' => 'required|date_format:H:i|after:hora_evento',
-            'estatus_id' => 'required|exists:estatus,id',
-            'descripcion' => 'nullable|string|max:500',
-        ]);
+        $validated = $request->validated();
 
         try {
             $validated['formValidationFecha'] = date('Y-m-d', strtotime($validated['formValidationFecha']));
@@ -37,10 +48,7 @@ class EventoController extends Controller
             return redirect()->back()->withInput();
         }
 
-        $exists = Evento::where('nombre', $request->formValidationName)
-            ->whereDate('fecha_evento', $request->formValidationFecha)
-            ->where('hora_evento', $request->hora_evento)
-            ->exists();
+        $exists = Evento::isEventoDuplicated($validated, Auth::user()->area_id);
 
         if ($exists) {
             Alert::warning('Advertencia', 'Ya existe un Evento con ese nombre en esa fecha y hora.')->autoClose(5000)->timerProgressBar();
@@ -70,44 +78,42 @@ class EventoController extends Controller
             return back()->withInput();
         }
     }
-
-    public function registrar()
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Evento  $evento
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Evento $evento)
     {
-        $estatusLista = Estatus::all();
-        return view('evento.registro', compact('estatusLista'));
+        //
     }
 
-    public function editar(Evento $evento)
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\Evento  $evento
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Evento $evento)
     {
         $estatusLista = Estatus::all();
         $evento->fecha_evento = \Carbon\Carbon::parse($evento->fecha_evento)->format('Y-m-d');
         return view('evento.editar', compact('evento', 'estatusLista'));
     }
-
-    public function actualizar(Request $request, Evento $evento)
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \App\Http\Requests\UpdateEventoRequest  $request
+     * @param  \App\Models\Evento  $evento
+     * @return \Illuminate\Http\Response
+     */
+    public function update(UpdateEventoRequest $request, Evento $evento)
     {
-        $request->merge([
-            'hora_evento' => substr($request->hora_evento, 0, 5), // Recorta a H:i
-            'hora_fin_evento' => substr($request->hora_fin_evento, 0, 5),
-        ]);
 
-        $validated = $request->validate([
-            'formValidationName' => 'required|string|min:10|max:255',
-            'asistenciaGobernador' => ['required', 'in:1,0'],
-            'formValidationLugar' => 'required|string|min:10|max:255',
-            'formValidationFecha' => 'required|date',
-            'vestimenta' => ['required', 'exists:vestimentas,id'],
-            'hora_evento' => 'required|date_format:H:i',
-            'hora_fin_evento' => 'required|date_format:H:i|after:hora_evento',
-            'estatus_id' => 'required|exists:estatus,id',
-            'descripcion' => 'nullable|string|max:500',
-        ]);
+        $validated = $request->validated();
 
-        $exists = Evento::where('nombre', $request->formValidationName)
-            ->whereDate('fecha_evento', $request->formValidationFecha)
-            ->where('hora_evento', $request->hora_evento)
-            ->where('id', '!=', $evento->id)
-            ->exists();
+        $exists = Evento::isEventoDuplicated($validated, Auth::user()->area_id, $evento->id);
 
         if ($exists) {
             Alert::warning('Advertencia', 'Ya existe un Evento con ese nombre en esa fecha y hora.')->autoClose(5000)->timerProgressBar();
@@ -134,8 +140,13 @@ class EventoController extends Controller
             return back()->withInput();
         }
     }
-
-    public function eliminar(Evento $evento)
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Evento  $evento
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Evento $evento)
     {
         try {
             $evento->delete();
