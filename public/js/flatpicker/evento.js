@@ -77,12 +77,19 @@ $('#hora_fin_evento').clockpicker({
     let hour = parseInt(parts[0]);
     let minute = parseInt(parts[1]);
 
-    // Validar que hora de fin no sea menor que inicio
-    if (hour < minHour || (hour === minHour && minute < minMinute)) {
-        // Reemplazamos alert por Toastr
-        toastr.error('La hora de fin no puede ser menor que la hora de inicio!', 'Error');
+    // Validar que hora de fin sea mayor que hora de inicio
+    if (hour < minHour || (hour === minHour && minute <= minMinute)) {
+        // Ajustar automáticamente +1 hora
+        let newHour = minHour + 1;
+        let newMinute = minMinute;
 
-        // Ajustamos el valor al mínimo permitido
-        $(this).val(`${minHour.toString().padStart(2, '0')}:${minMinute.toString().padStart(2, '0')}`);
+        // Limitar a 23:59 si pasa de 23
+        if (newHour >= 24) {
+            newHour = 23;
+            newMinute = 59;
+        }
+
+        toastr.error('La hora de fin debe ser mayor que la hora de inicio.', 'Error');
+        $(this).val(`${newHour.toString().padStart(2, '0')}:${newMinute.toString().padStart(2, '0')}`);
     }
 });
