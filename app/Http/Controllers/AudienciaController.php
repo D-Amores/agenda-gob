@@ -174,19 +174,34 @@ class AudienciaController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  Audiencia  $audiencia
      * @return \Illuminate\Http\Response
      */
     public function destroy(Audiencia $audiencia)
     {
-        $this->authorize('delete', $audiencia);
+        if (auth()->id() !== $audiencia->user_id) {
+            return response()->json([
+                'ok'      => false,
+                'message' => 'No autorizado.',
+            ], 403);
+        }
+
         try {
             $audiencia->delete();
-            Alert::success('Éxito', 'Audiencia eliminada correctamente')->autoClose(5000)->timerProgressBar();
-            return redirect()->route('calendario.index'); // aquí Laravel mostrará el alert
-        } catch (\Exception $e) {
-            Alert::error('Error', 'No se pudo eliminar la audiencia')->autoClose(5000)->timerProgressBar();
-            return redirect()->route('calendario.index');
+
+            return response()->json([
+                'ok'      => true,
+                'message' => 'Audiencia eliminada correctamente.',
+                'id'      => $audiencia->id,
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'ok'      => false,
+                'message' => 'No se pudo eliminar la audiencia.',
+                'error'   => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
         }
     }
 }
