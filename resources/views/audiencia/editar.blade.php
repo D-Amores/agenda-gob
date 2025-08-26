@@ -59,16 +59,19 @@
             <input type="text" name="formValidationFecha" id="formValidationFecha" class="form-control" value="{{ old('formValidationFecha', $audiencia->fecha_audiencia) }}" required />
           </div>
 
+         <div class="mb-3 d-flex align-items-center gap-2">
+            <div class="flex-grow-1">
           <!-- Hora inicio -->
-          <div class="mb-3">
+
             <label class="form-label" for="hora_audiencia">Hora de inicio</label>
             <input type="text" name="hora_audiencia" id="hora_audiencia" class="form-control timepicker" value="{{ old('hora_audiencia', $audiencia->hora_audiencia) }}" required />
           </div>
           <!-- Hora fin -->
-          <div class="mb-3">
+          <div class="flex-grow-1">
             <label class="form-label" for="hora_fin_audiencia">Hora de finalizacion</label>
             <input type="text" name="hora_fin_audiencia" id="hora_fin_audiencia" class="form-control timepicker" value="{{ old('hora_fin_audiencia', $audiencia->hora_fin_audiencia) }}" required />
           </div>
+        </div>
 
           <!-- Procedencia -->
           <div class="mb-3">

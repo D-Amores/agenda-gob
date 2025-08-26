@@ -33,7 +33,7 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('eventos.actualizar', $evento->id) }}">
+                    <form method="POST" action="{{ route('eventos.update', $evento->id) }}">
                         @csrf
                         @method('PUT')
                         <!-- Nombre -->
