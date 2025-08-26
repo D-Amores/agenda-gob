@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/bootstrap-select/bootstrap-select.css') }}" />
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/select2/select2.css') }}" />
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/css/formValidation.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
 @endsection
 
@@ -55,18 +56,18 @@
           <!-- Fecha -->
           <div class="mb-3">
             <label class="form-label" for="formValidationFecha">Fecha</label>
-            <input type="date" name="formValidationFecha" id="formValidationFecha" class="form-control" value="{{ old('formValidationFecha', $audiencia->fecha_audiencia) }}" required />
+            <input type="text" name="formValidationFecha" id="formValidationFecha" class="form-control" value="{{ old('formValidationFecha', $audiencia->fecha_audiencia) }}" required />
           </div>
 
           <!-- Hora inicio -->
           <div class="mb-3">
             <label class="form-label" for="hora_audiencia">Hora de inicio</label>
-            <input type="time" name="hora_audiencia" id="hora_audiencia" class="form-control" value="{{ old('hora_audiencia', $audiencia->hora_audiencia) }}" required />
+            <input type="text" name="hora_audiencia" id="hora_audiencia" class="form-control timepicker" value="{{ old('hora_audiencia', $audiencia->hora_audiencia) }}" required />
           </div>
           <!-- Hora fin -->
           <div class="mb-3">
             <label class="form-label" for="hora_fin_audiencia">Hora de finalizacion</label>
-            <input type="time" name="hora_fin_audiencia" id="hora_fin_audiencia" class="form-control" value="{{ old('hora_fin_audiencia', $audiencia->hora_fin_audiencia) }}" required />
+            <input type="text" name="hora_fin_audiencia" id="hora_fin_audiencia" class="form-control timepicker" value="{{ old('hora_fin_audiencia', $audiencia->hora_fin_audiencia) }}" required />
           </div>
 
           <!-- Procedencia -->
@@ -115,6 +116,12 @@
   <script src="{{ asset('sneat/assets/vendor/libs/bs-stepper/bs-stepper.js') }}"></script>
 <script src="{{ asset('sneat/assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script>
 <script src="{{ asset('sneat/assets/vendor/libs/select2/select2.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script src="{{ asset('js/flatpicker/editar-audiencia.js') }}"></script>
+
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
