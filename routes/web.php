@@ -6,6 +6,7 @@ use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LogoutController;
 
 /*
@@ -33,6 +34,10 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LogoutController::class, 'store'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Perfil (URIs: profile/{user}/edit, profile/{user})
+    Route::resource('profile', ProfileController::class)->parameters(['profile' => 'user'])
+        ->only(['edit', 'update']);
 
     // Audiencias
     Route::resource('audiencias', AudienciaController::class)->parameters([
