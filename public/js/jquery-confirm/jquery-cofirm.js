@@ -18,23 +18,18 @@ window.UI = {
             }
         });
     },
-    // Agrega timeout (ms). Por defecto 2000. Si timeout = 0, no se autocierra.
-    alert(message, type = 'blue', title = 'Información', onOk, timeout = 1000) {
-        let autoCloseTimer = null;
+    alert(message, type = 'blue', title = 'Información', onOk, timeout = 0) {
 
         const jc = $.alert({
             title,
             content: message,
             type,
+            autoClose: false,
             buttons: {
                 ok: {
                     text: 'OK',
                     btnClass: 'btn-primary',
                     action: () => {
-                        if (autoCloseTimer) {
-                            clearTimeout(autoCloseTimer);
-                            autoCloseTimer = null;
-                        }
                         if (typeof onOk === 'function') onOk();
                     }
                 }
@@ -42,7 +37,7 @@ window.UI = {
         });
 
         if (timeout && Number(timeout) > 0) {
-            autoCloseTimer = setTimeout(() => {
+            setTimeout(() => {
                 try { jc.close(); } catch (_) {}
             }, Number(timeout));
         }
@@ -60,7 +55,6 @@ window.UI = {
             title: false
         });
     },
-    // AJAX helper con JSON por defecto
     ajax({ url, method = 'POST', data, success, fail, always }) {
         $.ajax({
             url,

@@ -384,9 +384,10 @@ document.addEventListener("DOMContentLoaded", function () {
             const eventForm = document.getElementById("eventForm");
             if (eventForm) eventForm.classList.add("d-none");
 
-            UI.alert(data.message || 'Eliminado correctamente.', 'green', 'Éxito');
+            UI.alert(data.message || 'Eliminado correctamente.', 'green', 'Éxito', null, 2000);
           } catch (e) {
             UI.alert('Error de red al eliminar.', 'red', 'Error');
+
           }
         }
       });
