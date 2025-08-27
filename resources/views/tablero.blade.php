@@ -18,7 +18,7 @@
         </div>
 
         <!-- Número -->
-        <h2 class="fw-bold mb-1 text-success">{{$numeroAudiencia}}</h2>
+        <h2 id="aud-count" class="fw-bold mb-1 text-success">{{$numeroAudiencia}}</h2>
 
         <!-- Subtítulo -->
         <p class="text-muted mb-0">Audiencias Registradas</p>
@@ -37,7 +37,7 @@
         </div>
 
         <!-- Número -->
-        <h2 class="fw-bold mb-1 text-warning">{{$numeroEventos}}</h2>
+        <h2 id="evt-count" class="fw-bold mb-1 text-warning">{{$numeroEventos}}</h2>
 
         <!-- Subtítulo -->
         <p class="text-muted mb-0">Eventos Registrados</p>
@@ -263,6 +263,18 @@ var options = {
                 { name: "Audiencias", data: data.audiencias },
                 { name: "Eventos", data: data.eventos }
             ]);
+
+            // Actualizar tarjetas: sumar las series
+            try {
+                const totalAud = (Array.isArray(data.audiencias) ? data.audiencias : []).reduce((s, v) => s + Number(v || 0), 0);
+                const totalEvt = (Array.isArray(data.eventos) ? data.eventos : []).reduce((s, v) => s + Number(v || 0), 0);
+                const audEl = document.getElementById('aud-count');
+                const evtEl = document.getElementById('evt-count');
+                if (audEl) audEl.textContent = totalAud;
+                if (evtEl) evtEl.textContent = totalEvt;
+            } catch (e) {
+                console.error('Error updating counters:', e);
+            }
         })
         .catch(err => {
             console.error('Error fetching chart data:', err);

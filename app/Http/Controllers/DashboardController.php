@@ -174,9 +174,9 @@ class DashboardController extends Controller
                     $rangeStart = Carbon::parse(min($minDates))->startOfDay();
                     $rangeEnd = Carbon::parse(max($maxDates))->startOfDay();
                 } else {
-                    // si no hay registros, volver al rango por defecto (futuros 30 días)
+                    // si no hay registros, usar rango corto de 7 días (evitar 30 días muy saturados)
                     $rangeStart = $today->copy();
-                    $rangeEnd = $today->copy()->addDays(29);
+                    $rangeEnd = $today->copy()->addDays(6); // 7 días por defecto cuando no hay datos
                 }
             }
 

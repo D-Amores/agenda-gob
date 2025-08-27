@@ -14,16 +14,16 @@
             <li class="menu-header small text-muted">Registros</li>
 
             <li class="menu-item">
-                <a href="{{ route('eventos.create') }}" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-calendar-event"></i>
-                    <span class="menu-title text-uppercase fw-semibold">Registro de Evento</span>
+                <a href="{{ route('audiencias.create') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-group"></i>
+                    <span class="menu-title text-uppercase fw-semibold">Registro de Audiencia</span>
                 </a>
             </li>
 
             <li class="menu-item">
-                <a href="{{ route('audiencias.create') }}" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-group"></i>
-                    <span class="menu-title text-uppercase fw-semibold">Registro de Audiencia</span>
+                <a href="{{ route('eventos.create') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-calendar-event"></i>
+                    <span class="menu-title text-uppercase fw-semibold">Registro de Evento</span>
                 </a>
             </li>
 
