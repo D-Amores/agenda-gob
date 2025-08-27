@@ -17,7 +17,7 @@
 <div class="row justify-content-center">
   <div class="col-md-8 col-lg-6">
     <div class="card mb-4">
-      <div class="card-header d-flex justify-content-between align-items-center">
+      <div class="card-header d-flex justify-content-between align-items-center border-start border-4 border-success">
         <h5 class="mb-0">Editar Audiencia</h5>
         <small class="text-muted float-end">Formulario de edición</small>
       </div>
@@ -101,16 +101,14 @@
 
           <!-- Botón -->
           <div class="text-end">
-            <a href="{{ route('dashboard') }}" class="btn btn-warning text-white">Cancelar</a>
-            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+            <a href="{{ route('dashboard') }}" class="btn btn-success">Cancelar</a>
+            <button type="submit" class="btn btn-success">Guardar cambios</button>
           </div>
-
         </form>
       </div>
     </div>
   </div>
 </div>
-
 @endsection
 
 

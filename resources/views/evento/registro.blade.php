@@ -92,11 +92,11 @@
                                 </div>
 
                                 <div class="col-12 d-flex justify-content-between">
-                                    <button type="button" class="btn btn-label-secondary btn-prev" disabled>
+                                    <button type="button" class="btn btn-warning btn-prev" disabled>
                                         <i class="bx bx-chevron-left bx-sm ms-sm-n2"></i>
                                         <span class="align-middle d-sm-inline-block d-none">Anterior</span>
                                     </button>
-                                    <button type="button" class="btn btn-primary btn-next">
+                                    <button type="button" class="btn btn-warning btn-next">
                                         <span class="align-middle d-sm-inline-block d-none me-sm-1">Siguiente</span>
                                         <i class="bx bx-chevron-right bx-sm me-sm-n2"></i>
                                     </button>
@@ -142,11 +142,11 @@
 
                                 <!-- Botones de navegación -->
                                 <div class="col-12 d-flex justify-content-between">
-                                    <button type="button" class="btn btn-primary btn-prev">
+                                    <button type="button" class="btn btn-warning btn-prev">
                                         <i class="bx bx-chevron-left bx-sm ms-sm-n2"></i>
                                         <span class="align-middle d-sm-inline-block d-none">Anterior</span>
                                     </button>
-                                    <button type="button" class="btn btn-primary btn-next">
+                                    <button type="button" class="btn btn-warning btn-next">
                                         <span class="align-middle d-sm-inline-block d-none me-sm-1">Siguiente</span>
                                         <i class="bx bx-chevron-right bx-sm me-sm-n2"></i>
                                     </button>
@@ -178,11 +178,11 @@
 
                                 <!-- Botones -->
                                 <div class="col-12 d-flex justify-content-between">
-                                    <button type="button" class="btn btn-primary btn-prev">
+                                    <button type="button" class="btn btn-warning btn-prev">
                                         <i class="bx bx-chevron-left bx-sm ms-sm-n2"></i>
                                         <span class="align-middle d-sm-inline-block d-none">Anterior</span>
                                     </button>
-                                    <button type="submit" class="btn btn-success btn-next btn-submit">Enviar</button>
+                                    <button type="submit" class="btn btn-warning btn-next btn-submit text-white">Enviar</button>
                                 </div>
                             </div>
                         </div>
