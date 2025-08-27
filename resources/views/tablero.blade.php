@@ -52,6 +52,17 @@
     box-shadow: 0 8px 20px rgba(0,0,0,0.1);
   }
   #custom-range { display: none; gap: .5rem; align-items: center; }
+
+  /* inputs del rango personalizado: más pequeños en pantallas grandes, completos en móviles */
+  #custom-range input {
+    max-width: 180px;
+    min-width: 120px;
+  }
+  @media (max-width: 576px) {
+    #custom-range { flex-direction: column; }
+    #custom-range input { max-width: 100%; min-width: 0; width: 100%; }
+    #custom-range .btn { width: 100%; }
+  }
 </style>
 
 
@@ -98,6 +109,10 @@
 @section('script')
   <!-- Page JS -->
   <script src="{{ asset('sneat/assets/js/charts-apex.js') }}"></script>
+
+  <!-- flatpickr (usa CDN si no tienes package local) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
   <script type="text/javascript">
 
@@ -244,6 +259,91 @@ var options = {
         if (first) fetchChartData(first.getAttribute('data-filter'));
     });
 
+    // flatpickr instances (para inputs personalizados)
+    var fpStart = null;
+    var fpEnd = null;
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // init flatpickr con minDate = today para evitar seleccionar días anteriores
+      fpStart = flatpickr("#custom-start", {
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        onChange: function(selectedDates, dateStr) {
+          if (selectedDates.length) {
+            fpEnd.set('minDate', dateStr);
+          }
+        }
+      });
+
+      fpEnd = flatpickr("#custom-end", {
+        dateFormat: "Y-m-d",
+        minDate: "today",
+      });
+    });
+
+    // actualizar comportamiento cuando se abre personalizado: poner defaults si está vacío
+    document.querySelectorAll('.dropdown-item[data-filter]').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            let filter = this.getAttribute('data-filter');
+
+            // Manage active class and update title
+            setActiveItem(this);
+            document.getElementById('chart-title').textContent = this.textContent.trim();
+
+            // If personalizado, show inputs and wait for confirm
+            if (filter === 'personalizado') {
+                showCustomRange();
+
+                // establecer valores por defecto si están vacíos: hoy .. +6 días
+                const startEl = document.getElementById('custom-start');
+                const endEl = document.getElementById('custom-end');
+                const todayStr = new Date().toISOString().slice(0,10);
+                const plus6 = new Date(); plus6.setDate(plus6.getDate() + 6);
+                const plus6Str = plus6.toISOString().slice(0,10);
+
+                if (startEl && !startEl.value) {
+                  startEl.value = todayStr;
+                  if (fpStart) fpStart.setDate(todayStr, true);
+                  if (fpEnd) fpEnd.set('minDate', todayStr);
+                }
+                if (endEl && !endEl.value) {
+                  endEl.value = plus6Str;
+                  if (fpEnd) fpEnd.setDate(plus6Str, true);
+                }
+
+                return;
+            } else {
+                hideCustomRange();
+            }
+
+            fetchChartData(filter);
+        });
+    });
+
+    // ajustar minDate del end cuando se aplica personalizado (por si el usuario editó)
+    document.getElementById('custom-apply').addEventListener('click', function(e) {
+        e.preventDefault();
+        let start = document.getElementById('custom-start').value;
+        let end = document.getElementById('custom-end').value;
+        if (!start || !end) {
+            console.error('Start and end dates required');
+            return;
+        }
+        // asegurar que end no sea anterior a start
+        if (new Date(end) < new Date(start)) {
+          console.error('End must be after or equal to start');
+          return;
+        }
+        // Add active to personalizado item and update title
+        let personalItem = document.querySelector('.dropdown-item[data-filter="personalizado"]');
+        setActiveItem(personalItem);
+        document.getElementById('chart-title').textContent = personalItem.textContent.trim();
+
+        fetchChartData('personalizado', { start: start, end: end });
+    });
+
     // fetch helper
     function fetchChartData(filter, params = {}) {
         let url = `/dashboard/chart-data?filter=${encodeURIComponent(filter)}`;
@@ -276,8 +376,8 @@ var options = {
                 console.error('Error updating counters:', e);
             }
         })
-        .catch(err => {
-            console.error('Error fetching chart data:', err);
+        .catch(error => {
+            console.error('Error fetching chart data:', error);
         });
     }
 
