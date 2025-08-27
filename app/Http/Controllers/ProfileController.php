@@ -6,6 +6,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
@@ -76,26 +77,50 @@ class ProfileController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        // Opcional: asegurar que solo actualiza su propio perfil
         if ($user->id !== auth()->id()) {
-            abort(403);
+            return response()->json([
+                'ok'      => false,
+                'message' => 'No autorizado.',
+            ], 403);
         }
 
-        $data = $request->only(['username', 'email']);
+        try {
+            $data = $request->only(['username', 'email']);
 
-        if ($request->hasFile('profile_photo')) {
-            // elimina la foto anterior si existe
-            if ($user->profile_photo_path && Storage::disk('public')->exists($user->profile_photo_path)) {
-                Storage::disk('public')->delete($user->profile_photo_path);
+            if ($request->hasFile('profile_photo')) {
+                // elimina la foto anterior si existe
+                if ($user->profile_photo_path && Storage::disk('public')->exists($user->profile_photo_path)) {
+                    Storage::disk('public')->delete($user->profile_photo_path);
+                }
+
+                $path = $request->file('profile_photo')->store('profiles', 'public');
+                $data['profile_photo_path'] = $path;
             }
 
-            $path = $request->file('profile_photo')->store('profiles', 'public');
-            $data['profile_photo_path'] = $path;
-        }
-        $user->update($data);
-        //dd($user);
+            if ($request->filled('password')) {
+                $data['password'] = Hash::make($request->password);
+            }
 
-        return back()->with('status', 'Perfil actualizado correctamente.');
+            $user->update($data);
+
+            return response()->json([
+                'ok'      => true,
+                'message' => 'Perfil actualizado correctamente.',
+                'user'    => [
+                    'username'   => $user->username,
+                    'email'      => $user->email,
+                    'avatar_url' => $user->avatar_url,
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'ok'      => false,
+                'message' => 'No se pudo actualizar el perfil.',
+                'error'   => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
+        }
     }
 
     /**

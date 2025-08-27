@@ -9,7 +9,7 @@ FullCalendar.globalLocales.push(function () {
          buttonText: {
              prev: "Ant",
              next: "Sig",
-             today: "Hoy",  
+             today: "Hoy",
              month: "Mes",
              week: "Semana",
              day: "Día",
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
             reprogramado: "warning",
             programado: "primary",
             atendido: "success",
-            cancelado: "danger",      
+            cancelado: "danger",
             pendiente: "info"
         },
         T = document.querySelector(".btn-toggle-sidebar"),
@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("hora").innerText = `${moment(event.start).format('h:mm A')} - ${moment(event.end).format('h:mm A')}`;
         document.getElementById("estatus").innerText = event.extendedProps.estatus || "N/D";
         document.getElementById("vestimenta").innerText = event.extendedProps.vestimenta || "N/D";
-        
+
         const btnEditar = document.getElementById("btnEditar");
         const btnEliminar = document.getElementById("btnEliminar");
         const formEnviar = document.getElementById("formEnviar");
@@ -269,7 +269,7 @@ document.addEventListener("DOMContentLoaded", function () {
             e.insertAdjacentHTML("beforeend", '<i class="bx bx-menu bx-sm text-body"></i>');
         }
     }
-    
+
     let i = new FullCalendar.Calendar(x, {
         themeSystem: 'standard',
         initialView: "dayGridMonth",
@@ -341,6 +341,73 @@ document.addEventListener("DOMContentLoaded", function () {
             y();
         }
     });
+
+    // Referencias globales al form y al botón Eliminar
+    const formEliminar = document.getElementById("formEnviar");
+    const btnEliminar = document.getElementById("btnEliminar");
+
+    // Generaliza: elimina audiencia o evento por fetch
+    async function eliminarItem(tipo, id, url) {
+      const titulo = tipo === 'evento' ? 'Eliminar evento' : 'Eliminar audiencia';
+      UI.confirm({
+        title: titulo,
+        message: '¿Deseas eliminar este registro? Esta acción no se puede deshacer.',
+        type: 'red',
+        text: 'Eliminar',
+        class: 'btn-danger',
+        onConfirm: async () => {
+          try {
+            const body = new URLSearchParams();
+            body.append('_method', 'DELETE');
+            body.append('_token', csrfToken);
+
+            const resp = await fetch(url, {
+              method: 'POST', // DELETE con method spoofing
+              headers: { 'Accept': 'application/json' },
+              body
+            });
+
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok || data.ok === false) {
+              const msg = (data && (data.message || data.error)) || 'No se pudo eliminar.';
+              UI.alert(msg, 'red', 'Error');
+              return;
+            }
+
+            // Remueve del arreglo y refresca calendario
+            l = l.filter(ev => !(ev.tipo === tipo && Number(ev.id) === Number(id)));
+            i.refetchEvents();
+
+            // Limpia panel de detalles y lista
+            const lista = document.querySelector('.event-list-scroll ul');
+            if (lista) lista.innerHTML = `<li class="list-group-item text-center text-muted">No hay eventos</li>`;
+            const eventForm = document.getElementById("eventForm");
+            if (eventForm) eventForm.classList.add("d-none");
+
+            UI.alert(data.message || 'Eliminado correctamente.', 'green', 'Éxito', null, 2000);
+          } catch (e) {
+            UI.alert('Error de red al eliminar.', 'red', 'Error');
+
+          }
+        }
+      });
+    }
+
+    // Intercepta el submit del form para eliminar vía fetch
+    if (formEliminar) {
+      formEliminar.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!btnEliminar) return;
+
+        const id = btnEliminar.dataset.id;
+        const tipo = btnEliminar.dataset.tipo; // 'audiencia' | 'evento'
+        const url = formEliminar.action;
+
+        if ((tipo === 'audiencia' || tipo === 'evento') && id && url) {
+          eliminarItem(tipo, id, url);
+        }
+      });
+    }
 
     function w() {
         if (c) c.value = "";
