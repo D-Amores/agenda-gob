@@ -51,6 +51,7 @@
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.1);
   }
+  #custom-range { display: none; gap: .5rem; align-items: center; }
 </style>
 
 
@@ -58,25 +59,33 @@
     <!-- Line Area Chart -->
     <div class="col-12 mb-4">
         <div class="card">
-            <div class="card-header d-flex justify-content-between">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="card-title mb-0">{{ $tituloGrafica }}</h5>
+                    <!-- Titular ahora controlado por JS -->
+                    <h5 id="chart-title" class="card-title mb-0"></h5>
                 </div>
 
                 <div class="dropdown">
                     <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="bx bx-calendar"></i></button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center" data-filter="">Mis Eventos y Audiencias</a></li>
-                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center" data-filter="">Eventos y Audiencias del Area</a></li>
-                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center" data-filter="">Proximos 7 Dias</a></li>
-                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center" data-filter="">Proximos 30 Dias</a></li>
-                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center" data-filter="">Personalizado</a></li>
+                        <li><a href="#" class="dropdown-item" data-filter="mis">Mis Eventos y Audiencias</a></li>
+                        <li><a href="#" class="dropdown-item" data-filter="area">Eventos y Audiencias del Area</a></li>
+                        <li><a href="#" class="dropdown-item" data-filter="7dias">Próximos 7 Dias</a></li>
+                        <li><a href="#" class="dropdown-item" data-filter="30dias">Próximos 30 Dias</a></li>
+                        <li><a href="#" class="dropdown-item" data-filter="personalizado">Personalizado</a></li>
                     </ul>
                 </div>
             </div>
 
             <div class="card-body">
                 <div id="chart"></div>
+
+                <div id="custom-range" class="mt-3">
+                    <input type="date" id="custom-start" class="form-control form-control-sm" />
+                    <input type="date" id="custom-end" class="form-control form-control-sm" />
+                    <button id="custom-apply" class="btn btn-sm btn-primary">Aplicar</button>
+                    <button id="custom-cancel" class="btn btn-sm btn-outline-secondary">Cancelar</button>
+                </div>
             </div>
         </div>
     </div>
@@ -170,6 +179,105 @@ var options = {
 
   var chart = new ApexCharts(document.querySelector("#chart"), options);
   chart.render();
+
+    // helpers
+    function setActiveItem(el) {
+        document.querySelectorAll('.dropdown-item[data-filter]').forEach(i => i.classList.remove('active'));
+        if (el) el.classList.add('active');
+    }
+
+    function hideCustomRange() {
+        document.getElementById('custom-range').style.display = 'none';
+    }
+
+    function showCustomRange() {
+        document.getElementById('custom-range').style.display = 'flex';
+    }
+
+    // attach events to dropdown items
+    document.querySelectorAll('.dropdown-item[data-filter]').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            let filter = this.getAttribute('data-filter');
+
+            // Manage active class and update title
+            setActiveItem(this);
+            document.getElementById('chart-title').textContent = this.textContent.trim();
+
+            // If personalizado, show inputs and wait for confirm
+            if (filter === 'personalizado') {
+                showCustomRange();
+                return;
+            } else {
+                hideCustomRange();
+            }
+
+            fetchChartData(filter);
+        });
+    });
+
+    // custom range controls
+    document.getElementById('custom-apply').addEventListener('click', function(e) {
+        e.preventDefault();
+        let start = document.getElementById('custom-start').value;
+        let end = document.getElementById('custom-end').value;
+        if (!start || !end) {
+            console.error('Start and end dates required');
+            return;
+        }
+        // Add active to personalizado item and update title
+        let personalItem = document.querySelector('.dropdown-item[data-filter="personalizado"]');
+        setActiveItem(personalItem);
+        document.getElementById('chart-title').textContent = personalItem.textContent.trim();
+
+        fetchChartData('personalizado', { start: start, end: end });
+    });
+
+    document.getElementById('custom-cancel').addEventListener('click', function(e){
+        e.preventDefault();
+        hideCustomRange();
+        // restore first item as active
+        let first = document.querySelector('.dropdown-item[data-filter]');
+        setActiveItem(first);
+        document.getElementById('chart-title').textContent = first ? first.textContent.trim() : '';
+        if (first) fetchChartData(first.getAttribute('data-filter'));
+    });
+
+    // fetch helper
+    function fetchChartData(filter, params = {}) {
+        let url = `/dashboard/chart-data?filter=${encodeURIComponent(filter)}`;
+        if (params.start) url += `&start=${encodeURIComponent(params.start)}`;
+        if (params.end) url += `&end=${encodeURIComponent(params.end)}`;
+
+        fetch(url)
+        .then(res => {
+            if (!res.ok) throw new Error('Network response was not ok');
+            return res.json();
+        })
+        .then(data => {
+            chart.updateOptions({
+                xaxis: { categories: data.fechas }
+            });
+            chart.updateSeries([
+                { name: "Audiencias", data: data.audiencias },
+                { name: "Eventos", data: data.eventos }
+            ]);
+        })
+        .catch(err => {
+            console.error('Error fetching chart data:', err);
+        });
+    }
+
+    // Inicializar: marcar primer item activo y cargar sus datos (evita título servidor)
+    (function initDefault() {
+        let first = document.querySelector('.dropdown-item[data-filter]');
+        if (first) {
+            setActiveItem(first);
+            document.getElementById('chart-title').textContent = first.textContent.trim();
+            fetchChartData(first.getAttribute('data-filter'));
+        }
+    })();
 
 </script>
 
