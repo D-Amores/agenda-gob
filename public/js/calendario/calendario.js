@@ -1,27 +1,27 @@
 "use strict";
 FullCalendar.globalLocales.push(function () {
-     var es = {
-         code: "es",
-         week: {
-             dow: 1,
-             doy: 4
-         },
-         buttonText: {
-             prev: "Ant",
-             next: "Sig",
-             today: "Hoy",
-             month: "Mes",
-             week: "Semana",
-             day: "Día",
-             list: "Agenda"
-         },
-         weekText: "Sm",
-         allDayText: "Todo el día",
-         moreLinkText: "más",
-         noEventsText: "No hay eventos para mostrar"
-     };
-     return es;
- }());
+    var es = {
+        code: "es",
+        week: {
+            dow: 1,
+            doy: 4
+        },
+        buttonText: {
+            prev: "Ant",
+            next: "Sig",
+            today: "Hoy",
+            month: "Mes",
+            week: "Semana",
+            day: "Día",
+            list: "Agenda"
+        },
+        weekText: "Sm",
+        allDayText: "Todo el día",
+        moreLinkText: "más",
+        noEventsText: "No hay eventos para mostrar"
+    };
+    return es;
+}());
 
 let direction = "ltr";
 isRtl && (direction = "rtl");
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const fechaFormateada = moment(fechaSeleccionada).format('YYYY-MM-DD');
 
         const tiposSeleccionados = Array.from(document.querySelectorAll('.input-filter:checked'))
-        .map(cb => ({ tipo: cb.dataset.tipo, estatus: cb.dataset.estatus }));
+            .map(cb => ({ tipo: cb.dataset.tipo, estatus: cb.dataset.estatus }));
 
         const eventosDelDia = l.filter(evento => {
             const mismaFecha = moment(evento.start).format('YYYY-MM-DD') === fechaFormateada;
@@ -164,10 +164,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 urlEliminar = urlAudienciaEliminar.replace('__ID__', id);
                 urlEditar = urlAudienciaEditar.replace('__ID__', id);
             }
-
-            console.log("URL de edición:", urlEditar);
-            console.log("URL de eliminación:", urlEliminar);
-
             formEnviar.action = urlEliminar;
             btnEditar.href = urlEditar;
             btnEditar.dataset.id = id;
@@ -182,43 +178,43 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-// Cargar audiencias desde la variable global `audiencias` generada en Blade
+    // Cargar audiencias desde la variable global `audiencias` generada en Blade
     if (typeof audiencias !== 'undefined') {
         l = audiencias
-        .filter(a => a && a.id)
-        .map(a => {
-            // Obtener solo la fecha en formato YYYY-MM-DD
-            const fecha = a.fecha_audiencia.split(' ')[0];
+            .filter(a => a && a.id)
+            .map(a => {
+                // Obtener solo la fecha en formato YYYY-MM-DD
+                const fecha = a.fecha_audiencia.split(' ')[0];
 
-            // Inicio
-            const start = a.hora_audiencia
-                ? moment(`${fecha} ${a.hora_audiencia}`, 'YYYY-MM-DD HH:mm').toDate()
-                : moment(`${fecha} 00:00`, 'YYYY-MM-DD HH:mm').toDate();
+                // Inicio
+                const start = a.hora_audiencia
+                    ? moment(`${fecha} ${a.hora_audiencia}`, 'YYYY-MM-DD HH:mm').toDate()
+                    : moment(`${fecha} 00:00`, 'YYYY-MM-DD HH:mm').toDate();
 
-            // Fin
-            const end = a.hora_fin_audiencia
-                ? moment(`${fecha} ${a.hora_fin_audiencia}`, 'YYYY-MM-DD HH:mm').toDate()
-                : moment(start).add(1, 'hours').toDate();
+                // Fin
+                const end = a.hora_fin_audiencia
+                    ? moment(`${fecha} ${a.hora_fin_audiencia}`, 'YYYY-MM-DD HH:mm').toDate()
+                    : moment(start).add(1, 'hours').toDate();
 
-            return {
-                id: Number(a.id),
-                tipo: 'audiencia',
-                title: a.nombre || 'Sin título',
-                asunto: a.asunto_audiencia || 'Sin título',
-                start: start,
-                end: end,
-                allDay: false,
-                extendedProps: {
-                    descripcion: a.descripcion || '',
-                    lugar: a.lugar || '',
-                    calendar: (a.estatus?.estatus || 'pendiente').toLowerCase(),
-                    user: a.user?.name || '',
-                    estatus: a.estatus?.estatus || '',
-                    vestimenta: a.vestimenta?.tipo || 'No especificada',
-                    user_id: a.user?.id || null
-                }
-            };
-        });
+                return {
+                    id: Number(a.id),
+                    tipo: 'audiencia',
+                    title: a.nombre || 'Sin título',
+                    asunto: a.asunto_audiencia || 'Sin título',
+                    start: start,
+                    end: end,
+                    allDay: false,
+                    extendedProps: {
+                        descripcion: a.descripcion || '',
+                        lugar: a.lugar || '',
+                        calendar: (a.estatus?.estatus || 'pendiente').toLowerCase(),
+                        user: a.user?.name || '',
+                        estatus: a.estatus?.estatus || '',
+                        vestimenta: a.vestimenta?.tipo || 'No especificada',
+                        user_id: a.user?.id || null
+                    }
+                };
+            });
     }
 
     if (typeof eventos !== 'undefined') {
@@ -274,15 +270,15 @@ document.addEventListener("DOMContentLoaded", function () {
         themeSystem: 'standard',
         initialView: "dayGridMonth",
         events: function (info, successCallback, failureCallback) {
-                const tiposSeleccionados = Array.from(document.querySelectorAll('.input-filter:checked'))
-                    .map(cb => ({ tipo: cb.dataset.tipo, estatus: cb.dataset.estatus }));
-                const eventosFiltrados = l.filter(ev => {
-                    return tiposSeleccionados.some(f =>
-                        f.tipo === ev.tipo && f.estatus.toLowerCase() === (ev.extendedProps.estatus || '').toLowerCase()
-                    );
-                });
-                successCallback(eventosFiltrados);
-         },
+            const tiposSeleccionados = Array.from(document.querySelectorAll('.input-filter:checked'))
+                .map(cb => ({ tipo: cb.dataset.tipo, estatus: cb.dataset.estatus }));
+            const eventosFiltrados = l.filter(ev => {
+                return tiposSeleccionados.some(f =>
+                    f.tipo === ev.tipo && f.estatus.toLowerCase() === (ev.extendedProps.estatus || '').toLowerCase()
+                );
+            });
+            successCallback(eventosFiltrados);
+        },
         editable: false,
         contentHeight: 'parent',
         dayMaxEvents: 2,
@@ -308,7 +304,7 @@ document.addEventListener("DOMContentLoaded", function () {
         eventClassNames: function ({ event: e }) {
             return ["fc-event-" + M[e._def.extendedProps.estatus]];
         },
-        eventDidMount: function({ event, el }) {
+        eventDidMount: function ({ event, el }) {
             // le asignamos el title al elemento DOM del evento
             let tooltipContent = `<strong>${event.title}</strong><br>${event.extendedProps.descripcion || ''}`;
             new bootstrap.Tooltip(el, {
@@ -348,65 +344,65 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Generaliza: elimina audiencia o evento por fetch
     async function eliminarItem(tipo, id, url) {
-      const titulo = tipo === 'evento' ? 'Eliminar evento' : 'Eliminar audiencia';
-      UI.confirm({
-        title: titulo,
-        message: '¿Deseas eliminar este registro? Esta acción no se puede deshacer.',
-        type: 'red',
-        text: 'Eliminar',
-        class: 'btn-danger',
-        onConfirm: async () => {
-          try {
-            const body = new URLSearchParams();
-            body.append('_method', 'DELETE');
-            body.append('_token', csrfToken);
+        const titulo = tipo === 'evento' ? 'Eliminar evento' : 'Eliminar audiencia';
+        UI.confirm({
+            title: titulo,
+            message: '¿Deseas eliminar este registro? Esta acción no se puede deshacer.',
+            type: 'red',
+            text: 'Eliminar',
+            class: 'btn-danger',
+            onConfirm: async () => {
+                try {
+                    const body = new URLSearchParams();
+                    body.append('_method', 'DELETE');
+                    body.append('_token', csrfToken);
 
-            const resp = await fetch(url, {
-              method: 'POST', // DELETE con method spoofing
-              headers: { 'Accept': 'application/json' },
-              body
-            });
+                    const resp = await fetch(url, {
+                        method: 'POST', // DELETE con method spoofing
+                        headers: { 'Accept': 'application/json' },
+                        body
+                    });
 
-            const data = await resp.json().catch(() => ({}));
-            if (!resp.ok || data.ok === false) {
-              const msg = (data && (data.message || data.error)) || 'No se pudo eliminar.';
-              UI.alert(msg, 'red', 'Error');
-              return;
+                    const data = await resp.json().catch(() => ({}));
+                    if (!resp.ok || data.ok === false) {
+                        const msg = (data && (data.message || data.error)) || 'No se pudo eliminar.';
+                        UI.alert(msg, 'red', 'Error');
+                        return;
+                    }
+
+                    // Remueve del arreglo y refresca calendario
+                    l = l.filter(ev => !(ev.tipo === tipo && Number(ev.id) === Number(id)));
+                    i.refetchEvents();
+
+                    // Limpia panel de detalles y lista
+                    const lista = document.querySelector('.event-list-scroll ul');
+                    if (lista) lista.innerHTML = `<li class="list-group-item text-center text-muted">No hay eventos</li>`;
+                    const eventForm = document.getElementById("eventForm");
+                    if (eventForm) eventForm.classList.add("d-none");
+
+                    UI.alert(data.message || 'Eliminado correctamente.', 'green', 'Éxito', null, 2000);
+                } catch (e) {
+                    UI.alert('Error de red al eliminar.', 'red', 'Error');
+
+                }
             }
-
-            // Remueve del arreglo y refresca calendario
-            l = l.filter(ev => !(ev.tipo === tipo && Number(ev.id) === Number(id)));
-            i.refetchEvents();
-
-            // Limpia panel de detalles y lista
-            const lista = document.querySelector('.event-list-scroll ul');
-            if (lista) lista.innerHTML = `<li class="list-group-item text-center text-muted">No hay eventos</li>`;
-            const eventForm = document.getElementById("eventForm");
-            if (eventForm) eventForm.classList.add("d-none");
-
-            UI.alert(data.message || 'Eliminado correctamente.', 'green', 'Éxito', null, 2000);
-          } catch (e) {
-            UI.alert('Error de red al eliminar.', 'red', 'Error');
-
-          }
-        }
-      });
+        });
     }
 
     // Intercepta el submit del form para eliminar vía fetch
     if (formEliminar) {
-      formEliminar.addEventListener('submit', (e) => {
-        e.preventDefault();
-        if (!btnEliminar) return;
+        formEliminar.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!btnEliminar) return;
 
-        const id = btnEliminar.dataset.id;
-        const tipo = btnEliminar.dataset.tipo; // 'audiencia' | 'evento'
-        const url = formEliminar.action;
+            const id = btnEliminar.dataset.id;
+            const tipo = btnEliminar.dataset.tipo; // 'audiencia' | 'evento'
+            const url = formEliminar.action;
 
-        if ((tipo === 'audiencia' || tipo === 'evento') && id && url) {
-          eliminarItem(tipo, id, url);
-        }
-      });
+            if ((tipo === 'audiencia' || tipo === 'evento') && id && url) {
+                eliminarItem(tipo, id, url);
+            }
+        });
     }
 
     function w() {
@@ -434,10 +430,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     B && B.addEventListener("click", e => {
-                const checked = e.currentTarget.checked;
-                document.querySelectorAll(".input-filter").forEach(cb => cb.checked = checked);
-                i.refetchEvents();
-            });
+        const checked = e.currentTarget.checked;
+        document.querySelectorAll(".input-filter").forEach(cb => cb.checked = checked);
+        i.refetchEvents();
+    });
 
     D.addEventListener("hidden.bs.offcanvas", function () {
         w();

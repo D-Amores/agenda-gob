@@ -45,6 +45,8 @@ class AudienciaController extends Controller
      */
     public function store(Request $request)
     {
+        $response = ['ok' => false, 'message' => '', 'errors' => null];
+        $status = 422;
         // Validación manual para poder responder 422 en JSON uniformemente
         $validator = Validator::make($request->all(), [
             'formValidationName'   => 'required|string|min:10|max:255',
@@ -59,11 +61,9 @@ class AudienciaController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'ok'     => false,
-                'message' => 'Errores de validación.',
-                'errors' => $validator->errors(),
-            ], 422);
+            $response['message'] = 'Errores de validación.';
+            $response['errors'] = $validator->errors();
+            return response()->json($response, $status);
         }
 
         $validated = $validator->validated();
@@ -72,18 +72,13 @@ class AudienciaController extends Controller
         try {
             $validated['formValidationFecha'] = Carbon::parse($validated['formValidationFecha'])->format('Y-m-d');
         } catch (\Throwable $e) {
-            return response()->json([
-                'ok'      => false,
-                'message' => 'Fecha inválida.',
-            ], 422);
+            $response['message'] = 'Fecha inválida.';
+            return response()->json($response, $status);
         }
 
-        // Duplicados
         if (Audiencia::isAudienciaDuplicated($validated, Auth::user()->area_id)) {
-            return response()->json([
-                'ok'      => false,
-                'message' => 'Ya existe una audiencia con ese nombre en esa fecha y hora.',
-            ], 422);
+            $response['message'] = 'Ya existe una audiencia con ese nombre en esa fecha y hora.';
+            return response()->json($response, $status);
         }
 
         try {
@@ -101,24 +96,13 @@ class AudienciaController extends Controller
                 'user_id'           => Auth::id(),
             ]);
 
-            return response()->json([
-                'ok'       => true,
-                'message'  => 'Audiencia creada correctamente.',
-                'audiencia' => [
-                    'id'      => $audiencia->id,
-                    'nombre'  => $audiencia->nombre,
-                    'fecha'   => $audiencia->fecha_audiencia,
-                    'hora'    => $audiencia->hora_audiencia,
-                    'estatus' => optional($audiencia->estatus)->estatus,
-                ],
-            ], 201);
+            $response['ok'] = true;
+            $response['message'] = 'Audiencia creada correctamente.';
+            return response()->json($response, 201);
         } catch (\Throwable $e) {
             report($e);
-            return response()->json([
-                'ok'      => false,
-                'message' => 'Ocurrió un problema al guardar.',
-                'error'   => config('app.debug') ? $e->getMessage() : null,
-            ], 500);
+            $response['message'] = 'Ocurrió un problema al guardar.';
+            return response()->json($response, 500);
         }
     }
 
@@ -156,6 +140,8 @@ class AudienciaController extends Controller
      */
     public function update(Request $request, Audiencia $audiencia)
     {
+        $response = ['ok' => false, 'message' => '', 'errors' => null];
+        $status = 422;
         // Normalizar horas
         $request->merge([
             'hora_audiencia'     => substr((string)$request->hora_audiencia, 0, 5),
@@ -175,21 +161,17 @@ class AudienciaController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'ok'     => false,
-                'message' => 'Errores de validación.',
-                'errors' => $validator->errors(),
-            ], 422);
+            $response['message'] = 'Errores de validación.';
+            $response['errors'] = $validator->errors();
+            return response()->json($response, $status);
         }
 
         $validated = $validator->validated();
 
         // Duplicados (excluye el id actual)
         if (Audiencia::isAudienciaDuplicated($validated, Auth::user()->area_id, $audiencia->id)) {
-            return response()->json([
-                'ok'      => false,
-                'message' => 'Ya existe una audiencia con ese nombre en esa fecha y hora.',
-            ], 422);
+            $response['message'] = 'Ya existe una audiencia con ese nombre en esa fecha y hora.';
+            return response()->json($response, $status);
         }
 
         try {
@@ -205,24 +187,13 @@ class AudienciaController extends Controller
                 'descripcion'       => $validated['descripcion'] ?? null,
             ]);
 
-            return response()->json([
-                'ok'       => true,
-                'message'  => 'Audiencia actualizada correctamente.',
-                'audiencia' => [
-                    'id'      => $audiencia->id,
-                    'nombre'  => $audiencia->nombre,
-                    'fecha'   => $audiencia->fecha_audiencia,
-                    'hora'    => $audiencia->hora_audiencia,
-                    'estatus' => optional($audiencia->estatus)->estatus,
-                ],
-            ]);
+            $response['ok'] = true;
+            $response['message'] = 'Audiencia actualizada correctamente.';
+            return response()->json($response, 201);
         } catch (\Throwable $e) {
             report($e);
-            return response()->json([
-                'ok'      => false,
-                'message' => 'No se pudo actualizar la audiencia.',
-                'error'   => config('app.debug') ? $e->getMessage() : null,
-            ], 500);
+            $response['message'] = 'Ocurrió un problema al actualizar.';
+            return response()->json($response, 500);
         }
     }
 
@@ -234,29 +205,22 @@ class AudienciaController extends Controller
      */
     public function destroy(Audiencia $audiencia)
     {
+        $response = ['ok' => false, 'message' => '', 'errors' => null];
+        $status = 500;
         if (auth()->id() !== $audiencia->user_id) {
-            return response()->json([
-                'ok'      => false,
-                'message' => 'No autorizado.',
-            ], 403);
+            $response['message'] = 'No autorizado.';
+            return response()->json($response, 403);
         }
-
         try {
             $audiencia->delete();
-
-            return response()->json([
-                'ok'      => true,
-                'message' => 'Audiencia eliminada correctamente.',
-                'id'      => $audiencia->id,
-            ]);
+            $response['ok'] = true;
+            $response['message'] = 'Audiencia eliminada correctamente.';
+            $response['id'] = $audiencia->id;
+            return response()->json($response);
         } catch (\Throwable $e) {
             report($e);
-
-            return response()->json([
-                'ok'      => false,
-                'message' => 'No se pudo eliminar la audiencia.',
-                'error'   => config('app.debug') ? $e->getMessage() : null,
-            ], 500);
+            $response['message'] = 'Ocurrió un problema al eliminar.';
+            return response()->json($response, $status);
         }
     }
 }

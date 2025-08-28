@@ -7,7 +7,7 @@ use App\Http\Requests\UpdateEventoRequest;
 use App\Models\Evento;
 use App\Models\Estatus;
 use Illuminate\Support\Facades\Auth;
-use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Validation\ValidationException;
 
 class EventoController extends Controller
 {
@@ -39,22 +39,25 @@ class EventoController extends Controller
      */
     public function store(StoreEventoRequest $request)
     {
-        $validated = $request->validated();
+        $response = ['ok' => false, 'message' => '', 'errors' => null];
+        $status = 422;
 
         try {
+            $validated = $request->validated();
             $validated['formValidationFecha'] = date('Y-m-d', strtotime($validated['formValidationFecha']));
+        } catch (ValidationException $e) {
+            $response['message'] = 'Errores de validación.';
+            $response['errors'] = $e->errors();
+            return response()->json($response, $status);
         } catch (\Exception $e) {
-            Alert::error('Error', 'Fecha inválida')->autoClose(5000)->timerProgressBar();
-            return redirect()->back()->withInput();
+            $response['message'] = 'Campos inválidos.';
+            return response()->json($response, $status);
         }
 
-        $exists = Evento::isEventoDuplicated($validated, Auth::user()->area_id);
-
-        if ($exists) {
-            Alert::warning('Advertencia', 'Ya existe un Evento con ese nombre en esa fecha y hora.')->autoClose(5000)->timerProgressBar();
-            return back()->withInput();
+        if (Evento::isEventoDuplicated($validated, Auth::user()->area_id)) {
+            $response['message'] = 'Ya existe un Evento con ese nombre en esa fecha y hora.';
+            return response()->json($response, $status);
         }
-
 
         try {
             Evento::create([
@@ -71,11 +74,13 @@ class EventoController extends Controller
                 'user_id' => Auth::id(),
             ]);
 
-            Alert::success('Éxito', 'Guardado correctamente')->autoClose(5000)->timerProgressBar();
-            return redirect()->route('calendario.index');
+            $response['ok'] = true;
+            $response['message'] = 'Evento creado correctamente.';
+            return response()->json($response, 201);
         } catch (\Exception $e) {
-            Alert::error('Error', 'Ocurrió un problema al guardar.')->autoClose(7000)->timerProgressBar();
-            return back()->withInput();
+            report($e);
+            $response['message'] = 'Ocurrió un problema al guardar.';
+            return response()->json($response, 500);
         }
     }
     /**
@@ -110,14 +115,22 @@ class EventoController extends Controller
      */
     public function update(UpdateEventoRequest $request, Evento $evento)
     {
+        $response = ['ok' => false, 'message' => '', 'errors' => null];
+        $status = 422;
 
         $validated = $request->validated();
 
-        $exists = Evento::isEventoDuplicated($validated, Auth::user()->area_id, $evento->id);
+        try {
+            $validated = $request->validated();
+        } catch (ValidationException $e) {
+            $response['message'] = 'Errores de validación.';
+            $response['errors'] = $e->errors();
+            return response()->json($response, $status);
+        }
 
-        if ($exists) {
-            Alert::warning('Advertencia', 'Ya existe un Evento con ese nombre en esa fecha y hora.')->autoClose(5000)->timerProgressBar();
-            return back()->withInput();
+        if (Evento::isEventoDuplicated($validated, Auth::user()->area_id, $evento->id)) {
+            $response['message'] = 'Ya existe un Evento con ese nombre en esa fecha y hora.';
+            return response()->json($response, $status);
         }
 
         try {
@@ -133,11 +146,13 @@ class EventoController extends Controller
                 'descripcion' => $validated['descripcion'] ?? null,
             ]);
 
-            Alert::success('Éxito', 'Evento actualizado correctamente')->autoClose(5000)->timerProgressBar();
-            return redirect()->route('calendario.index');
+            $response['ok'] = true;
+            $response['message'] = 'Evento actualizado correctamente.';
+            return response()->json($response, 201);
         } catch (\Exception $e) {
-            Alert::error('Error', 'No se pudo actualizar el Evento')->autoClose(5000)->timerProgressBar();
-            return back()->withInput();
+            report($e);
+            $response['message'] = 'Ocurrió un problema al guardar.';
+            return response()->json($response, 500);
         }
     }
     /**
@@ -148,29 +163,23 @@ class EventoController extends Controller
      */
     public function destroy(Evento $evento)
     {
+        $response = ['ok' => false, 'message' => '', 'errors' => null];
+        $status = 500;
         if (auth()->id() !== $evento->user_id) {
-            return response()->json([
-                'ok'      => false,
-                'message' => 'No autorizado.',
-            ], 403);
+            $response['message'] = 'No autorizado.';
+            return response()->json($response, 403);
         }
 
         try {
             $evento->delete();
-
-            return response()->json([
-                'ok'      => true,
-                'message' => 'Evento eliminado correctamente.',
-                'id'      => $evento->id,
-            ]);
+            $response['ok'] = true;
+            $response['message'] = 'Evento eliminado correctamente.';
+            $response['id'] = $evento->id;
+            return response()->json($response);
         } catch (\Throwable $e) {
             report($e);
-
-            return response()->json([
-                'ok'      => false,
-                'message' => 'No se pudo eliminar el Evento.',
-                'error'   => config('app.debug') ? $e->getMessage() : null,
-            ], 500);
+            $response['message'] = 'Ocurrió un problema al eliminar.';
+            return response()->json($response, $status);
         }
     }
 }

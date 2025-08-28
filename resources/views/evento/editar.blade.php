@@ -33,15 +33,14 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('eventos.update', $evento->id) }}">
+                    <form method="POST" action="{{ route('eventos.update', $evento->id) }}" id="updateEventoForm">
                         @csrf
                         @method('PUT')
                         <!-- Nombre -->
                         <div class="mb-3">
                             <label class="form-label" for="formValidationName">Nombre</label>
                             <input type="text" name="formValidationName" id="formValidationName" class="form-control"
-                                value="{{ old('formValidationName', $evento->nombre) }}" placeholder="Reunión"
-                                required />
+                                value="{{ old('formValidationName', $evento->nombre) }}" placeholder="Reunión" required />
                         </div>
 
                         <div class="mb-3">
@@ -74,7 +73,7 @@
                         </div>
 
                         <!-- Hora inicio -->
-                       <div class="mb-3 d-flex align-items-center gap-2">
+                        <div class="mb-3 d-flex align-items-center gap-2">
                             <div class="flex-grow-1">
                                 <label class="form-label" for="hora_evento">Hora de inicio</label>
                                 <input type="text" name="hora_evento" id="hora_evento" class="form-control timepicker"
@@ -82,7 +81,8 @@
                             </div>
                             <div class="flex-grow-1">
                                 <label class="form-label" for="hora_fin_evento">Hora de finalizacion</label>
-                                <input type="text" name="hora_fin_evento" id="hora_fin_evento" class="form-control timepicker"
+                                <input type="text" name="hora_fin_evento" id="hora_fin_evento"
+                                    class="form-control timepicker"
                                     value="{{ old('hora_fin_evento', $evento->hora_fin_evento) }}" required />
                             </div>
                         </div>
@@ -129,7 +129,7 @@
                         <!-- Botón -->
                         <div class="text-end">
                             <a href="{{ route('dashboard') }}" class="btn btn-warning text-white">Cancelar</a>
-                            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                            <button type="submit" class="btn btn-primary" id="btnSubmit">Guardar cambios</button>
                         </div>
 
                     </form>
@@ -146,34 +146,17 @@
     <script src="{{ asset('sneat/assets/vendor/libs/bs-stepper/bs-stepper.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/select2/select2.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <script src="{{ asset('js/flatpicker/editar-evento.js') }}"></script>
 
+    <!-- jQuery Confirm -->
+    <script src="{{ asset('js/jquery-confirm/jquery-confirm.js') }}"></script>
+    <script src="{{ asset('js/evento/update.js') }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form');
-
-            form.addEventListener('submit', function(e) {
-                const inputs = form.querySelectorAll('input, select, textarea');
-                let valid = true;
-
-                inputs.forEach(input => {
-                    input.classList.remove('is-invalid');
-
-                    // Validar solo los campos requeridos
-                    if (input.hasAttribute('required') && !input.value.trim()) {
-                        input.classList.add('is-invalid');
-                        valid = false;
-                    }
-                });
-
-                if (!valid) {
-                    e.preventDefault(); // Evita el envío si hay errores
-                }
-            });
-        });
+        window.routes = {
+            calendarioIndex: "{{ route('calendario.index') }}"
+        };
     </script>
 @endsection -->

@@ -1,15 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const wizardEl = document.querySelector("#wizard-validation");
-    const stepper = new Stepper(wizardEl, {
-        linear: true,
-        animation: true,
-    });
-
-    const form = document.querySelector("#wizard-validation-form");
-    const steps = form.querySelectorAll(".content");
-    const nextButtons = form.querySelectorAll(".btn-next:not(.btn-submit)");
-    const prevButtons = form.querySelectorAll(".btn-prev");
-    const submitButton = form.querySelector(".btn-submit");
+    const form = document.querySelector("#updateAudienciaForm");
+    const submitButton = form.querySelector("#btnSubmit");
 
     function validateStep(stepElement) {
         const inputs = stepElement.querySelectorAll("input, select, textarea");
@@ -17,10 +8,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         inputs.forEach((input) => {
             input.classList.remove("is-invalid");
-
             const value = input.value.trim();
             const feedback = input.nextElementSibling;
-
             // Validar campos requeridos
             if (input.hasAttribute("required") && !value) {
                 input.classList.add("is-invalid");
@@ -33,7 +22,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 valid = false;
                 return;
             }
-
             // Validar minlength si aplica
             const minlength = input.getAttribute("minlength");
             if (minlength && value.length < parseInt(minlength)) {
@@ -47,37 +35,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 valid = false;
             }
         });
-
         return valid;
     }
 
-    nextButtons.forEach((button) => {
-        button.addEventListener("click", function () {
-            const currentStep = form.querySelector(".content.active");
-
-            if (validateStep(currentStep)) {
-                stepper.next();
-            }
-        });
-    });
-
-    prevButtons.forEach((button) => {
-        button.addEventListener("click", function () {
-            stepper.previous();
-        });
-    });
-
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const currentStep = form.querySelector(".content.active");
-
-        if (!validateStep(currentStep)) return;
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (!validateStep(form)) {
+            return;
+        }
 
         UI.confirm({
-            title: "Guardar audiencia",
-            message: "¿Deseas registrar la audiencia?",
+            title: "Actualizar audiencia",
+            message: "¿Deseas actualizar la audiencia?",
             type: "blue",
-            text: "Guardar",
+            text: "Actualizar",
             class: "btn-primary",
             onConfirm: () => {
                 const originalText = submitButton.innerHTML;
@@ -85,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 submitButton.innerHTML = "Enviando...";
                 UI.ajax({
                     url: form.action,
-                    method: "POST",
+                    method: "POST", //lo trata como put
                     data: new FormData(form), // incluye @csrf
                     success: (data) => {
                         if (data) {
@@ -100,11 +71,13 @@ document.addEventListener("DOMContentLoaded", function () {
                                 return;
                             }
                             UI.alert(
-                                data.message || "Registro creado con exito.",
+                                data.message ||
+                                    "Registro actualizado con exito.",
                                 "green",
                                 "Éxito",
                                 () => {
-                                    window.location = window.routes.calendarioIndex;
+                                    window.location =
+                                        window.routes.calendarioIndex;
                                 },
                                 4000
                             );
@@ -115,10 +88,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         const msg =
                             resp.message ||
                             "No se pudo crear el registro. Intenta de nuevo.";
-                        // Errores de validación
+                        // Errores de validación o duplicado
                         if (jq.status === 422) {
                             if (resp.errors) {
-                                const errs = Object.values(resp.errors).flat().join("<br>");
+                                const errs = Object.values(resp.errors)
+                                    .flat()
+                                    .join("<br>");
                                 UI.alert(
                                     errs || "Errores de validación.",
                                     "red",
@@ -129,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 return;
                             }
                             UI.alert(
-                                msg || "Errores de duplicado.",
+                                msg || "Error de duplicado.",
                                 "red",
                                 "Errores",
                                 null,
@@ -138,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             return;
                         }
                         // 401/403/419/500 u otros
-                        UI.alert(msg, "red", "Error");
+                        UI.alert(msg, "red", "Error", null, 3000);
                     },
                     always: () => {
                         submitButton.disabled = false;
