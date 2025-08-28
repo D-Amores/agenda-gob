@@ -33,7 +33,7 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('audiencias.update', $audiencia->id) }}">
+                    <form method="POST" action="{{ route('audiencias.update', $audiencia->id) }}" id="updateAudienciaForm">
                         @csrf
                         @method('PUT')
                         <!-- Nombre -->
@@ -115,7 +115,7 @@
                         <!-- Botón -->
                         <div class="text-end">
                             <a href="{{ route('dashboard') }}" class="btn btn-warning text-white">Cancelar</a>
-                            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                            <button type="submit" class="btn btn-primary" id="btnSubmit">Guardar cambios</button>
                         </div>
 
                     </form>
@@ -132,35 +132,17 @@
     <script src="{{ asset('sneat/assets/vendor/libs/bs-stepper/bs-stepper.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/select2/select2.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <script src="{{ asset('js/flatpicker/editar-audiencia.js') }}"></script>
 
-
+    <!-- jQuery Confirm -->
+    <script src="{{ asset('js/jquery-confirm/jquery-cofirm.js') }}"></script>
+    <script src="{{ asset('js/audiencia/update.js') }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form');
-
-            form.addEventListener('submit', function(e) {
-                const inputs = form.querySelectorAll('input, select, textarea');
-                let valid = true;
-
-                inputs.forEach(input => {
-                    input.classList.remove('is-invalid');
-
-                    // Validar solo los campos requeridos
-                    if (input.hasAttribute('required') && !input.value.trim()) {
-                        input.classList.add('is-invalid');
-                        valid = false;
-                    }
-                });
-
-                if (!valid) {
-                    e.preventDefault(); // Evita el envío si hay errores
-                }
-            });
-        });
+        window.routes = {
+            calendarioIndex: "{{ route('calendario.index') }}"
+        };
     </script>
 @endsection
