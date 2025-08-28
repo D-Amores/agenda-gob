@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/select2/select2.css') }}" />
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/css/formValidation.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
- @endsection
+@endsection
 
 @section('content')
     <div class="row">
@@ -121,8 +121,8 @@
                                 <!-- Hora de Audiencia -->
                                 <div class="col-sm-6">
                                     <label class="form-label" for="hora_evento">Hora de inicio</label>
-                                    <input type="text" id="hora_evento" name="hora_evento" class="form-control timepicker"
-                                        required readonly/>
+                                    <input type="text" id="hora_evento" name="hora_evento"
+                                        class="form-control timepicker" required readonly />
                                 </div>
 
                                 <!-- Área (select) -->
@@ -203,88 +203,17 @@
     <script src="{{ asset('sneat/assets/vendor/libs/select2/select2.js') }}"></script>
     <!-- <script src="{{ asset('js/evento/establecer-hora-inicio-fin.js') }}"></script> -->
     <!-- jQuery y ClockPicker JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <script src="{{ asset('js/flatpicker/evento.js') }}"></script>
 
+    <!-- jQuery Confirm -->
+    <script src="{{ asset('js/jquery-confirm/jquery-cofirm.js') }}"></script>
+    <script src="{{ asset('js/evento/store.js') }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const wizardEl = document.querySelector('#wizard-validation');
-            const stepper = new Stepper(wizardEl, {
-                linear: true,
-                animation: true
-            });
-
-            const form = document.querySelector('#wizard-validation-form');
-            const steps = form.querySelectorAll('.content');
-            const nextButtons = form.querySelectorAll('.btn-next:not(.btn-submit)');
-            const prevButtons = form.querySelectorAll('.btn-prev');
-            const submitButton = form.querySelector('.btn-submit');
-
-            function validateStep(stepElement) {
-                const inputs = stepElement.querySelectorAll('input, select, textarea');
-                let valid = true;
-
-                inputs.forEach(input => {
-                    input.classList.remove('is-invalid');
-
-                    const value = input.value.trim();
-                    const feedback = input.nextElementSibling;
-
-                    // Validar campos requeridos
-                    if (input.hasAttribute('required') && !value) {
-                        input.classList.add('is-invalid');
-                        if (feedback && feedback.classList.contains('invalid-feedback')) {
-                            feedback.textContent = 'Este campo es obligatorio.';
-                        }
-                        valid = false;
-                        return;
-                    }
-
-                    // Validar minlength si aplica
-                    const minlength = input.getAttribute('minlength');
-                    if (minlength && value.length < parseInt(minlength)) {
-                        input.classList.add('is-invalid');
-                        if (feedback && feedback.classList.contains('invalid-feedback')) {
-                            feedback.textContent = `Debe tener al menos ${minlength} caracteres.`;
-                        }
-                        valid = false;
-                    }
-                });
-
-                return valid;
-            }
-
-
-
-            nextButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const currentStep = form.querySelector('.content.active');
-
-                    if (validateStep(currentStep)) {
-                        stepper.next();
-                    }
-                });
-            });
-
-            prevButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    stepper.previous();
-                });
-            });
-
-            submitButton.addEventListener('click', function() {
-                const currentStep = form.querySelector('.content.active');
-
-                if (validateStep(currentStep)) {
-                    // Aquí puedes hacer envío AJAX si lo deseas
-                    submitButton.disabled = true;
-                    submitButton.innerHTML = 'Enviando...';
-                    form.submit();
-                }
-            });
-        });
+        window.routes = {
+            calendarioIndex: "{{ route('calendario.index') }}"
+        };
     </script>
 @endsection

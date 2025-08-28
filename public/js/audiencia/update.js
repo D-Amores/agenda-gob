@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                     "red",
                                     "Error",
                                     null,
-                                    3000
+                                    4000
                                 );
                                 return;
                             }
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                     window.location =
                                         window.routes.calendarioIndex;
                                 },
-                                3000
+                                4000
                             );
                         }
                     },

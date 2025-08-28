@@ -8,6 +8,7 @@ use App\Models\Evento;
 use App\Models\Estatus;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Validation\ValidationException;
 
 class EventoController extends Controller
 {
@@ -39,22 +40,25 @@ class EventoController extends Controller
      */
     public function store(StoreEventoRequest $request)
     {
-        $validated = $request->validated();
+        $response = ['ok' => false, 'message' => '', 'errors' => null];
+        $status = 422;
 
         try {
+            $validated = $request->validated();
             $validated['formValidationFecha'] = date('Y-m-d', strtotime($validated['formValidationFecha']));
+        } catch (ValidationException $e) {
+            $response['message'] = 'Errores de validación.';
+            $response['errors'] = $e->errors();
+            return response()->json($response, $status);
         } catch (\Exception $e) {
-            Alert::error('Error', 'Fecha inválida')->autoClose(5000)->timerProgressBar();
-            return redirect()->back()->withInput();
+            $response['message'] = 'Campos inválidos.';
+            return response()->json($response, $status);
         }
 
-        $exists = Evento::isEventoDuplicated($validated, Auth::user()->area_id);
-
-        if ($exists) {
-            Alert::warning('Advertencia', 'Ya existe un Evento con ese nombre en esa fecha y hora.')->autoClose(5000)->timerProgressBar();
-            return back()->withInput();
+        if (Evento::isEventoDuplicated($validated, Auth::user()->area_id)) {
+            $response['message'] = 'Ya existe un Evento con ese nombre en esa fecha y hora.';
+            return response()->json($response, $status);
         }
-
 
         try {
             Evento::create([
@@ -71,11 +75,13 @@ class EventoController extends Controller
                 'user_id' => Auth::id(),
             ]);
 
-            Alert::success('Éxito', 'Guardado correctamente')->autoClose(5000)->timerProgressBar();
-            return redirect()->route('calendario.index');
+            $response['ok'] = true;
+            $response['message'] = 'Evento creado correctamente.';
+            return response()->json($response, 201);
         } catch (\Exception $e) {
-            Alert::error('Error', 'Ocurrió un problema al guardar.')->autoClose(7000)->timerProgressBar();
-            return back()->withInput();
+            report($e);
+            $response['message'] = 'Ocurrió un problema al guardar.';
+            return response()->json($response, 500);
         }
     }
     /**

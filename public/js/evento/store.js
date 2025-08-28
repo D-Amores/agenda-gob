@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     const form = document.querySelector("#wizard-validation-form");
-    const steps = form.querySelectorAll(".content");
     const nextButtons = form.querySelectorAll(".btn-next:not(.btn-submit)");
     const prevButtons = form.querySelectorAll(".btn-prev");
     const submitButton = form.querySelector(".btn-submit");
@@ -74,8 +73,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!validateStep(currentStep)) return;
 
         UI.confirm({
-            title: "Guardar audiencia",
-            message: "¿Deseas registrar la audiencia?",
+            title: "Guardar evento",
+            message: "¿Deseas registrar el evento?",
             type: "blue",
             text: "Guardar",
             class: "btn-primary",
@@ -105,16 +104,14 @@ document.addEventListener("DOMContentLoaded", function () {
                                 "Éxito",
                                 () => {
                                     window.location = window.routes.calendarioIndex;
-                                },
-                                4000
+                                }
                             );
                         }
                     },
                     fail: (jq) => {
                         const resp = jq.responseJSON || {};
                         const msg =
-                            resp.message ||
-                            "No se pudo crear el registro. Intenta de nuevo.";
+                            resp.message || "No se pudo crear el registro. Intenta de nuevo.";
                         // Errores de validación
                         if (jq.status === 422) {
                             if (resp.errors) {
@@ -129,16 +126,16 @@ document.addEventListener("DOMContentLoaded", function () {
                                 return;
                             }
                             UI.alert(
-                                msg || "Errores de duplicado.",
+                                msg || "Error de duplicado.",
                                 "red",
-                                "Errores",
+                                "Error",
                                 null,
                                 4000
                             );
                             return;
                         }
                         // 401/403/419/500 u otros
-                        UI.alert(msg, "red", "Error");
+                        UI.alert(msg, "red", "Error", null, 4000);
                     },
                     always: () => {
                         submitButton.disabled = false;
