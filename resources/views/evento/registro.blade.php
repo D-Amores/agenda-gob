@@ -209,7 +209,7 @@
     <script src="{{ asset('js/flatpicker/evento.js') }}"></script>
 
     <!-- jQuery Confirm -->
-    <script src="{{ asset('js/jquery-confirm/jquery-cofirm.js') }}"></script>
+    <script src="{{ asset('js/jquery-confirm/jquery-confirm.js') }}"></script>
     <script src="{{ asset('js/evento/store.js') }}"></script>
     <script>
         window.routes = {

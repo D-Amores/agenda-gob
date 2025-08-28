@@ -222,7 +222,7 @@
     <script src="{{ asset('sneat/assets/vendor/libs/select2/select2.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/moment/moment.js') }}"></script>
-    <script src="{{ asset('js/jquery-confirm/jquery-cofirm.js') }}"></script>
+    <script src="{{ asset('js/jquery-confirm/jquery-confirm.js') }}"></script>
 
     <!-- Page JS -->
     <script src="{{ asset('sneat/assets/js/app-calendar-events.js') }}"></script>

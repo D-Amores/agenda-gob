@@ -200,7 +200,7 @@
     <script src="{{ asset('js/flatpicker/audiencia.js') }}"></script>
 
     <!-- jQuery Confirm -->
-    <script src="{{ asset('js/jquery-confirm/jquery-cofirm.js') }}"></script>
+    <script src="{{ asset('js/jquery-confirm/jquery-confirm.js') }}"></script>
     <script src="{{ asset('js/audiencia/store.js') }}"></script>
     <script>
         window.routes = {
