@@ -163,29 +163,23 @@ class EventoController extends Controller
      */
     public function destroy(Evento $evento)
     {
+        $response = ['ok' => false, 'message' => '', 'errors' => null];
+        $status = 500;
         if (auth()->id() !== $evento->user_id) {
-            return response()->json([
-                'ok'      => false,
-                'message' => 'No autorizado.',
-            ], 403);
+            $response['message'] = 'No autorizado.';
+            return response()->json($response, 403);
         }
 
         try {
             $evento->delete();
-
-            return response()->json([
-                'ok'      => true,
-                'message' => 'Evento eliminado correctamente.',
-                'id'      => $evento->id,
-            ]);
+            $response['ok'] = true;
+            $response['message'] = 'Evento eliminado correctamente.';
+            $response['id'] = $evento->id;
+            return response()->json($response);
         } catch (\Throwable $e) {
             report($e);
-
-            return response()->json([
-                'ok'      => false,
-                'message' => 'No se pudo eliminar el Evento.',
-                'error'   => config('app.debug') ? $e->getMessage() : null,
-            ], 500);
+            $response['message'] = 'Ocurrió un problema al eliminar.';
+            return response()->json($response, $status);
         }
     }
 }
