@@ -7,6 +7,8 @@ use App\Models\Estatus;
 use App\Models\Audiencia;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class AudienciaController extends Controller
 {
@@ -43,52 +45,64 @@ class AudienciaController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'formValidationName' => 'required|string|min:10|max:255',
+        $response = ['ok' => false, 'message' => '', 'errors' => null];
+        $status = 422;
+        // Validación manual para poder responder 422 en JSON uniformemente
+        $validator = Validator::make($request->all(), [
+            'formValidationName'   => 'required|string|min:10|max:255',
             'formValidationAsunto' => 'required|string|min:10|max:255',
-            'formValidationLugar' => 'required|string|min:10|max:255',
-            'formValidationFecha' => 'required|date',
-            'procedencia' => 'nullable|string|max:255',
-            'hora_audiencia' => 'required|date_format:H:i',
-            'hora_fin_audiencia' => 'required|date_format:H:i|after:hora_audiencia',
-            'estatus_id' => 'required|exists:estatus,id',
-            'descripcion' => 'nullable|string|max:500',
+            'formValidationLugar'  => 'required|string|min:10|max:255',
+            'formValidationFecha'  => 'required|date',
+            'procedencia'          => 'nullable|string|max:255',
+            'hora_audiencia'       => 'required|date_format:H:i',
+            'hora_fin_audiencia'   => 'required|date_format:H:i|after:hora_audiencia',
+            'estatus_id'           => 'required|exists:estatus,id',
+            'descripcion'          => 'nullable|string|max:500',
         ]);
 
-        try {
-            $validated['formValidationFecha'] = date('Y-m-d', strtotime($validated['formValidationFecha']));
-        } catch (\Exception $e) {
-            Alert::error('Error', 'Fecha inválida')->autoClose(5000)->timerProgressBar();
-            return redirect()->back()->withInput();
+        if ($validator->fails()) {
+            $response['message'] = 'Errores de validación.';
+            $response['errors'] = $validator->errors();
+            return response()->json($response, $status);
         }
 
-        $exists = Audiencia::isAudienciaDuplicated($validated, Auth::user()->area_id);
+        $validated = $validator->validated();
 
-        if ($exists) {
-            Alert::warning('Advertencia', 'Ya existe una audiencia con ese nombre en esa fecha y hora.')->autoClose(5000)->timerProgressBar();
-            return back()->withInput();
+        // Normalizar fecha
+        try {
+            $validated['formValidationFecha'] = Carbon::parse($validated['formValidationFecha'])->format('Y-m-d');
+        } catch (\Throwable $e) {
+            $response['message'] = 'Fecha inválida.';
+            return response()->json($response, $status);
+        }
+
+        if (Audiencia::isAudienciaDuplicated($validated, Auth::user()->area_id)) {
+            $response['message'] = 'Ya existe una audiencia con ese nombre en esa fecha y hora.';
+            return response()->json($response, $status);
         }
 
         try {
-            Audiencia::create([
-                'nombre' => $validated['formValidationName'],
-                'asunto_audiencia' => $validated['formValidationAsunto'],
-                'lugar' => $validated['formValidationLugar'],
-                'fecha_audiencia' => $validated['formValidationFecha'],
-                'procedencia' => $validated['procedencia'] ?? null,
-                'hora_audiencia' => $validated['hora_audiencia'],
+            $audiencia = Audiencia::create([
+                'nombre'            => $validated['formValidationName'],
+                'asunto_audiencia'  => $validated['formValidationAsunto'],
+                'lugar'             => $validated['formValidationLugar'],
+                'fecha_audiencia'   => $validated['formValidationFecha'],
+                'procedencia'       => $validated['procedencia'] ?? null,
+                'hora_audiencia'    => $validated['hora_audiencia'],
                 'hora_fin_audiencia' => $validated['hora_fin_audiencia'],
-                'area_id' => Auth::user()->area_id,
-                'estatus_id' => $validated['estatus_id'],
-                'descripcion' => $validated['descripcion'] ?? null,
-                'user_id' => Auth::id(),
+                'area_id'           => Auth::user()->area_id,
+                'estatus_id'        => $validated['estatus_id'],
+                'descripcion'       => $validated['descripcion'] ?? null,
+                'user_id'           => Auth::id(),
             ]);
 
-            Alert::success('Éxito', 'Guardado correctamente')->autoClose(5000)->timerProgressBar();
-            return redirect()->route('calendario.index');
-        } catch (\Exception $e) {
-            Alert::error('Error', 'Ocurrió un problema al guardar.')->autoClose(7000)->timerProgressBar();
-            return back()->withInput();
+            $response['ok'] = true;
+            $response['message'] = 'Audiencia creada correctamente.';
+            return response()->json($response, 201);
+        } catch (\Throwable $e) {
+            report($e);
+            $response['message'] = 'Ocurrió un problema al guardar.';
+            return response()->json($response, 500);
         }
     }
 
@@ -126,67 +140,87 @@ class AudienciaController extends Controller
      */
     public function update(Request $request, Audiencia $audiencia)
     {
+        $response = ['ok' => false, 'message' => '', 'errors' => null];
+        $status = 422;
+        // Normalizar horas
         $request->merge([
-            'hora_audiencia' => substr($request->hora_audiencia, 0, 5), // Recorta a H:i
-            'hora_fin_audiencia' => substr($request->hora_fin_audiencia, 0, 5),
+            'hora_audiencia'     => substr((string)$request->hora_audiencia, 0, 5),
+            'hora_fin_audiencia' => substr((string)$request->hora_fin_audiencia, 0, 5),
         ]);
 
-        $validated = $request->validate([
-            'formValidationName' => 'required|string|min:10|max:255',
+        $validator = Validator::make($request->all(), [
+            'formValidationName'   => 'required|string|min:10|max:255',
             'formValidationAsunto' => 'required|string|min:10|max:255',
-            'formValidationLugar' => 'required|string|min:10|max:255',
-            'formValidationFecha' => 'required|date',
-            'procedencia' => 'nullable|string|max:255',
-            'hora_audiencia' => 'required|date_format:H:i',
-            'hora_fin_audiencia' => 'required|date_format:H:i|after:hora_audiencia',
-            'estatus_id' => 'required|exists:estatus,id',
-            'descripcion' => 'nullable|string|max:500',
+            'formValidationLugar'  => 'required|string|min:10|max:255',
+            'formValidationFecha'  => 'required|date',
+            'procedencia'          => 'nullable|string|max:255',
+            'hora_audiencia'       => 'required|date_format:H:i',
+            'hora_fin_audiencia'   => 'required|date_format:H:i|after:hora_audiencia',
+            'estatus_id'           => 'required|exists:estatus,id',
+            'descripcion'          => 'nullable|string|max:500',
         ]);
 
-        $exists = Audiencia::isAudienciaDuplicated($validated, Auth::user()->area_id, $audiencia->id);
+        if ($validator->fails()) {
+            $response['message'] = 'Errores de validación.';
+            $response['errors'] = $validator->errors();
+            return response()->json($response, $status);
+        }
 
-        if ($exists) {
-            Alert::warning('Advertencia', 'Ya existe una audiencia con ese nombre en esa fecha y hora.')->autoClose(5000)->timerProgressBar();
-            return back()->withInput();
+        $validated = $validator->validated();
+
+        // Duplicados (excluye el id actual)
+        if (Audiencia::isAudienciaDuplicated($validated, Auth::user()->area_id, $audiencia->id)) {
+            $response['message'] = 'Ya existe una audiencia con ese nombre en esa fecha y hora.';
+            return response()->json($response, $status);
         }
 
         try {
             $audiencia->update([
-                'nombre' => $validated['formValidationName'],
-                'asunto_audiencia' => $validated['formValidationAsunto'],
-                'lugar' => $validated['formValidationLugar'],
-                'fecha_audiencia' => $validated['formValidationFecha'],
-                'procedencia' => $validated['procedencia'] ?? null,
-                'hora_audiencia' => $validated['hora_audiencia'],
+                'nombre'            => $validated['formValidationName'],
+                'asunto_audiencia'  => $validated['formValidationAsunto'],
+                'lugar'             => $validated['formValidationLugar'],
+                'fecha_audiencia'   => $validated['formValidationFecha'],
+                'procedencia'       => $validated['procedencia'] ?? null,
+                'hora_audiencia'    => $validated['hora_audiencia'],
                 'hora_fin_audiencia' => $validated['hora_fin_audiencia'],
-                'estatus_id' => $validated['estatus_id'],
-                'descripcion' => $validated['descripcion'] ?? null,
+                'estatus_id'        => $validated['estatus_id'],
+                'descripcion'       => $validated['descripcion'] ?? null,
             ]);
 
-            Alert::success('Éxito', 'Audiencia actualizada correctamente')->autoClose(5000)->timerProgressBar();
-            return redirect()->route('calendario.index');
-        } catch (\Exception $e) {
-            Alert::error('Error', 'No se pudo actualizar la audiencia')->autoClose(5000)->timerProgressBar();
-            return back()->withInput();
+            $response['ok'] = true;
+            $response['message'] = 'Audiencia actualizada correctamente.';
+            return response()->json($response, 201);
+        } catch (\Throwable $e) {
+            report($e);
+            $response['message'] = 'Ocurrió un problema al actualizar.';
+            return response()->json($response, 500);
         }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  Audiencia  $audiencia
      * @return \Illuminate\Http\Response
      */
     public function destroy(Audiencia $audiencia)
     {
-        $this->authorize('delete', $audiencia);
+        $response = ['ok' => false, 'message' => '', 'errors' => null];
+        $status = 500;
+        if (auth()->id() !== $audiencia->user_id) {
+            $response['message'] = 'No autorizado.';
+            return response()->json($response, 403);
+        }
         try {
             $audiencia->delete();
-            Alert::success('Éxito', 'Audiencia eliminada correctamente')->autoClose(5000)->timerProgressBar();
-            return redirect()->route('calendario.index'); // aquí Laravel mostrará el alert
-        } catch (\Exception $e) {
-            Alert::error('Error', 'No se pudo eliminar la audiencia')->autoClose(5000)->timerProgressBar();
-            return redirect()->route('calendario.index');
+            $response['ok'] = true;
+            $response['message'] = 'Audiencia eliminada correctamente.';
+            $response['id'] = $audiencia->id;
+            return response()->json($response);
+        } catch (\Throwable $e) {
+            report($e);
+            $response['message'] = 'Ocurrió un problema al eliminar.';
+            return response()->json($response, $status);
         }
     }
 }

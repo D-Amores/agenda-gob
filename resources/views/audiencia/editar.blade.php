@@ -1,6 +1,8 @@
 @extends ('layouts.app')
 
-@section('title') Audiencia @endsection
+@section('title')
+    Audiencia
+@endsection
 
 @section('link')
     <!-- Vendors CSS -->
@@ -9,7 +11,6 @@
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/select2/select2.css') }}" />
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/css/formValidation.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-
 @endsection
 
 @section('content')
@@ -29,50 +30,59 @@
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
-            </div>
-        @endif
+             </div>
+                    @endif
 
-        <form method="POST" action="{{ route('audiencias.update', $audiencia->id) }}">
-        @csrf
-        @method('PUT')
-          <!-- Nombre -->
-          <div class="mb-3">
-            <label class="form-label" for="formValidationName">Nombre</label>
-            <input type="text" name="formValidationName" id="formValidationName" class="form-control" value="{{ old('formValidationName', $audiencia->nombre) }}" placeholder="Reunión" required />
-          </div>
+                    <form method="POST" action="{{ route('audiencias.update', $audiencia->id) }}" id="updateAudienciaForm">
+                        @csrf
+                        @method('PUT')
+                        <!-- Nombre -->
+                        <div class="mb-3">
+                            <label class="form-label" for="formValidationName">Nombre</label>
+                            <input type="text" name="formValidationName" id="formValidationName" class="form-control"
+                                value="{{ old('formValidationName', $audiencia->nombre) }}" placeholder="Reunión"
+                                required />
+                        </div>
 
-          <!-- Asunto -->
-          <div class="mb-3">
-            <label class="form-label" for="formValidationAsunto">Asunto</label>
-            <input type="text" name="formValidationAsunto" id="formValidationAsunto" class="form-control" value="{{ old('formValidationAsunto', $audiencia->asunto_audiencia) }}" placeholder="Asunto de la audiencia" required />
-          </div>
+                        <!-- Asunto -->
+                        <div class="mb-3">
+                            <label class="form-label" for="formValidationAsunto">Asunto</label>
+                            <input type="text" name="formValidationAsunto" id="formValidationAsunto" class="form-control"
+                                value="{{ old('formValidationAsunto', $audiencia->asunto_audiencia) }}"
+                                placeholder="Asunto de la audiencia" required />
+                        </div>
 
-          <!-- Lugar -->
-          <div class="mb-3">
-            <label class="form-label" for="formValidationLugar">Lugar</label>
-            <input type="text" name="formValidationLugar" id="formValidationLugar" class="form-control" placeholder="Lugar" value="{{ old('formValidationLugar', $audiencia->lugar) }}" required />
-          </div>
+                        <!-- Lugar -->
+                        <div class="mb-3">
+                            <label class="form-label" for="formValidationLugar">Lugar</label>
+                            <input type="text" name="formValidationLugar" id="formValidationLugar" class="form-control"
+                                placeholder="Lugar" value="{{ old('formValidationLugar', $audiencia->lugar) }}" required />
+                        </div>
 
-          <!-- Fecha -->
-          <div class="mb-3">
-            <label class="form-label" for="formValidationFecha">Fecha</label>
-            <input type="text" name="formValidationFecha" id="formValidationFecha" class="form-control" value="{{ old('formValidationFecha', $audiencia->fecha_audiencia) }}" required />
-          </div>
+                        <!-- Fecha -->
+                        <div class="mb-3">
+                            <label class="form-label" for="formValidationFecha">Fecha</label>
+                            <input type="text" name="formValidationFecha" id="formValidationFecha" class="form-control"
+                                value="{{ old('formValidationFecha', $audiencia->fecha_audiencia) }}" required />
+                        </div>
 
-         <div class="mb-3 d-flex align-items-center gap-2">
-            <div class="flex-grow-1">
-          <!-- Hora inicio -->
+                        <div class="mb-3 d-flex align-items-center gap-2">
+                            <div class="flex-grow-1">
+                                <!-- Hora inicio -->
 
-            <label class="form-label" for="hora_audiencia">Hora de inicio</label>
-            <input type="text" name="hora_audiencia" id="hora_audiencia" class="form-control timepicker" value="{{ old('hora_audiencia', $audiencia->hora_audiencia) }}" required />
-          </div>
-          <!-- Hora fin -->
-          <div class="flex-grow-1">
-            <label class="form-label" for="hora_fin_audiencia">Hora de finalizacion</label>
-            <input type="text" name="hora_fin_audiencia" id="hora_fin_audiencia" class="form-control timepicker" value="{{ old('hora_fin_audiencia', $audiencia->hora_fin_audiencia) }}" required />
-          </div>
-        </div>
-
+                                <label class="form-label" for="hora_audiencia">Hora de inicio</label>
+                                <input type="text" name="hora_audiencia" id="hora_audiencia"
+                                    class="form-control timepicker"
+                                    value="{{ old('hora_audiencia', $audiencia->hora_audiencia) }}" required />
+                            </div>
+                            <!-- Hora fin -->
+                            <div class="flex-grow-1">
+                                <label class="form-label" for="hora_fin_audiencia">Hora de finalizacion</label>
+                                <input type="text" name="hora_fin_audiencia" id="hora_fin_audiencia"
+                                    class="form-control timepicker"
+                                    value="{{ old('hora_fin_audiencia', $audiencia->hora_fin_audiencia) }}" required />
+                            </div>
+                        </div>
           <!-- Procedencia -->
           <div class="mb-3">
             <label class="form-label" for="procedencia">Procedencia</label>
@@ -99,11 +109,11 @@
             <textarea class="form-control" id="descripcion" name="descripcion" rows="3">{{ old('descripcion', $audiencia->descripcion) }}</textarea>
           </div>
 
-          <!-- Botón -->
-          <div class="text-end">
-            <a href="{{ route('dashboard') }}" class="btn btn-success">Cancelar</a>
-            <button type="submit" class="btn btn-success">Guardar cambios</button>
-          </div>
+<!-- Botón -->
+                        <div class="text-end">
+                            <a href="{{ route('dashboard') }}" class="btn btn-warning text-white">Cancelar</a>
+                            <button type="submit" class="btn btn-primary" id="btnSubmit">Guardar cambios</button>
+                        </div>
         </form>
       </div>
     </div>
@@ -113,39 +123,21 @@
 
 
 @section('script')
-  <!-- Vendors JS -->
-  <script src="{{ asset('sneat/assets/vendor/libs/bs-stepper/bs-stepper.js') }}"></script>
-<script src="{{ asset('sneat/assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script>
-<script src="{{ asset('sneat/assets/vendor/libs/select2/select2.js') }}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- Vendors JS -->
+    <script src="{{ asset('sneat/assets/vendor/libs/bs-stepper/bs-stepper.js') }}"></script>
+    <script src="{{ asset('sneat/assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script>
+    <script src="{{ asset('sneat/assets/vendor/libs/select2/select2.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-<script src="{{ asset('js/flatpicker/editar-audiencia.js') }}"></script>
+    <script src="{{ asset('js/flatpicker/editar-audiencia.js') }}"></script>
 
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const form = document.querySelector('form');
-
-    form.addEventListener('submit', function (e) {
-      const inputs = form.querySelectorAll('input, select, textarea');
-      let valid = true;
-
-      inputs.forEach(input => {
-        input.classList.remove('is-invalid');
-
-        // Validar solo los campos requeridos
-        if (input.hasAttribute('required') && !input.value.trim()) {
-          input.classList.add('is-invalid');
-          valid = false;
-        }
-      });
-
-      if (!valid) {
-        e.preventDefault(); // Evita el envío si hay errores
-      }
-    });
-  });
-</script>
+    <!-- jQuery Confirm -->
+    <script src="{{ asset('js/jquery-confirm/jquery-confirm.js') }}"></script>
+    <script src="{{ asset('js/audiencia/update.js') }}"></script>
+    <script>
+        window.routes = {
+            calendarioIndex: "{{ route('calendario.index') }}"
+        };
+    </script>
 @endsection

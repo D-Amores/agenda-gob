@@ -210,7 +210,8 @@
 
 
     <!-- FullCalendar Core -->
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script src="{{ asset('js/calendario/index.global.min.js') }}"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.global.min.js"></script>
 
     <!-- Vendors JS -->
@@ -221,6 +222,7 @@
     <script src="{{ asset('sneat/assets/vendor/libs/select2/select2.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/moment/moment.js') }}"></script>
+    <script src="{{ asset('js/jquery-confirm/jquery-confirm.js') }}"></script>
 
     <!-- Page JS -->
     <script src="{{ asset('sneat/assets/js/app-calendar-events.js') }}"></script>
