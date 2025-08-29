@@ -14,23 +14,23 @@
 @endsection
 
 @section('content')
-    <!-- Basic Layout -->
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Editar Audiencia</h5>
-                    <small class="text-muted float-end">Formulario de edición</small>
-                </div>
-                <div class="card-body">
-                    @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
+<!-- Basic Layout -->
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center border-start border-4 border-success">
+        <h5 class="mb-0">Editar Audiencia</h5>
+        <small class="text-muted float-end">Formulario de edición</small>
+      </div>
+      <div class="card-body">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+             </div>
                     @endif
 
                     <form method="POST" action="{{ route('audiencias.update', $audiencia->id) }}" id="updateAudienciaForm">
@@ -83,47 +83,42 @@
                                     value="{{ old('hora_fin_audiencia', $audiencia->hora_fin_audiencia) }}" required />
                             </div>
                         </div>
+          <!-- Procedencia -->
+          <div class="mb-3">
+            <label class="form-label" for="procedencia">Procedencia</label>
+            <input type="text" name="procedencia" id="procedencia" class="form-control" value="{{ old('procedencia', $audiencia->procedencia) }}"/>
+          </div>
 
-                        <!-- Procedencia -->
-                        <div class="mb-3">
-                            <label class="form-label" for="procedencia">Procedencia</label>
-                            <input type="text" name="procedencia" id="procedencia" class="form-control"
-                                value="{{ old('procedencia', $audiencia->procedencia) }}" />
-                        </div>
+          <!-- Estatus -->
+          <div class="mb-3">
+            <label class="form-label" for="estatus_id">Estatus</label>
+            <select class="form-select" id="estatus_id" name="estatus_id">
+              <option value="">Seleccione un estatus</option>
+              {{-- Aquí se debe iterar estatusList si está disponible --}}
+                @foreach($estatusLista as $estatus)
+                    <option value="{{ $estatus->id }}" {{ old('estatus_id', $audiencia->estatus_id) == $estatus->id ? 'selected' : '' }}>
+                        {{ $estatus->estatus }}
+                    </option>
+                @endforeach
+            </select>
+          </div>
 
-                        <!-- Estatus -->
-                        <div class="mb-3">
-                            <label class="form-label" for="estatus_id">Estatus</label>
-                            <select class="form-select" id="estatus_id" name="estatus_id">
-                                <option value="">Seleccione un estatus</option>
-                                {{-- Aquí se debe iterar estatusList si está disponible --}}
-                                @foreach ($estatusLista as $estatus)
-                                    <option value="{{ $estatus->id }}"
-                                        {{ old('estatus_id', $audiencia->estatus_id) == $estatus->id ? 'selected' : '' }}>
-                                        {{ $estatus->estatus }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+          <!-- Descripción -->
+          <div class="mb-3">
+            <label class="form-label" for="descripcion">Descripción</label>
+            <textarea class="form-control" id="descripcion" name="descripcion" rows="3">{{ old('descripcion', $audiencia->descripcion) }}</textarea>
+          </div>
 
-                        <!-- Descripción -->
-                        <div class="mb-3">
-                            <label class="form-label" for="descripcion">Descripción</label>
-                            <textarea class="form-control" id="descripcion" name="descripcion" rows="3">{{ old('descripcion', $audiencia->descripcion) }}</textarea>
-                        </div>
-
-                        <!-- Botón -->
+<!-- Botón -->
                         <div class="text-end">
                             <a href="{{ route('dashboard') }}" class="btn btn-warning text-white">Cancelar</a>
                             <button type="submit" class="btn btn-primary" id="btnSubmit">Guardar cambios</button>
                         </div>
-
-                    </form>
-                </div>
-            </div>
-        </div>
+        </form>
+      </div>
     </div>
-
+  </div>
+</div>
 @endsection
 
 

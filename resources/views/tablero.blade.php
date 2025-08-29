@@ -18,7 +18,7 @@
         </div>
 
         <!-- Número -->
-        <h2 class="fw-bold mb-1 text-success">{{$numeroAudiencia}}</h2>
+        <h2 id="aud-count" class="fw-bold mb-1 text-success">{{$numeroAudiencia}}</h2>
 
         <!-- Subtítulo -->
         <p class="text-muted mb-0">Audiencias Registradas</p>
@@ -37,7 +37,7 @@
         </div>
 
         <!-- Número -->
-        <h2 class="fw-bold mb-1 text-warning">{{$numeroEventos}}</h2>
+        <h2 id="evt-count" class="fw-bold mb-1 text-warning">{{$numeroEventos}}</h2>
 
         <!-- Subtítulo -->
         <p class="text-muted mb-0">Eventos Registrados</p>
@@ -51,6 +51,18 @@
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.1);
   }
+  #custom-range { display: none; gap: .5rem; align-items: center; }
+
+  /* inputs del rango personalizado: más pequeños en pantallas grandes, completos en móviles */
+  #custom-range input {
+    max-width: 180px;
+    min-width: 120px;
+  }
+  @media (max-width: 576px) {
+    #custom-range { flex-direction: column; }
+    #custom-range input { max-width: 100%; min-width: 0; width: 100%; }
+    #custom-range .btn { width: 100%; }
+  }
 </style>
 
 
@@ -58,25 +70,33 @@
     <!-- Line Area Chart -->
     <div class="col-12 mb-4">
         <div class="card">
-            <div class="card-header d-flex justify-content-between">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="card-title mb-0">{{ $tituloGrafica }}</h5>
+                    <!-- Titular ahora controlado por JS -->
+                    <h5 id="chart-title" class="card-title mb-0"></h5>
                 </div>
 
                 <div class="dropdown">
                     <button type="button" class="btn dropdown-toggle px-0" data-bs-toggle="dropdown" aria-expanded="false"><i class="bx bx-calendar"></i></button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center" data-filter="">Mis Eventos y Audiencias</a></li>
-                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center" data-filter="">Eventos y Audiencias del Area</a></li>
-                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center" data-filter="">Proximos 7 Dias</a></li>
-                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center" data-filter="">Proximos 30 Dias</a></li>
-                        <li><a href="javascript:void(0);" class="dropdown-item d-flex align-items-center" data-filter="">Personalizado</a></li>
+                        <li><a href="#" class="dropdown-item" data-filter="mis">Mis Eventos y Audiencias</a></li>
+                        <li><a href="#" class="dropdown-item" data-filter="area">Eventos y Audiencias del Area</a></li>
+                        <li><a href="#" class="dropdown-item" data-filter="7dias">Próximos 7 Dias</a></li>
+                        <li><a href="#" class="dropdown-item" data-filter="30dias">Próximos 30 Dias</a></li>
+                        <li><a href="#" class="dropdown-item" data-filter="personalizado">Personalizado</a></li>
                     </ul>
                 </div>
             </div>
 
             <div class="card-body">
                 <div id="chart"></div>
+
+                <div id="custom-range" class="mt-3">
+                    <input type="date" id="custom-start" class="form-control form-control-sm" />
+                    <input type="date" id="custom-end" class="form-control form-control-sm" />
+                    <button id="custom-apply" class="btn btn-sm btn-primary">Aplicar</button>
+                    <button id="custom-cancel" class="btn btn-sm btn-outline-secondary">Cancelar</button>
+                </div>
             </div>
         </div>
     </div>
@@ -87,91 +107,21 @@
 @endsection
 
 @section('script')
-  <!-- Page JS -->
+  <!-- librerías necesarias -->
   <script src="{{ asset('sneat/assets/js/charts-apex.js') }}"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-  <script type="text/javascript">
+  <!-- pasar datos iniciales desde servidor -->
+  <script>
+    window.__DASHBOARD_INITIAL__ = {
+      fechas: @json($fechasTodas),
+      audiencias: @json($audienciasData),
+      eventos: @json($eventosData)
+    };
+  </script>
 
-  var fechasTodas = @json($fechasTodas);
-  var audiencias = @json($audienciasData);
-  var eventos = @json($eventosData);
-
-var options = {
-  chart: {
-    height: 380,
-    type: "area",
-    background: "transparent",
-    toolbar: { show: false }
-  },
-  stroke: {
-    curve: "smooth",
-    width: 3
-  },
-  dataLabels: { enabled: false },
-  colors: ["#28c76f", "#ff9f43"], // verde y naranja
-  fill: {
-    type: "gradient",
-    gradient: {
-      shade: "light",
-      type: "vertical",
-      shadeIntensity: 0.4,
-      gradientToColors: ["#81fbb8", "#ffd26f"],
-      opacityFrom: 0.7,
-      opacityTo: 0.1,
-      stops: [0, 100]
-    }
-  },
-  grid: {
-    borderColor: "#e7e7e7",
-    strokeDashArray: 4,
-    yaxis: { lines: { show: true } }
-  },
-  markers: {
-    size: 5,
-    colors: ["#fff"],
-    strokeColors: ["#28c76f", "#ff9f43"],
-    strokeWidth: 3,
-    hover: { size: 7 }
-  },
-  series: [
-    { name: "Audiencias", data: audiencias },
-    { name: "Eventos", data: eventos }
-  ],
-  xaxis: {
-    categories: fechasTodas,
-    labels: { style: { fontSize: "12px" } }
-  },
-  yaxis: {
-    decimalsInFloat: 0,
-    labels: {
-      formatter: function (val) {
-        return Math.round(val);
-      }
-    }
-  },
-  tooltip: {
-    shared: true,
-    intersect: false,
-    x: { format: "dd MMM yyyy" },
-    y: {
-      formatter: function (val, opts) {
-          let icon = opts.seriesIndex === 0 ? "👥" : "📅"; // 👥 para Audiencias, 📅 para Eventos
-          return icon + " " + Math.round(val);
-      }
-    }
-  },
-  legend: {
-    position: "top",
-    horizontalAlign: "right",
-    markers: { radius: 12 }
-  }
-};
-
-
-  var chart = new ApexCharts(document.querySelector("#chart"), options);
-  chart.render();
-
-</script>
-
-
+  <!-- scripts del tablero (orden: chart primero, luego controls) -->
+  <script src="{{ asset('js/dashboard/chart.js') }}"></script>
+  <script src="{{ asset('js/dashboard/controls.js') }}"></script>
 @endsection
