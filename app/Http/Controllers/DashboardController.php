@@ -160,7 +160,8 @@ class DashboardController extends Controller
                     break;
             }
 
-            // Para 'mis' y 'area' (cuando no se pasó start/end) calcular rango entre primer y último registro
+            // Para 'mis' y 'area' (cuando no se pasó start/end) usar fechas registradas
+            // pero SIN mostrar fechas anteriores a hoy (start = max(minDate, today)).
             if (in_array($filter, ['mis', 'area']) && !$start && !$end) {
                 $minEvento = (clone $eventosBase)->select(DB::raw('MIN(DATE(fecha_evento)) as min_date'))->value('min_date');
                 $minAud = (clone $audienciasBase)->select(DB::raw('MIN(DATE(fecha_audiencia)) as min_date'))->value('min_date');
@@ -171,12 +172,22 @@ class DashboardController extends Controller
                 $maxDates = array_filter([$maxEvento, $maxAud]);
 
                 if (!empty($minDates) && !empty($maxDates)) {
-                    $rangeStart = Carbon::parse(min($minDates))->startOfDay();
-                    $rangeEnd = Carbon::parse(max($maxDates))->startOfDay();
+                    $minDate = Carbon::parse(min($minDates))->startOfDay();
+                    $maxDate = Carbon::parse(max($maxDates))->startOfDay();
+
+                    if ($maxDate->gte($today)) {
+                        // start debe ser al menos hoy
+                        $rangeStart = $minDate->gte($today) ? $minDate : $today->copy();
+                        $rangeEnd = $maxDate;
+                    } else {
+                        // todas las fechas están en el pasado -> ventana corta desde hoy
+                        $rangeStart = $today->copy();
+                        $rangeEnd = $today->copy()->addDays(6);
+                    }
                 } else {
-                    // si no hay registros, usar rango corto de 7 días (evitar 30 días muy saturados)
+                    // sin registros -> ventana corta desde hoy
                     $rangeStart = $today->copy();
-                    $rangeEnd = $today->copy()->addDays(6); // 7 días por defecto cuando no hay datos
+                    $rangeEnd = $today->copy()->addDays(6);
                 }
             }
 
