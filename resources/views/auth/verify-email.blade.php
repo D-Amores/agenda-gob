@@ -76,6 +76,11 @@ data-template="horizontal-menu-template">
                         <br><strong class="text-primary">{{ auth()->user()->email }}</strong>
                     </p>
 
+                    <div class="alert alert-info">
+                        <i class="bx bx-info-circle me-2"></i>
+                        <strong>Importante:</strong> Una vez que verifiques tu email, recibirás un segundo correo con tu contraseña generada automáticamente.
+                    </div>
+
                     {{-- Mensaje de éxito del registro --}}
                     @if(session('success'))
                     <div class="alert alert-info alert-dismissible fade show" role="alert">

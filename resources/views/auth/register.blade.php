@@ -151,55 +151,6 @@ data-template="horizontal-menu-template">
                             @enderror
                         </div>
 
-                        <div class="mb-3 form-password-toggle">
-                            <label class="form-label" for="password">Contraseña <span class="text-danger">*</span></label>
-                            <div class="input-group input-group-merge">
-                                <span class="input-group-text"><i class="bx bx-lock"></i></span>
-                                <input type="password" 
-                                    class="form-control @error('password') is-invalid @enderror" 
-                                    id="password" name="password" 
-                                    placeholder="••••••••••••" 
-                                    minlength="8"
-                                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-                                    title="Mínimo 8 caracteres, debe incluir: mayúscula, minúscula, número y carácter especial"
-                                    aria-describedby="password" required />
-                                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
-                            </div>
-                            <div class="mt-2">
-                                <small class="text-muted">
-                                    La contraseña debe contener:
-                                    <ul class="mb-0 mt-1" style="font-size: 0.75rem;">
-                                        <li>Al menos 8 caracteres</li>
-                                        <li>Una letra mayúscula (A-Z)</li>
-                                        <li>Una letra minúscula (a-z)</li>
-                                        <li>Un número (0-9)</li>
-                                        <li>Un carácter especial (@$!%*?&)</li>
-                                    </ul>
-                                </small>
-                            </div>
-                            @error('password')
-                                <div class="text-danger mt-1"><small>{{ $message }}</small></div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-4 form-password-toggle">
-                            <label class="form-label" for="password_confirmation">Confirmar Contraseña <span class="text-danger">*</span></label>
-                            <div class="input-group input-group-merge">
-                                <span class="input-group-text"><i class="bx bx-lock"></i></span>
-                                <input type="password" 
-                                    class="form-control @error('password_confirmation') is-invalid @enderror" 
-                                    id="password_confirmation" name="password_confirmation" 
-                                    placeholder="••••••••••••" 
-                                    minlength="8"
-                                    aria-describedby="password_confirmation" required />
-                                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
-                            </div>
-                            <small class="text-muted">Repite la misma contraseña</small>
-                            @error('password_confirmation')
-                                <div class="text-danger mt-1"><small>{{ $message }}</small></div>
-                            @enderror
-                        </div>
-
                         <!-- Honeypot field (hidden from users, visible to bots) -->
                         <div style="position: absolute; left: -9999px; top: -9999px;">
                             <input type="text" name="website" value="" autocomplete="off" tabindex="-1">
@@ -215,7 +166,7 @@ data-template="horizontal-menu-template">
                         <div class="text-center mb-3">
                             <small class="text-muted">
                                 <i class="bx bx-info-circle me-1"></i>
-                                Después del registro, recibirás un email de verificación
+                                Se generará una contraseña automática y se enviará por email
                             </small>
                         </div>
 
@@ -245,89 +196,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 5000);
     }
 
-    // Validación en tiempo real para contraseña
-    const passwordInput = document.getElementById('password');
-    const confirmPasswordInput = document.getElementById('password_confirmation');
+    // Validación en tiempo real para nombre de usuario
     const usernameInput = document.getElementById('username');
     const form = document.getElementById('formAuthentication');
-
-    // Función para validar contraseña
-    function validatePassword(password) {
-        const minLength = password.length >= 8;
-        const hasUpper = /[A-Z]/.test(password);
-        const hasLower = /[a-z]/.test(password);
-        const hasNumber = /\d/.test(password);
-        const hasSpecial = /[@$!%*?&]/.test(password);
-        
-        return {
-            minLength,
-            hasUpper,
-            hasLower,
-            hasNumber,
-            hasSpecial,
-            isValid: minLength && hasUpper && hasLower && hasNumber && hasSpecial
-        };
-    }
-
-    // Función para mostrar fortaleza de contraseña
-    function updatePasswordStrength(password) {
-        const validation = validatePassword(password);
-        const strengthBar = document.getElementById('password-strength');
-        
-        if (!strengthBar) return;
-
-        let strength = 0;
-        if (validation.minLength) strength++;
-        if (validation.hasUpper) strength++;
-        if (validation.hasLower) strength++;
-        if (validation.hasNumber) strength++;
-        if (validation.hasSpecial) strength++;
-
-        strengthBar.className = 'progress-bar';
-        strengthBar.style.width = (strength * 20) + '%';
-        
-        if (strength <= 2) {
-            strengthBar.classList.add('bg-danger');
-            strengthBar.textContent = 'Débil';
-        } else if (strength <= 3) {
-            strengthBar.classList.add('bg-warning');
-            strengthBar.textContent = 'Regular';
-        } else if (strength <= 4) {
-            strengthBar.classList.add('bg-info');
-            strengthBar.textContent = 'Buena';
-        } else {
-            strengthBar.classList.add('bg-success');
-            strengthBar.textContent = 'Fuerte';
-        }
-    }
-
-    // Agregar indicador de fortaleza después del campo de contraseña
-    if (passwordInput) {
-        const strengthIndicator = document.createElement('div');
-        strengthIndicator.innerHTML = `
-            <div class="progress mt-2" style="height: 5px;">
-                <div id="password-strength" class="progress-bar" role="progressbar" style="width: 0%"></div>
-            </div>
-        `;
-        passwordInput.closest('.mb-3').appendChild(strengthIndicator);
-
-        passwordInput.addEventListener('input', function() {
-            updatePasswordStrength(this.value);
-        });
-    }
-
-    // Validar confirmación de contraseña
-    if (confirmPasswordInput && passwordInput) {
-        confirmPasswordInput.addEventListener('input', function() {
-            if (this.value !== passwordInput.value) {
-                this.setCustomValidity('Las contraseñas no coinciden');
-                this.classList.add('is-invalid');
-            } else {
-                this.setCustomValidity('');
-                this.classList.remove('is-invalid');
-            }
-        });
-    }
 
     // Validar nombre de usuario
     if (usernameInput) {
@@ -348,24 +219,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Validación final del formulario
     if (form) {
         form.addEventListener('submit', function(e) {
-            const password = passwordInput.value;
-            const confirmPassword = confirmPasswordInput.value;
             const username = usernameInput.value;
-
-            const passwordValidation = validatePassword(password);
             const usernameValid = /^[a-zA-Z0-9._-]+$/.test(username) && username.length >= 3;
-
-            if (!passwordValidation.isValid) {
-                e.preventDefault();
-                alert('La contraseña no cumple con los requisitos de seguridad.');
-                return false;
-            }
-
-            if (password !== confirmPassword) {
-                e.preventDefault();
-                alert('Las contraseñas no coinciden.');
-                return false;
-            }
 
             if (!usernameValid) {
                 e.preventDefault();

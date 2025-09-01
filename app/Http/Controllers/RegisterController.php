@@ -14,6 +14,33 @@ use App\Models\Area;
 class RegisterController extends Controller
 {
     /**
+     * Generar una contraseña segura automáticamente
+     */
+    private function generateSecurePassword($length = 12)
+    {
+        $lowercase = 'abcdefghijklmnopqrstuvwxyz';
+        $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $numbers = '0123456789';
+        $symbols = '@$!%*?&';
+        
+        // Asegurar que tenga al menos uno de cada tipo
+        $password = '';
+        $password .= $lowercase[random_int(0, strlen($lowercase) - 1)];
+        $password .= $uppercase[random_int(0, strlen($uppercase) - 1)];
+        $password .= $numbers[random_int(0, strlen($numbers) - 1)];
+        $password .= $symbols[random_int(0, strlen($symbols) - 1)];
+        
+        // Llenar el resto con caracteres aleatorios
+        $allChars = $lowercase . $uppercase . $numbers . $symbols;
+        for ($i = 4; $i < $length; $i++) {
+            $password .= $allChars[random_int(0, strlen($allChars) - 1)];
+        }
+        
+        // Mezclar los caracteres
+        return str_shuffle($password);
+    }
+
+    /**
      * Mostrar el formulario de registro
      */
     public function index()
@@ -32,16 +59,10 @@ class RegisterController extends Controller
             return back()->withErrors(['security' => 'Solicitud no válida.'])->withInput();
         }
 
-        // Validar los datos del formulario
+        // Validar los datos del formulario (sin contraseña)
         $validator = Validator::make($request->all(), [
             'username' => ['required', 'string', 'min:3', 'max:255', 'unique:users', 'regex:/^[a-zA-Z0-9._-]+$/'],
             'email' => ['required', 'string', 'email:rfc,dns', 'max:255', 'unique:users'],
-            'password' => [
-                'required', 
-                'confirmed', 
-                'min:8',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/'
-            ],
             'area_id' => ['required', 'exists:c_area,id'],
         ], [
             'username.required' => 'El nombre de usuario es obligatorio.',
@@ -51,10 +72,6 @@ class RegisterController extends Controller
             'email.required' => 'El correo electrónico es obligatorio.',
             'email.email' => 'El correo electrónico debe ser válido.',
             'email.unique' => 'Este correo electrónico ya está registrado.',
-            'password.required' => 'La contraseña es obligatoria.',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
-            'password.regex' => 'La contraseña debe contener al menos: 1 letra minúscula, 1 mayúscula, 1 número y 1 carácter especial (@$!%*?&).',
             'area_id.required' => 'Debe seleccionar un área.',
             'area_id.exists' => 'El área seleccionada no es válida.',
         ]);
@@ -63,13 +80,19 @@ class RegisterController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        // Crear el usuario
+        // Generar contraseña segura automáticamente
+        $generatedPassword = $this->generateSecurePassword();
+
+        // Crear el usuario con la contraseña generada
         $user = User::create([
             'username' => $request->username,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($generatedPassword),
             'area_id' => $request->area_id,
         ]);
+
+        // Guardar la contraseña en la sesión temporalmente para enviarla después de verificación
+        session(['temp_password_' . $user->id => $generatedPassword]);
 
         // Disparar evento para enviar email de verificación automáticamente
         event(new Registered($user));

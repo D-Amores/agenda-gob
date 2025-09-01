@@ -39,19 +39,13 @@ Route::middleware('guest')->group(function () {
 
 // Email verification routes
 Route::middleware('auth')->group(function () {
-    Route::get('/email/verify', function () {
-        return view('auth.verify-email');
-    })->name('verification.notice');
+    Route::get('/email/verify', [App\Http\Controllers\Auth\EmailVerificationController::class, 'notice'])->name('verification.notice');
     
-    Route::get('/email/verify/{id}/{hash}', function (\Illuminate\Foundation\Auth\EmailVerificationRequest $request) {
-        $request->fulfill();
-        return redirect('/dashboard')->with('success', '¡Email verificado exitosamente!');
-    })->middleware(['signed'])->name('verification.verify');
+    Route::get('/email/verify/{id}/{hash}', [App\Http\Controllers\Auth\EmailVerificationController::class, 'verify'])
+        ->middleware(['signed'])->name('verification.verify');
     
-    Route::post('/email/verification-notification', function (\Illuminate\Http\Request $request) {
-        $request->user()->sendEmailVerificationNotification();
-        return back()->with('message', 'Enlace de verificación enviado!');
-    })->middleware('throttle:6,1')->name('verification.send');
+    Route::post('/email/verification-notification', [App\Http\Controllers\Auth\EmailVerificationController::class, 'send'])
+        ->middleware('throttle:6,1')->name('verification.send');
 });
 
 
