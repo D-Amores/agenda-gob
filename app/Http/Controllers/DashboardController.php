@@ -22,11 +22,17 @@ class DashboardController extends Controller
         $areaId = $user->area_id;
         $userId = $user->id;
 
-        // Queries base (toda el área, futuros)
+        // Queries base para contadores (futuros) — excluir cancelados (estatus_id = 3)
         $eventosQueryBase = Evento::where('area_id', $areaId)
+            ->where('estatus_id', '<>', 3)
             ->whereDate('fecha_evento', '>=', now()->startOfDay());
         $audienciasQueryBase = Audiencia::where('area_id', $areaId)
+            ->where('estatus_id', '<>', 3)
             ->whereDate('fecha_audiencia', '>=', now()->startOfDay());
+
+        // Queries base para construir la gráfica inicial (todas las fechas, excluir cancelados)
+        $eventosChartBase = Evento::where('area_id', $areaId)->where('estatus_id', '<>', 3);
+        $audienciasChartBase = Audiencia::where('area_id', $areaId)->where('estatus_id', '<>', 3);
 
         // Contar eventos y audiencias personales
         $numeroEventos = (clone $eventosQueryBase)->where('user_id', $userId)->count();
@@ -51,12 +57,13 @@ class DashboardController extends Controller
         }
 
 
-        // Fechas recientes de eventos y audiencias
-        $fechasEventos = (clone $eventosQuery)
+        // Fechas recientes de eventos y audiencias (para la gráfica inicial)
+        // Usamos las bases de chart (todas las fechas registradas) para evitar recortar desde hoy
+        $fechasEventos = (clone $eventosChartBase)
             ->select(DB::raw('DATE(fecha_evento) as fecha'))
             ->groupBy(DB::raw('DATE(fecha_evento)'));
 
-        $fechasAudiencias = (clone $audienciasQuery)
+        $fechasAudiencias = (clone $audienciasChartBase)
             ->select(DB::raw('DATE(fecha_audiencia) as fecha'))
             ->groupBy(DB::raw('DATE(fecha_audiencia)'));
 
@@ -71,10 +78,10 @@ class DashboardController extends Controller
         $audienciasData = [];
 
         foreach ($fechasTodas as $fecha) {
-            $eventosData[] = (clone $eventosQuery)
+            $eventosData[] = (clone $eventosChartBase)
                 ->whereDate('fecha_evento', $fecha)
                 ->count();
-            $audienciasData[] = (clone $audienciasQuery)
+            $audienciasData[] = (clone $audienciasChartBase)
                 ->whereDate('fecha_audiencia', $fecha)
                 ->count();
         }
@@ -104,9 +111,9 @@ class DashboardController extends Controller
             $start = $request->query('start');
             $end = $request->query('end');
 
-            // Queries base (siempre filtrar por área)
-            $eventosBase = Evento::where('area_id', $areaId);
-            $audienciasBase = Audiencia::where('area_id', $areaId);
+            // Queries base (siempre filtrar por área) — excluir cancelados (estatus_id = 3)
+            $eventosBase = Evento::where('area_id', $areaId)->where('estatus_id', '<>', 3);
+            $audienciasBase = Audiencia::where('area_id', $areaId)->where('estatus_id', '<>', 3);
 
             $today = Carbon::now()->startOfDay();
 
@@ -160,23 +167,27 @@ class DashboardController extends Controller
                     break;
             }
 
-            // Para 'mis' y 'area' (cuando no se pasó start/end) calcular rango entre primer y último registro
+            // Para 'mis' y 'area' (cuando no se pasó start/end) usar desde la PRIMERA hasta la ÚLTIMA fecha registrada
+            // (no recortamos por hoy en estas dos opciones)
             if (in_array($filter, ['mis', 'area']) && !$start && !$end) {
-                $minEvento = (clone $eventosBase)->select(DB::raw('MIN(DATE(fecha_evento)) as min_date'))->value('min_date');
-                $minAud = (clone $audienciasBase)->select(DB::raw('MIN(DATE(fecha_audiencia)) as min_date'))->value('min_date');
-                $maxEvento = (clone $eventosBase)->select(DB::raw('MAX(DATE(fecha_evento)) as max_date'))->value('max_date');
-                $maxAud = (clone $audienciasBase)->select(DB::raw('MAX(DATE(fecha_audiencia)) as max_date'))->value('max_date');
+                // primeros registros >= today
+                $firstFutureEvento = (clone $eventosBase)->select(DB::raw('MIN(DATE(fecha_evento)) as min_date'))->whereDate('fecha_evento', '>=', $today)->value('min_date');
+                $firstFutureAud = (clone $audienciasBase)->select(DB::raw('MIN(DATE(fecha_audiencia)) as min_date'))->whereDate('fecha_audiencia', '>=', $today)->value('min_date');
 
-                $minDates = array_filter([$minEvento, $minAud]);
-                $maxDates = array_filter([$maxEvento, $maxAud]);
+                $firstFutureDates = array_filter([$firstFutureEvento, $firstFutureAud]);
 
-                if (!empty($minDates) && !empty($maxDates)) {
-                    $rangeStart = Carbon::parse(min($minDates))->startOfDay();
-                    $rangeEnd = Carbon::parse(max($maxDates))->startOfDay();
+                if (!empty($firstFutureDates)) {
+                    // también calcular último futuro
+                    $lastFutureEvento = (clone $eventosBase)->select(DB::raw('MAX(DATE(fecha_evento)) as max_date'))->whereDate('fecha_evento', '>=', $today)->value('max_date');
+                    $lastFutureAud = (clone $audienciasBase)->select(DB::raw('MAX(DATE(fecha_audiencia)) as max_date'))->whereDate('fecha_audiencia', '>=', $today)->value('max_date');
+                    $lastFutureDates = array_filter([$lastFutureEvento, $lastFutureAud]);
+
+                    $rangeStart = Carbon::parse(min($firstFutureDates))->startOfDay();
+                    $rangeEnd = Carbon::parse(max($lastFutureDates))->startOfDay();
                 } else {
-                    // si no hay registros, usar rango corto de 7 días (evitar 30 días muy saturados)
+                    // no hay registros futuros -> ventana corta desde hoy
                     $rangeStart = $today->copy();
-                    $rangeEnd = $today->copy()->addDays(6); // 7 días por defecto cuando no hay datos
+                    $rangeEnd = $today->copy()->addDays(6);
                 }
             }
 

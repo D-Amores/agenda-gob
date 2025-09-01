@@ -52,17 +52,6 @@
     box-shadow: 0 8px 20px rgba(0,0,0,0.1);
   }
   #custom-range { display: none; gap: .5rem; align-items: center; }
-
-  /* inputs del rango personalizado: más pequeños en pantallas grandes, completos en móviles */
-  #custom-range input {
-    max-width: 180px;
-    min-width: 120px;
-  }
-  @media (max-width: 576px) {
-    #custom-range { flex-direction: column; }
-    #custom-range input { max-width: 100%; min-width: 0; width: 100%; }
-    #custom-range .btn { width: 100%; }
-  }
 </style>
 
 
@@ -109,19 +98,16 @@
 @section('script')
   <!-- librerías necesarias -->
   <script src="{{ asset('sneat/assets/js/charts-apex.js') }}"></script>
+
+  <!-- flatpickr para rango personalizado -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-  <!-- pasar datos iniciales desde servidor -->
-  <script>
-    window.__DASHBOARD_INITIAL__ = {
-      fechas: @json($fechasTodas),
-      audiencias: @json($audienciasData),
-      eventos: @json($eventosData)
-    };
+  <script type="text/javascript">
+    var fechasTodas = @json($fechasTodas);
+    var audiencias = @json($audienciasData);
+    var eventos = @json($eventosData);
   </script>
 
-  <!-- scripts del tablero (orden: chart primero, luego controls) -->
-  <script src="{{ asset('js/dashboard/chart.js') }}"></script>
-  <script src="{{ asset('js/dashboard/controls.js') }}"></script>
+  <script src="{{ asset('js/dashboard/tablero.js') }}"></script>
 @endsection
