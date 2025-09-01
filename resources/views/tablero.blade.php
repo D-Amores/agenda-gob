@@ -99,6 +99,10 @@
   <!-- librerías necesarias -->
   <script src="{{ asset('sneat/assets/js/charts-apex.js') }}"></script>
 
+  <!-- flatpickr para rango personalizado -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
   <script type="text/javascript">
     var fechasTodas = @json($fechasTodas);
     var audiencias = @json($audienciasData);

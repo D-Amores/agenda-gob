@@ -91,6 +91,20 @@ function showCustomRange() {
     document.getElementById('custom-range').style.display = 'flex';
 }
 
+// flatpickr initialization (if loaded)
+var fpStart = null, fpEnd = null;
+function initFlatpickr() {
+  if (typeof flatpickr === 'undefined') return;
+  fpStart = flatpickr('#custom-start', {
+    dateFormat: 'Y-m-d',
+    minDate: 'today',
+    onChange: function(selectedDates, dateStr) {
+      if (selectedDates.length && fpEnd) fpEnd.set('minDate', dateStr);
+    }
+  });
+  fpEnd = flatpickr('#custom-end', { dateFormat: 'Y-m-d', minDate: 'today' });
+}
+
 // attach events to dropdown items
 document.querySelectorAll('.dropdown-item[data-filter]').forEach(function(item) {
     item.addEventListener('click', function(e) {
@@ -104,7 +118,14 @@ document.querySelectorAll('.dropdown-item[data-filter]').forEach(function(item) 
 
         // If personalizado, show inputs and wait for confirm
         if (filter === 'personalizado') {
-            showCustomRange();
+                showCustomRange();
+                // default dates when opening personalizado
+                var startEl = document.getElementById('custom-start');
+                var endEl = document.getElementById('custom-end');
+                var todayStr = new Date().toISOString().slice(0,10);
+                var plus6 = new Date(); plus6.setDate(plus6.getDate()+6); var plus6Str = plus6.toISOString().slice(0,10);
+                if (startEl && !startEl.value) { startEl.value = todayStr; if (fpStart) fpStart.setDate(todayStr, true); if (fpEnd) fpEnd.set('minDate', todayStr); }
+                if (endEl && !endEl.value) { endEl.value = plus6Str; if (fpEnd) fpEnd.setDate(plus6Str, true); }
             return;
         } else {
             hideCustomRange();
@@ -186,4 +207,6 @@ function fetchChartData(filter, params = {}) {
         document.getElementById('chart-title').textContent = first.textContent.trim();
         fetchChartData(first.getAttribute('data-filter'));
     }
+  // init flatpickr after DOM ready
+  initFlatpickr();
 })();
