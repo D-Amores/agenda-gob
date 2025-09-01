@@ -1,15 +1,113 @@
+# Dependencies
 /node_modules
+/vendor
+
+# Environment files
+.env
+.env.backup
+.env.local
+.env.production
+.env.testing
+
+# Laravel specific
 /public/hot
 /public/storage
 /storage/*.key
-/vendor
-.env
-.env.backup
+/storage/app/*
+!/storage/app/.gitkeep
+/storage/framework/cache/*
+!/storage/framework/cache/.gitkeep
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitkeep
+/storage/framework/testing/*
+!/storage/framework/testing/.gitkeep
+/storage/framework/views/*
+!/storage/framework/views/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
+/bootstrap/cache/*
+!/bootstrap/cache/.gitkeep
+
+# Testing
 .phpunit.result.cache
+/coverage
+phpunit.xml
+
+# Build files
+/public/build
+/public/mix-manifest.json
+/public/js/app.js
+/public/css/app.css
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+/.idea
+/.vscode
+*.swp
+*.swo
+*~
+
+# Docker
 docker-compose.override.yml
 Homestead.json
 Homestead.yaml
-npm-debug.log
-yarn-error.log
-/.idea
-/.vscode
+
+# Temporary files
+/tmp
+*.tmp
+*.temp
+
+# Documentation files (específicos del proyecto)
+gmail-setup-instructions.md
+email-config-example.txt
+GITIGNORE-GUIDE.md
+
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# PHP specific
+/composer.phar
+.php_cs.cache
+.php-cs-fixer.cache
+
+# NPM/Yarn
+.npm
+.yarn-integrity
+yarn.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Mac specific
+.AppleDouble
+.LSOverride
+
+# Windows specific
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
