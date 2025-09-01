@@ -1,7 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AudienciaController;
+use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EventoController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LogoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,5 +24,32 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
-//Route::get('/contacto', [ContactoController::class, 'index'])->name('contacto');
+Route::middleware('guest')->group(function () {
+    // Mostrar el formulario
+    Route::get('/login', [LoginController::class, 'index'])->name('login');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+});
+
+
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [LogoutController::class, 'store'])->name('logout');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])->name('dashboard.chart-data');
+
+    // Perfil (URIs: profile/{user}/edit, profile/{user})
+    Route::resource('profile', ProfileController::class)->parameters(['profile' => 'user'])
+        ->only(['edit', 'update']);
+
+    // Audiencias
+    Route::resource('audiencias', AudienciaController::class)->parameters([
+        'audiencia' => 'audiencia'
+    ])->except(['index', 'show']);
+
+    //Eventos
+    Route::resource('eventos', EventoController::class)->parameters([
+        'evento' => 'evento'
+    ])->except(['index', 'show']);
+
+    // Calendario
+    Route::get('/calendario', [CalendarioController::class, 'index'])->name('calendario.index');
+});

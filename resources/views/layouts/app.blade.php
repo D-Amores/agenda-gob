@@ -18,19 +18,19 @@
       data-assets-path="{{ asset('sneat/assets/') }}/"
       data-template="horizontal-menu-template">
 
-  
+
 <!-- Mirrored from demos.themeselection.com/sneat-bootstrap-html-admin-template/html/horizontal-menu-template/dashboards-analytics.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 28 Mar 2022 15:52:38 GMT -->
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Agenda</title>
-    
+    <title>@yield('title')</title>
+
     <meta name="description" content="Most Powerful &amp; Comprehensive Bootstrap 5 HTML Admin Dashboard Template built for developers!" />
     <meta name="keywords" content="dashboard, bootstrap 5 dashboard, bootstrap 5 design, bootstrap 5">
     <!-- Canonical SEO -->
     <link rel="canonical" href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/">
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/assets/img/favicon/favicon.ico" />
 
@@ -54,27 +54,38 @@
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/typeahead-js/typeahead.css') }}" />
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/apex-charts/apex-charts.css') }}" />
 
+    <!-- JQUERY CONFIRM -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.css">
+
+    <!-- custom styles -->
+    @yield('link')
+
+    <!-- FaltPickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- ClockPicker CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
     <!-- Helpers -->
     <script src="{{ asset('sneat/assets/vendor/js/helpers.js') }}"></script>
 
     <!-- Template customizer & Theme config -->
-    <script src="{{ asset('sneat/assets/vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('sneat/assets/js/config.js') }}"></script>
 
-    
+
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async="async" src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
     <script>
-    window.dataLayer = window.dataLayer || [];
+        window.dataLayer = window.dataLayer || [];
 
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag('js', new Date());
-    gtag('config', 'GA_MEASUREMENT_ID');
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
     </script>
-    <!-- Custom notification for demo -->
-    <!-- beautify ignore:end -->
 
 </head>
 
@@ -84,42 +95,49 @@
 <div class="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
   <div class="layout-container">
 
-    
-    
+    <!-- Navbar -->
+      @include('partials.nav')
+    <!-- / Navbar -->
 
+      <!-- Layout container -->
+    <div class="layout-page">
 
+      <!-- Content wrapper -->
+      <div class="content-wrapper">
 
-<!-- Navbar -->
-    @include('partials.nav')
-<!-- / Navbar -->
-
-    @yield('content')
-          
-    @include('partials.footer')
-<!-- Footer -->
-
-          
-          <div class="content-backdrop fade"></div>
+        <!-- Menu -->
+          @include('partials.menu')
+        <!-- / Menu -->
+        <div class="container-xxl flex-grow-1 container-p-y">
+          @yield('content')
         </div>
-        <!--/ Content wrapper -->
-      </div>
 
-      <!--/ Layout container -->
+        <!-- Footer -->
+          @include('partials.footer')
+        <!-- / Footer -->
+
+
+        <div class="content-backdrop fade"></div>
+      </div>
+          <!--/ Content wrapper -->
     </div>
+      <!--/ Layout container -->
 
   </div>
 
-  
-  
+</div>
+
+
+
   <!-- Overlay -->
   <div class="layout-overlay layout-menu-toggle"></div>
-  
-  
+
+
   <!-- Drag Target Area To SlideIn Menu On Small Screens -->
   <div class="drag-target"></div>
-  
 
-  
+
+
 
   <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
@@ -143,7 +161,11 @@
 
 <!-- Page JS -->
 <script src="{{ asset('sneat/assets/js/dashboards-analytics.js') }}"></script>
-  
+
+<!-- JQUERY CONFIRM -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js"></script>
+
+@yield('script')
 </body>
 
 

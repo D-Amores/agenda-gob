@@ -1,1 +1,4 @@
 *.sqlite*
+seeders/*.php
+!seeders/DatabaseSeeder.php
+!seeders/PermisoSeeder.php

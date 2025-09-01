@@ -11,4 +11,14 @@ class Estatus extends Model
     
     protected $table = 'estatus';
     protected $fillable = ['estatus'];
+
+    public function eventos()
+    {
+        return $this->hasMany(Evento::class);
+    }
+
+    public function audiencias()
+    {
+        return $this->hasMany(Audiencia::class);
+    }
 }

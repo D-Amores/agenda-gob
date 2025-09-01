@@ -1,0 +1,6 @@
+/* Cualquier input de clockpicker o flatpickr en readonly */
+.timepicker {
+    cursor: pointer;
+    background-color: #fff;
+    /* opcional, para que se vea como un campo normal */
+}
