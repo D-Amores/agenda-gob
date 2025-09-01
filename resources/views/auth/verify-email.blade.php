@@ -78,7 +78,10 @@ data-template="horizontal-menu-template">
 
                     <div class="alert alert-info">
                         <i class="bx bx-info-circle me-2"></i>
-                        <strong>Importante:</strong> Una vez que verifiques tu email, recibirás un segundo correo con tu contraseña generada automáticamente.
+                        <strong>Proceso de verificación:</strong><br>
+                        1. Verifica tu email haciendo clic en el enlace<br>
+                        2. Recibirás un segundo email con tu contraseña<br>
+                        3. Serás redirigido al login para iniciar sesión
                     </div>
 
                     {{-- Mensaje de éxito del registro --}}

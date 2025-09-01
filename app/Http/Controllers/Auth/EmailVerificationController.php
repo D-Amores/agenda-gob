@@ -38,10 +38,20 @@ class EmailVerificationController extends Controller
             // Limpiar la contraseña temporal de la sesión
             session()->forget('temp_password_' . $user->id);
             
-            return redirect('/dashboard')->with('success', '¡Email verificado exitosamente! Te hemos enviado tu contraseña por email.');
+            // Cerrar sesión para que el usuario tenga que usar la nueva contraseña
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            
+            return redirect()->route('login')->with('success', '¡Email verificado exitosamente! Te hemos enviado tu contraseña por email. Revisa tu bandeja de entrada e inicia sesión.');
         }
         
-        return redirect('/dashboard')->with('success', '¡Email verificado exitosamente!');
+        // Si no hay contraseña temporal, también cerrar sesión y enviar al login
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect()->route('login')->with('success', '¡Email verificado exitosamente! Ya puedes iniciar sesión.');
     }
 
     /**
