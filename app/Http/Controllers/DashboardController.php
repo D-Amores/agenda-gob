@@ -22,10 +22,12 @@ class DashboardController extends Controller
         $areaId = $user->area_id;
         $userId = $user->id;
 
-        // Queries base (toda el área, futuros)
+        // Queries base (toda el área, futuros) — excluir cancelados (estatus_id = 3)
         $eventosQueryBase = Evento::where('area_id', $areaId)
+            ->where('estatus_id', '<>', 3)
             ->whereDate('fecha_evento', '>=', now()->startOfDay());
         $audienciasQueryBase = Audiencia::where('area_id', $areaId)
+            ->where('estatus_id', '<>', 3)
             ->whereDate('fecha_audiencia', '>=', now()->startOfDay());
 
         // Contar eventos y audiencias personales
@@ -104,9 +106,9 @@ class DashboardController extends Controller
             $start = $request->query('start');
             $end = $request->query('end');
 
-            // Queries base (siempre filtrar por área)
-            $eventosBase = Evento::where('area_id', $areaId);
-            $audienciasBase = Audiencia::where('area_id', $areaId);
+            // Queries base (siempre filtrar por área) — excluir cancelados (estatus_id = 3)
+            $eventosBase = Evento::where('area_id', $areaId)->where('estatus_id', '<>', 3);
+            $audienciasBase = Audiencia::where('area_id', $areaId)->where('estatus_id', '<>', 3);
 
             $today = Carbon::now()->startOfDay();
 
