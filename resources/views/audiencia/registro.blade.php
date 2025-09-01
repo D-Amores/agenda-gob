@@ -127,7 +127,7 @@
                                 <div class="col-sm-6">
                                     <label class="form-label" for="hora_fin_audiencia">Hora de finalizacion</label>
                                     <input type="text" id="hora_fin_audiencia" name="hora_fin_audiencia"
-                                        class="form-control timepicker" required />
+                                        class="form-control timepicker" required readonly/>
                                 </div>
 
 
