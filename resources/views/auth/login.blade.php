@@ -88,6 +88,14 @@ data-template="horizontal-menu-template">
                     <form id="formAuthentications" action="{{ route('login') }}" method="POST" novalidate>
                         @csrf
 
+                        {{-- Mensaje de éxito --}}
+                        @if(session('success'))
+                        <div id="login-success" class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        @endif
+
                         {{-- Error general --}}
                         @if($errors->any())
                         <div id="login-error" class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -134,6 +142,12 @@ data-template="horizontal-menu-template">
                             <button class="btn btn-primary btn-lg fw-semibold" type="submit">Iniciar Sesión</button>
                         </div>
 
+                        <div class="text-center mt-3">
+                            <p class="mb-0">¿No tienes una cuenta? 
+                                <a href="{{ route('register') }}" class="text-primary fw-semibold">Registrarse</a>
+                            </p>
+                        </div>
+
                     </form>
 
                 </div>
@@ -146,12 +160,22 @@ data-template="horizontal-menu-template">
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const errorDiv = document.getElementById('login-error');
+    const successDiv = document.getElementById('login-success');
+    
     if (errorDiv) {
         setTimeout(() => {
             errorDiv.style.transition = "opacity 0.5s";
             errorDiv.style.opacity = 0;
             setTimeout(() => errorDiv.remove(), 500);
         }, 3000);
+    }
+    
+    if (successDiv) {
+        setTimeout(() => {
+            successDiv.style.transition = "opacity 0.5s";
+            successDiv.style.opacity = 0;
+            setTimeout(() => successDiv.remove(), 500);
+        }, 5000);
     }
 });
 </script>

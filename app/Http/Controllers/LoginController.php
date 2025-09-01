@@ -23,6 +23,17 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
+            
+            // Verificar si el email está verificado
+            $user = Auth::user();
+            
+            // Forzar recarga del usuario desde la base de datos para asegurar datos actualizados
+            $freshUser = $user->fresh();
+            
+            if (!$freshUser->hasVerifiedEmail()) {
+                return redirect()->route('verification.notice');
+            }
+            
             return redirect()->intended('/dashboard');
         }
 
