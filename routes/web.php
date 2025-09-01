@@ -9,6 +9,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\EmailVerificationRegistrationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,21 +36,14 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [RegisterController::class, 'register'])
         ->middleware(['throttle.registration', 'throttle:3,1'])
         ->name('register.submit');
-});
-
-// Email verification routes
-Route::middleware('auth')->group(function () {
-    Route::get('/email/verify', [App\Http\Controllers\Auth\EmailVerificationController::class, 'notice'])->name('verification.notice');
     
-    Route::get('/email/verify/{id}/{hash}', [App\Http\Controllers\Auth\EmailVerificationController::class, 'verify'])
-        ->middleware(['signed'])->name('verification.verify');
-    
-    Route::post('/email/verification-notification', [App\Http\Controllers\Auth\EmailVerificationController::class, 'send'])
-        ->middleware('throttle:6,1')->name('verification.send');
+    // Registration verification routes
+    Route::get('/registration/pending', [EmailVerificationRegistrationController::class, 'pending'])->name('registration.pending');
+    Route::get('/registration/verify/{token}', [EmailVerificationRegistrationController::class, 'verify'])->name('registration.verify');
 });
 
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [LogoutController::class, 'store'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])->name('dashboard.chart-data');

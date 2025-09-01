@@ -88,7 +88,10 @@ data-template="horizontal-menu-template">
                     <form id="formAuthentication" action="{{ route('register.submit') }}" method="POST" novalidate>
                         @csrf
 
-                        {{-- Error general --}}
+                        {{-- Contenedor para mensajes dinámicos --}}
+                        <div id="dynamic-alerts"></div>
+
+                        {{-- Error general (solo para fallback sin JS) --}}
                         @if($errors->any())
                         <div id="register-error" class="alert alert-danger alert-dismissible fade show" role="alert">
                             <ul class="mb-0">
@@ -157,16 +160,22 @@ data-template="horizontal-menu-template">
                         </div>
 
                         <div class="d-grid mb-3">
-                            <button class="btn btn-primary btn-lg fw-semibold" type="submit">
-                                <i class="bx bx-user-plus me-2"></i>
-                                Crear Cuenta
+                            <button class="btn btn-primary btn-lg fw-semibold" type="submit" id="submit-btn">
+                                <span id="btn-text">
+                                    <i class="bx bx-user-plus me-2"></i>
+                                    Crear Cuenta
+                                </span>
+                                <span id="btn-loading" class="d-none">
+                                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                    Creando cuenta...
+                                </span>
                             </button>
                         </div>
 
                         <div class="text-center mb-3">
                             <small class="text-muted">
                                 <i class="bx bx-info-circle me-1"></i>
-                                Se generará una contraseña automática y se enviará por email
+                                Se enviará un enlace de verificación a tu email antes de crear la cuenta
                             </small>
                         </div>
 
@@ -187,6 +196,16 @@ data-template="horizontal-menu-template">
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('formAuthentication');
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+    const areaSelect = document.getElementById('area_id');
+    const submitBtn = document.getElementById('submit-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnLoading = document.getElementById('btn-loading');
+    const dynamicAlerts = document.getElementById('dynamic-alerts');
+
+    // Auto-hide server errors after 5 seconds
     const errorDiv = document.getElementById('register-error');
     if (errorDiv) {
         setTimeout(() => {
@@ -196,11 +215,74 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 5000);
     }
 
-    // Validación en tiempo real para nombre de usuario
-    const usernameInput = document.getElementById('username');
-    const form = document.getElementById('formAuthentication');
+    // Función para mostrar alertas dinámicas
+    function showAlert(type, message, errors = null) {
+        let alertHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">`;
+        
+        if (errors && Object.keys(errors).length > 0) {
+            alertHTML += '<ul class="mb-0">';
+            Object.values(errors).forEach(fieldErrors => {
+                if (Array.isArray(fieldErrors)) {
+                    fieldErrors.forEach(error => {
+                        alertHTML += `<li>${error}</li>`;
+                    });
+                } else {
+                    alertHTML += `<li>${fieldErrors}</li>`;
+                }
+            });
+            alertHTML += '</ul>';
+        } else {
+            alertHTML += message;
+        }
+        
+        alertHTML += '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+        
+        dynamicAlerts.innerHTML = alertHTML;
+        
+        // Auto-hide después de 5 segundos
+        setTimeout(() => {
+            const alert = dynamicAlerts.querySelector('.alert');
+            if (alert) {
+                alert.style.transition = "opacity 0.5s";
+                alert.style.opacity = 0;
+                setTimeout(() => {
+                    if (alert.parentNode) alert.remove();
+                }, 500);
+            }
+        }, 5000);
+    }
 
-    // Validar nombre de usuario
+    // Función para limpiar errores de validación visual
+    function clearFieldErrors() {
+        [usernameInput, emailInput, areaSelect].forEach(field => {
+            if (field) {
+                field.classList.remove('is-invalid');
+                const errorDiv = field.parentNode.parentNode.querySelector('.text-danger');
+                if (errorDiv) errorDiv.remove();
+            }
+        });
+    }
+
+    // Función para mostrar errores en campos específicos
+    function showFieldErrors(errors) {
+        Object.keys(errors).forEach(fieldName => {
+            const field = document.getElementById(fieldName);
+            if (field) {
+                field.classList.add('is-invalid');
+                
+                // Agregar mensaje de error debajo del campo
+                const existingError = field.parentNode.parentNode.querySelector('.text-danger');
+                if (existingError) existingError.remove();
+                
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'text-danger mt-1';
+                errorDiv.innerHTML = `<small>${errors[fieldName][0]}</small>`;
+                field.parentNode.parentNode.appendChild(errorDiv);
+            }
+        });
+    }
+
+    // Validación en tiempo real para nombre de usuario
     if (usernameInput) {
         usernameInput.addEventListener('input', function() {
             const username = this.value;
@@ -216,16 +298,76 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Validación final del formulario
+    // Manejar envío del formulario con AJAX
     if (form) {
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Validación básica del lado del cliente
             const username = usernameInput.value;
+            const email = emailInput.value;
+            const areaId = areaSelect.value;
+            
+            if (!username || !email || !areaId) {
+                showAlert('danger', 'Por favor, completa todos los campos requeridos.');
+                return;
+            }
+            
             const usernameValid = /^[a-zA-Z0-9._-]+$/.test(username) && username.length >= 3;
-
             if (!usernameValid) {
-                e.preventDefault();
-                alert('El nombre de usuario no es válido.');
-                return false;
+                showAlert('danger', 'El nombre de usuario no es válido.');
+                return;
+            }
+
+            // Mostrar estado de carga
+            submitBtn.disabled = true;
+            btnText.classList.add('d-none');
+            btnLoading.classList.remove('d-none');
+            clearFieldErrors();
+
+            try {
+                // Preparar datos del formulario
+                const formData = new FormData(form);
+                
+                // Hacer petición AJAX
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Éxito - mostrar mensaje y redirigir
+                    showAlert('success', data.message);
+                    
+                    // Redirigir después de un momento
+                    setTimeout(() => {
+                        window.location.href = data.data.redirect_url;
+                    }, 1500);
+                    
+                } else {
+                    // Error de validación o del servidor
+                    if (data.errors) {
+                        showFieldErrors(data.errors);
+                        showAlert('danger', data.message || 'Error de validación.', data.errors);
+                    } else {
+                        showAlert('danger', data.message || 'Ocurrió un error inesperado.');
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('danger', 'Error de conexión. Por favor, inténtalo de nuevo.');
+            } finally {
+                // Restaurar estado del botón
+                submitBtn.disabled = false;
+                btnText.classList.remove('d-none');
+                btnLoading.classList.add('d-none');
             }
         });
     }

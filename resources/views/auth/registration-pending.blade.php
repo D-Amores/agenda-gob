@@ -7,7 +7,7 @@ data-template="horizontal-menu-template">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Verificar Email</title>
+    <title>Verificación Pendiente</title>
     
     <meta name="description" content="Most Powerful &amp; Comprehensive Bootstrap 5 HTML Admin Dashboard Template built for developers!" />
     <meta name="keywords" content="dashboard, bootstrap 5 dashboard, bootstrap 5 design, bootstrap 5">
@@ -55,7 +55,7 @@ data-template="horizontal-menu-template">
    <div class="container-xxl">
     <div class="authentication-wrapper authentication-basic d-flex align-items-center min-vh-100">
         <div class="authentication-inner w-100 mx-auto" style="max-width: 500px;">
-            <!-- Verify Email Card -->
+            <!-- Verification Pending Card -->
             <div class="card shadow-sm rounded-5 bg-white bg-opacity-75">
                 <div class="card-body p-5 text-center">
 
@@ -64,99 +64,82 @@ data-template="horizontal-menu-template">
                         <span class="app-brand-text fw-bold fs-4 text-primary">Agenda</span>
                     </div>
 
-                    <!-- Icon -->
+                    <!-- Icono principal -->
                     <div class="mb-4">
-                        <i class="bx bx-envelope bx-lg text-warning" style="font-size: 4rem;"></i>
+                        <i class="bx bx-mail-send display-1 text-primary"></i>
                     </div>
 
-                    <h4 class="mb-3 fw-semibold">¡Cuenta creada exitosamente! 🎉</h4>
-                    <p class="mb-4 text-muted">
-                        Para completar tu registro, necesitas verificar tu correo electrónico.
-                        <br>Hemos enviado un enlace de verificación a:
-                        <br><strong class="text-primary">{{ auth()->user()->email }}</strong>
+                    <h4 class="mb-3 fw-semibold">¡Verifica tu correo electrónico! 📧</h4>
+                    
+                    @if(session('success'))
+                        <div id="success-message" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bx bx-check-circle me-2"></i>
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    <p class="text-muted mb-4">
+                        Hemos enviado un enlace de verificación a 
+                        @if(session('email'))
+                            <strong>{{ session('email') }}</strong>
+                        @else
+                            <strong>tu correo electrónico</strong>
+                        @endif
                     </p>
 
-                    <div class="alert alert-info">
+                    <div class="alert alert-info" role="alert">
                         <i class="bx bx-info-circle me-2"></i>
-                        <strong>Proceso de verificación:</strong><br>
-                        1. Verifica tu email haciendo clic en el enlace<br>
-                        2. Recibirás un segundo email con tu contraseña<br>
-                        3. Serás redirigido al login para iniciar sesión
+                        <strong>¿Qué sigue?</strong><br>
+                        1. Revisa tu bandeja de entrada<br>
+                        2. Haz clic en el enlace de verificación<br>
+                        3. Tu cuenta será creada automáticamente<br>
+                        4. Recibirás tu contraseña por email
                     </div>
-
-                    {{-- Mensaje de éxito del registro --}}
-                    @if(session('success'))
-                    <div class="alert alert-info alert-dismissible fade show" role="alert">
-                        <i class="bx bx-check-circle me-2"></i>
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    @endif
-
-                    {{-- Mensaje de reenvío --}}
-                    @if(session('message'))
-                    <div id="verify-success" class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="bx bx-envelope me-2"></i>
-                        {{ session('message') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    @endif
 
                     <div class="mb-4">
-                        <p class="text-muted small">
-                            <i class="bx bx-info-circle me-2"></i>
-                            Revisa tu bandeja de entrada y carpeta de spam. 
-                            El enlace expira en 60 minutos.
-                        </p>
+                        <small class="text-muted">
+                            <i class="bx bx-time-five me-1"></i>
+                            El enlace expira en 24 horas
+                        </small>
                     </div>
 
-                    <!-- Resend Form -->
-                    <form method="POST" action="{{ route('verification.send') }}" class="mb-3">
-                        @csrf
-                        <button type="submit" class="btn btn-primary btn-lg fw-semibold">
-                            <i class="bx bx-refresh me-2"></i>
-                            Reenviar email de verificación
-                        </button>
-                    </form>
-
-                    <!-- Logout -->
-                    <div class="mt-4">
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="btn btn-outline-secondary">
-                                <i class="bx bx-log-out me-2"></i>
-                                Cerrar sesión
-                            </button>
-                        </form>
+                    <div class="d-grid gap-2">
+                        <a href="{{ route('login') }}" class="btn btn-primary">
+                            <i class="bx bx-log-in me-2"></i>
+                            Ir al Login
+                        </a>
+                        
+                        <a href="{{ route('register') }}" class="btn btn-outline-secondary">
+                            <i class="bx bx-user-plus me-2"></i>
+                            Registrar otra cuenta
+                        </a>
                     </div>
 
-                    <!-- Help Section -->
                     <div class="mt-4 pt-3 border-top">
                         <small class="text-muted">
-                            <strong>¿No recibes el email?</strong><br>
-                            • Revisa tu carpeta de spam<br>
-                            • Verifica que el email sea correcto<br>
-                            • Intenta reenviar el enlace<br>
+                            <i class="bx bx-help-circle me-1"></i>
+                            ¿No recibiste el email? Revisa tu carpeta de spam o contacta al administrador.
                         </small>
                     </div>
 
                 </div>
             </div>
-            <!-- /Verify Email Card -->
+            <!-- /Verification Pending Card -->
         </div>
     </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const successDiv = document.getElementById('verify-success');
+    const successMessage = document.getElementById('success-message');
     
-    if (successDiv) {
+    if (successMessage) {
         setTimeout(() => {
-            successDiv.style.transition = "opacity 0.5s";
-            successDiv.style.opacity = 0;
-            setTimeout(() => successDiv.remove(), 500);
-        }, 4000);
+            successMessage.style.transition = "opacity 0.5s";
+            successMessage.style.opacity = 0;
+            setTimeout(() => successMessage.remove(), 500);
+        }, 8000); // 8 segundos para que lean bien el mensaje
     }
 });
 </script>

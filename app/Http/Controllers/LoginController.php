@@ -31,7 +31,12 @@ class LoginController extends Controller
             $freshUser = $user->fresh();
             
             if (!$freshUser->hasVerifiedEmail()) {
-                return redirect()->route('verification.notice');
+                // Si el usuario no tiene email verificado, algo está mal
+                // En el nuevo sistema, solo se crean usuarios con email verificado
+                Auth::logout();
+                return redirect()->route('login')->withErrors([
+                    'username' => 'Tu cuenta no está verificada. Por favor, contacta al administrador.',
+                ]);
             }
             
             return redirect()->intended('/dashboard');

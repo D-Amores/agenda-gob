@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Notification;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use App\Models\Area;
+use App\Models\PendingRegistration;
+use App\Notifications\VerifyRegistrationEmail;
+use Carbon\Carbon;
 
 class RegisterController extends Controller
 {
@@ -52,55 +53,49 @@ class RegisterController extends Controller
     /**
      * Procesar el registro del usuario
      */
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        // Verificar honeypot (anti-bot)
-        if ($request->filled('website')) {
-            return back()->withErrors(['security' => 'Solicitud no válida.'])->withInput();
-        }
-
-        // Validar los datos del formulario (sin contraseña)
-        $validator = Validator::make($request->all(), [
-            'username' => ['required', 'string', 'min:3', 'max:255', 'unique:users', 'regex:/^[a-zA-Z0-9._-]+$/'],
-            'email' => ['required', 'string', 'email:rfc,dns', 'max:255', 'unique:users'],
-            'area_id' => ['required', 'exists:c_area,id'],
-        ], [
-            'username.required' => 'El nombre de usuario es obligatorio.',
-            'username.min' => 'El nombre de usuario debe tener al menos 3 caracteres.',
-            'username.unique' => 'Este nombre de usuario ya está en uso.',
-            'username.regex' => 'El nombre de usuario solo puede contener letras, números, puntos, guiones y guiones bajos.',
-            'email.required' => 'El correo electrónico es obligatorio.',
-            'email.email' => 'El correo electrónico debe ser válido.',
-            'email.unique' => 'Este correo electrónico ya está registrado.',
-            'area_id.required' => 'Debe seleccionar un área.',
-            'area_id.exists' => 'El área seleccionada no es válida.',
-        ]);
-
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
+        // Limpiar registros expirados antes de crear uno nuevo
+        PendingRegistration::expired()->delete();
 
         // Generar contraseña segura automáticamente
         $generatedPassword = $this->generateSecurePassword();
 
-        // Crear el usuario con la contraseña generada
-        $user = User::create([
+        // Generar token de verificación único
+        $verificationToken = PendingRegistration::generateVerificationToken();
+
+        // Crear registro pendiente (no crear usuario aún)
+        $pendingRegistration = PendingRegistration::create([
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($generatedPassword),
             'area_id' => $request->area_id,
+            'verification_token' => $verificationToken,
+            'expires_at' => Carbon::now()->addDay(), // Expira en 24 horas
         ]);
 
-        // Guardar la contraseña en la sesión temporalmente para enviarla después de verificación
-        session(['temp_password_' . $user->id => $generatedPassword]);
+        // Crear URL de verificación
+        $verificationUrl = route('registration.verify', ['token' => $verificationToken]);
 
-        // Disparar evento para enviar email de verificación automáticamente
-        event(new Registered($user));
+        // Enviar email de verificación
+        Notification::route('mail', $request->email)
+            ->notify(new VerifyRegistrationEmail($pendingRegistration, $verificationUrl));
 
-        // Iniciar sesión temporal para poder mostrar la página de verificación
-        Auth::login($user);
+        // Responder según el tipo de request
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Hemos enviado un enlace de verificación a tu correo electrónico. Por favor, revisa tu bandeja de entrada y haz clic en el enlace para completar tu registro.',
+                'data' => [
+                    'email' => $request->email,
+                    'redirect_url' => route('registration.pending')
+                ]
+            ], 200);
+        }
 
-        // Redirigir a la página de verificación de email
-        return redirect()->route('verification.notice')->with('success', 'Cuenta creada exitosamente. Hemos enviado un enlace de verificación a tu correo electrónico.');
+        // Redirigir a página de verificación pendiente (fallback para requests no-AJAX)
+        return redirect()->route('registration.pending')
+            ->with('success', 'Hemos enviado un enlace de verificación a tu correo electrónico. Por favor, revisa tu bandeja de entrada y haz clic en el enlace para completar tu registro.')
+            ->with('email', $request->email);
     }
 }
