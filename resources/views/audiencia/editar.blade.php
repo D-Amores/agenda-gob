@@ -73,14 +73,14 @@
                                 <label class="form-label" for="hora_audiencia">Hora de inicio</label>
                                 <input type="text" name="hora_audiencia" id="hora_audiencia"
                                     class="form-control timepicker"
-                                    value="{{ old('hora_audiencia', $audiencia->hora_audiencia) }}" required />
+                                    value="{{ old('hora_audiencia', $audiencia->hora_audiencia) }}" required readonly/>
                             </div>
                             <!-- Hora fin -->
                             <div class="flex-grow-1">
                                 <label class="form-label" for="hora_fin_audiencia">Hora de finalizacion</label>
                                 <input type="text" name="hora_fin_audiencia" id="hora_fin_audiencia"
                                     class="form-control timepicker"
-                                    value="{{ old('hora_fin_audiencia', $audiencia->hora_fin_audiencia) }}" required />
+                                    value="{{ old('hora_fin_audiencia', $audiencia->hora_fin_audiencia) }}" required readonly/>
                             </div>
                         </div>
           <!-- Procedencia -->

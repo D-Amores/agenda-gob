@@ -77,13 +77,13 @@
                             <div class="flex-grow-1">
                                 <label class="form-label" for="hora_evento">Hora de inicio</label>
                                 <input type="text" name="hora_evento" id="hora_evento" class="form-control timepicker"
-                                    value="{{ old('hora_evento', $evento->hora_evento) }}" required />
+                                    value="{{ old('hora_evento', $evento->hora_evento) }}" required readonly/>
                             </div>
                             <div class="flex-grow-1">
                                 <label class="form-label" for="hora_fin_evento">Hora de finalizacion</label>
                                 <input type="text" name="hora_fin_evento" id="hora_fin_evento"
                                     class="form-control timepicker"
-                                    value="{{ old('hora_fin_evento', $evento->hora_fin_evento) }}" required />
+                                    value="{{ old('hora_fin_evento', $evento->hora_fin_evento) }}" required readonly/>
                             </div>
                         </div>
 
