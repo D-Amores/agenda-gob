@@ -183,6 +183,6 @@ data-template="horizontal-menu-template">
     </script>
     
     <!-- Email Verification JS -->
-    <script src="{{ asset('js/email-verification.js') }}"></script>
+    <script src="{{ asset('js/auth/email-verification.js') }}"></script>
 </body>
 </html>

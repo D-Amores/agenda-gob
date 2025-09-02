@@ -167,7 +167,7 @@ data-template="horizontal-menu-template">
     </script>
     
     <!-- Verification Pending JS -->
-    <script src="{{ asset('js/verification-pending.js') }}"></script>
+    <script src="{{ asset('js/auth/verification-pending.js') }}"></script>
 
     
 </body>
