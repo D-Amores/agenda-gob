@@ -17,14 +17,27 @@ class EmailVerificationRegistrationController extends Controller
      */
     public function verify(Request $request, $token)
     {
+        $response = ['ok' => false, 'message' => '', 'errors' => null, 'data' => null];
+        
         // Buscar el registro pendiente
         $pendingRegistration = PendingRegistration::where('verification_token', $token)
             ->notExpired()
             ->first();
 
         if (!$pendingRegistration) {
-            return redirect()->route('register')
-                ->withErrors(['verification' => 'El enlace de verificación es inválido o ha expirado.']);
+            $response['message'] = 'El enlace de verificación es inválido o ha expirado.';
+            $response['errors'] = ['verification' => 'El enlace de verificación es inválido o ha expirado.'];
+            
+            if ($request->expectsJson()) {
+                return response()->json($response, 400);
+            }
+            
+            // Para acceso directo desde enlaces, mostrar la vista de verificación
+            return view('auth.email-verification', [
+                'error' => true,
+                'message' => 'El enlace de verificación es inválido o ha expirado.',
+                'token' => $token
+            ]);
         }
 
         try {
@@ -61,20 +74,81 @@ class EmailVerificationRegistrationController extends Controller
             // Limpiar registros expirados (housekeeping)
             PendingRegistration::expired()->delete();
 
-            return redirect()->route('login')
-                ->with('success', 'Email verificado exitosamente. Hemos enviado tu contraseña a tu correo electrónico.');
+            $response['ok'] = true;
+            $response['message'] = 'Email verificado exitosamente. Hemos enviado tu contraseña a tu correo electrónico.';
+            $response['data'] = [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'redirect_url' => route('login')
+            ];
+
+            if ($request->expectsJson()) {
+                return response()->json($response);
+            }
+
+            // Para acceso directo desde enlaces, mostrar la vista de verificación con éxito
+            return view('auth.email-verification', [
+                'success' => true,
+                'message' => 'Email verificado exitosamente. Hemos enviado tu contraseña a tu correo electrónico.',
+                'email' => $user->email,
+                'redirect_url' => route('login'),
+                'token' => $token
+            ]);
 
         } catch (\Exception $e) {
-            return redirect()->route('register')
-                ->withErrors(['verification' => 'Error al procesar la verificación. Por favor, inténtalo de nuevo.']);
+            Log::error('Error en verificación de email', [
+                'error' => $e->getMessage(),
+                'token' => $token
+            ]);
+            
+            $response['message'] = 'Error al procesar la verificación. Por favor, inténtalo de nuevo.';
+            $response['errors'] = ['verification' => 'Error al procesar la verificación. Por favor, inténtalo de nuevo.'];
+            
+            if ($request->expectsJson()) {
+                return response()->json($response, 500);
+            }
+            
+            // Para acceso directo desde enlaces, mostrar la vista de verificación con error
+            return view('auth.email-verification', [
+                'error' => true,
+                'message' => 'Error al procesar la verificación. Por favor, inténtalo de nuevo.',
+                'token' => $token
+            ]);
         }
     }
 
     /**
      * Mostrar página de verificación pendiente
      */
-    public function pending()
+    public function pending(Request $request)
     {
+        if ($request->expectsJson()) {
+            $response = [
+                'ok' => true, 
+                'message' => 'Verificación pendiente', 
+                'errors' => null, 
+                'data' => [
+                    'status' => 'pending',
+                    'title' => '¡Verifica tu correo electrónico! 📧',
+                    'description' => 'Hemos enviado un enlace de verificación a tu correo electrónico.',
+                    'instructions' => [
+                        'Revisa tu bandeja de entrada',
+                        'Haz clic en el enlace de verificación',
+                        'Tu cuenta será creada automáticamente',
+                        'Recibirás tu contraseña por email'
+                    ],
+                    'email' => session('email'),
+                    'expiration_info' => 'El enlace expira en 24 horas',
+                    'links' => [
+                        'login' => route('login'),
+                        'register' => route('register')
+                    ]
+                ]
+            ];
+            
+            return response()->json($response);
+        }
+        
         return view('auth.registration-pending');
     }
 

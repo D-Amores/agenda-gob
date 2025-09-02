@@ -39,12 +39,18 @@ data-template="horizontal-menu-template">
     <!-- Page CSS -->
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/css/pages/page-auth.css') }}" />
 
+    <!-- jQuery Confirm CSS -->
+    <link rel="stylesheet" href="{{ asset('vendor/jquery-confirm/dist/jquery-confirm.min.css') }}" />
+
     <!-- Helpers -->
     <script src="{{ asset('sneat/assets/vendor/js/helpers.js') }}"></script>
 
     <!-- Template customizer & Theme config -->
     <script src="{{ asset('sneat/assets/vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('sneat/assets/js/config.js') }}"></script>
+    
+    <!-- CSRF Token Meta -->
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
 
 </head>
 
@@ -130,20 +136,6 @@ data-template="horizontal-menu-template">
     </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const successMessage = document.getElementById('success-message');
-    
-    if (successMessage) {
-        setTimeout(() => {
-            successMessage.style.transition = "opacity 0.5s";
-            successMessage.style.opacity = 0;
-            setTimeout(() => successMessage.remove(), 500);
-        }, 8000); // 8 segundos para que lean bien el mensaje
-    }
-});
-</script>
-
     <!-- / Content -->    
 
     <!-- Core JS -->
@@ -162,6 +154,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     <!-- Main JS -->
     <script src="{{ asset('sneat/assets/js/main.js') }}"></script>
+
+    <!-- jQuery Confirm -->
+    <script src="{{ asset('vendor/jquery-confirm/dist/jquery-confirm.min.js') }}"></script>
+    
+    <!-- UI Wrapper -->
+    <script src="{{ asset('js/jquery-confirm.js') }}"></script>
+    
+    <!-- Routes Helper -->
+    <script>
+        @include('partials.routes')
+    </script>
+    
+    <!-- Verification Pending JS -->
+    <script src="{{ asset('js/verification-pending.js') }}"></script>
 
     
 </body>

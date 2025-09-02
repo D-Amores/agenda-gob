@@ -23,11 +23,12 @@ class ThrottleRegistration
         if (RateLimiter::tooManyAttempts($key, 3)) {
             $seconds = RateLimiter::availableIn($key);
             
-            // Verificar si es una petición AJAX
-            if ($request->expectsJson() || $request->ajax()) {
+            // Verificar si es una petición fetch que espera JSON
+            if ($request->expectsJson()) {
                 $response = [
                     'ok' => false,
                     'message' => "Demasiados intentos de registro. Intenta nuevamente en {$seconds} segundos.",
+                    'errors' => null,
                     'data' => null
                 ];
                 return response()->json($response, 429); // 429 Too Many Requests

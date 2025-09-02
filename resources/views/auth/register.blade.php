@@ -188,6 +188,12 @@ data-template="horizontal-menu-template">
 
     <!-- Page JS -->
     <script src="{{ asset('js/jquery-confirm/jquery-confirm.js') }}"></script>
+    
+    <!-- Routes Helper -->
+    <script>
+        @include('partials.routes')
+    </script>
+    
     <script src="{{ asset('js/auth/register.js') }}"></script>
 
     
