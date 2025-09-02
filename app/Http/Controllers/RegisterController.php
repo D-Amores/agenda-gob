@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Requests\RegisterRequest;
-use App\Models\User;
 use App\Models\Area;
 use App\Models\PendingRegistration;
 use App\Notifications\VerifyRegistrationEmail;
-use Carbon\Carbon;
 
 class RegisterController extends Controller
 {
@@ -55,6 +52,8 @@ class RegisterController extends Controller
      */
     public function register(RegisterRequest $request)
     {
+        $response = ['ok' => false, 'message' => '', 'errors' => null, 'data' => null];
+        $status = 422;
         // Limpiar registros expirados antes de crear uno nuevo
         PendingRegistration::expired()->delete();
 
@@ -65,14 +64,23 @@ class RegisterController extends Controller
         $verificationToken = PendingRegistration::generateVerificationToken();
 
         // Crear registro pendiente (no crear usuario aún)
-        $pendingRegistration = PendingRegistration::create([
+        $pendingRegistration = new PendingRegistration([
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($generatedPassword),
             'area_id' => $request->area_id,
             'verification_token' => $verificationToken,
-            'expires_at' => Carbon::now()->addDay(), // Expira en 24 horas
+            'expires_at' => now()->addDay(), // Expira en 24 horas
         ]);
+
+        // Verificar duplicados
+        if ($pendingRegistration->isExist()) {
+            $response['message'] = 'El usuario o correo ya está en proceso de registro o ya existe.';
+            return response()->json($response, $status);
+        }
+
+        // Guardar registro porque no hay duplicados
+        $pendingRegistration->save();
 
         // Crear URL de verificación
         $verificationUrl = route('registration.verify', ['token' => $verificationToken]);
@@ -81,21 +89,12 @@ class RegisterController extends Controller
         Notification::route('mail', $request->email)
             ->notify(new VerifyRegistrationEmail($pendingRegistration, $verificationUrl));
 
-        // Responder según el tipo de request
-        if ($request->wantsJson()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Hemos enviado un enlace de verificación a tu correo electrónico. Por favor, revisa tu bandeja de entrada y haz clic en el enlace para completar tu registro.',
-                'data' => [
-                    'email' => $request->email,
-                    'redirect_url' => route('registration.pending')
-                ]
-            ], 200);
-        }
-
-        // Redirigir a página de verificación pendiente (fallback para requests no-AJAX)
-        return redirect()->route('registration.pending')
-            ->with('success', 'Hemos enviado un enlace de verificación a tu correo electrónico. Por favor, revisa tu bandeja de entrada y haz clic en el enlace para completar tu registro.')
-            ->with('email', $request->email);
+        $response['ok'] = true;
+        $response['message'] = 'Hemos enviado un enlace de verificación a tu correo electrónico. Por favor, revisa tu bandeja de entrada y haz clic en el enlace para completar tu registro.';
+        $response['data'] = [
+                                'email' => $request->email,
+                                'redirect_url' => route('registration.pending')
+                            ];
+        return response()->json($response, 200);
     }
 }

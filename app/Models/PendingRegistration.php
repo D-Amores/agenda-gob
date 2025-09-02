@@ -63,4 +63,17 @@ class PendingRegistration extends Model
     {
         return $query->where('expires_at', '<=', now());
     }
+
+    public function isExist()
+    {
+        return self::where(function ($query) {
+            $query->where('username', $this->username)
+                ->orWhere('email', $this->email);
+            })
+            ->when($this->id, function ($query) {
+                $query->where('id', '!=', $this->id);
+            })
+            ->exists();
+    }
+
 }
