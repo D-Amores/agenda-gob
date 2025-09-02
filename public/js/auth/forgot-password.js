@@ -47,25 +47,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (errorDiv) errorDiv.remove();
     }
 
-    // Función para mostrar errores en campos específicos
-    function showFieldErrors(errors) {
-        Object.keys(errors).forEach(fieldName => {
-            const field = document.getElementById(fieldName);
-            if (field) {
-                field.classList.add('is-invalid');
-                
-                // Agregar mensaje de error debajo del campo
-                const existingError = field.parentNode.parentNode.querySelector('.text-danger');
-                if (existingError) existingError.remove();
-                
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'text-danger mt-1';
-                errorDiv.innerHTML = `<small>${errors[fieldName][0]}</small>`;
-                field.parentNode.parentNode.appendChild(errorDiv);
-            }
-        });
-    }
-
     // Manejar envío del formulario con AJAX
     if (form) {
         form.addEventListener('submit', async function(e) {
