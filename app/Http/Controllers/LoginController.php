@@ -27,10 +27,7 @@ class LoginController extends Controller
             // Verificar si el email está verificado
             $user = Auth::user();
             
-            // Forzar recarga del usuario desde la base de datos para asegurar datos actualizados
-            $freshUser = $user->fresh();
-            
-            if (!$freshUser->hasVerifiedEmail()) {
+            if (is_null($user->email_verified_at)) {
                 // Si el usuario no tiene email verificado, algo está mal
                 // En el nuevo sistema, solo se crean usuarios con email verificado
                 Auth::logout();
