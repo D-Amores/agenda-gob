@@ -143,6 +143,9 @@ data-template="horizontal-menu-template">
                         </div>
 
                         <div class="text-center mt-3">
+                            <p class="mb-2">
+                                <a href="{{ route('password.request') }}" class="text-muted">¿Olvidaste tu contraseña?</a>
+                            </p>
                             <p class="mb-0">¿No tienes una cuenta? 
                                 <a href="{{ route('register') }}" class="text-primary fw-semibold">Registrarse</a>
                             </p>

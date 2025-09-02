@@ -36,7 +36,7 @@ class ThrottleRegistration
             
             // Para peticiones tradicionales (fallback)
             return back()->withErrors([
-                'throttle' => "Demasiados intentos de registro. Intenta nuevamente en {$seconds} segundos."
+                'throttle' => "Demasiados intentos. Intenta nuevamente en {$seconds} segundos."
             ])->withInput();
         }
         

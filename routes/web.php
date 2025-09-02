@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\EmailVerificationRegistrationController;
+use App\Http\Controllers\PasswordResetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +41,12 @@ Route::middleware('guest')->group(function () {
     // Registration verification routes
     Route::get('/registration/pending', [EmailVerificationRegistrationController::class, 'pending'])->name('registration.pending');
     Route::get('/registration/verify/{token}', [EmailVerificationRegistrationController::class, 'verify'])->name('registration.verify');
+    
+    // Password reset routes
+    Route::get('/forgot-password', [PasswordResetController::class, 'showForm'])->name('password.request');
+    Route::post('/forgot-password', [PasswordResetController::class, 'sendNewPassword'])
+        ->middleware('throttle.registration')
+        ->name('password.send');
 });
 
 
