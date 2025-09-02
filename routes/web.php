@@ -34,7 +34,7 @@ Route::middleware('guest')->group(function () {
     // Register routes
     Route::get('/register', [RegisterController::class, 'index'])->name('register');
     Route::post('/register', [RegisterController::class, 'register'])
-        ->middleware(['throttle.registration', 'throttle:3,1'])
+        ->middleware('throttle.registration')
         ->name('register.submit');
     
     // Registration verification routes
