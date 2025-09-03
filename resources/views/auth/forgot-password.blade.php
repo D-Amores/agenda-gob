@@ -65,7 +65,7 @@ data-template="horizontal-menu-template">
                     </div>
 
                     <h4 class="mb-2 text-center fw-semibold">¿Olvidaste tu contraseña? 🔐</h4>
-                    <p class="mb-4 text-center text-muted">Ingresa tu correo electrónico y te enviaremos una nueva contraseña</p>
+                    <p class="mb-4 text-center text-muted">Ingresa tu correo electrónico verificado y te enviaremos una nueva contraseña</p>
 
                     <form id="formPasswordReset" action="{{ route('password.send') }}" method="POST" novalidate>
                         @csrf
@@ -100,7 +100,7 @@ data-template="horizontal-menu-template">
                         <div class="text-center mb-3">
                             <small class="text-muted">
                                 <i class="bx bx-info-circle me-1"></i>
-                                Recibirás una nueva contraseña automática en tu correo
+                                Recibirás una nueva contraseña automática en tu correo verificado
                             </small>
                         </div>
 
