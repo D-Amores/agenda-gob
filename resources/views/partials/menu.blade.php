@@ -12,10 +12,10 @@
         .menu-link.menu-aud:hover, .menu-link.menu-evt:hover, .menu-link.menu-home:hover, .menu-link.menu-cal:hover { background: rgba(0,0,0,0.02); }
 
         /* Estados activos - fondo más fuerte y texto en blanco */
-        .menu-item.active .menu-link.menu-aud { background: #28c76f; border-left: 4px solid #1e9653; }
-        .menu-item.active .menu-link.menu-evt { background: #ff9f43; border-left: 4px solid #e6892b; }
-        .menu-item.active .menu-link.menu-home { background: #6a5cff; border-left: 4px solid #5a4bff; }
-        .menu-item.active .menu-link.menu-cal { background: #ffd166; border-left: 4px solid #e6bc4d; }
+        .menu-horizontal .menu-inner > .menu-item.active .menu-link.menu-aud { background: #28c76f !important; border-left: 4px solid #1e9653; }
+        .menu-horizontal .menu-inner > .menu-item.active .menu-link.menu-evt { background: #ff9f43 !important; border-left: 4px solid #e6892b; }
+        .menu-horizontal .menu-inner > .menu-item.active .menu-link.menu-home { background: #6a5cff !important; border-left: 4px solid #5a4bff; }
+        .menu-horizontal .menu-inner > .menu-item.active .menu-link.menu-cal { background: #ffd166 !important; border-left: 4px solid #e6bc4d; }
 
         .menu-item.active .menu-link .menu-icon { color: white !important; }
         .menu-item.active .menu-link .menu-title { color: white !important; }
