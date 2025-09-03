@@ -1,0 +1,22 @@
+/* acentos: borde izquierdo y pequeño hover para distinguir las entradas */
+.menu-link.menu-aud { border-left: 4px solid #28c76f; padding-left: .75rem; }
+.menu-link.menu-evt { border-left: 4px solid #ff9f43; padding-left: .75rem; }
+.menu-link.menu-home { border-left: 4px solid #6a5cff; padding-left: .75rem; } /* morado */
+.menu-link.menu-cal { border-left: 4px solid #ffd166; padding-left: .75rem; }  /* amarillo */
+.menu-link.menu-aud .menu-icon { color: #28c76f; }
+.menu-link.menu-evt .menu-icon { color: #ff9f43; }
+.menu-link.menu-home .menu-icon { color: #6a5cff; }
+.menu-link.menu-cal .menu-icon { color: #ffd166; }
+.menu-link.menu-aud:hover, .menu-link.menu-evt:hover, .menu-link.menu-home:hover, .menu-link.menu-cal:hover { background: rgba(0,0,0,0.02); }
+
+/* Estados activos - fondo más fuerte y texto en blanco */
+.menu-horizontal .menu-inner > .menu-item.active .menu-link.menu-aud { background: #28c76f !important; border-left: 4px solid #1e9653; }
+.menu-horizontal .menu-inner > .menu-item.active .menu-link.menu-evt { background: #ff9f43 !important; border-left: 4px solid #e6892b; }
+.menu-horizontal .menu-inner > .menu-item.active .menu-link.menu-home { background: #6a5cff !important; border-left: 4px solid #5a4bff; }
+.menu-horizontal .menu-inner > .menu-item.active .menu-link.menu-cal { background: #ffd166 !important; border-left: 4px solid #e6bc4d; }
+
+.menu-item.active .menu-link .menu-icon { color: white !important; }
+.menu-item.active .menu-link .menu-title { color: white !important; }
+
+/* Hover en elementos activos */
+.menu-item.active .menu-link:hover { opacity: 0.9; }
