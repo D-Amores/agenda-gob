@@ -8,7 +8,7 @@
         <ul class="menu-inner">
 
             <!-- Página Principal -->
-            <li class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+            <li class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }} me-2">
                 <a href="{{ route('dashboard') }}" class="menu-link menu-home">
                     <i class="menu-icon tf-icons bx bx-home"></i>
                     <span class="menu-title text-uppercase fw-semibold">Página Principal</span>
@@ -18,14 +18,14 @@
             <!-- Sección Registros -->
             <li class="menu-header small text-muted">Registros</li>
 
-            <li class="menu-item {{ request()->routeIs('audiencias.*') ? 'active' : '' }}">
+            <li class="menu-item {{ request()->routeIs('audiencias.*') ? 'active' : '' }} me-2">
                 <a href="{{ route('audiencias.create') }}" class="menu-link menu-aud">
                     <i class="menu-icon tf-icons bx bx-group"></i>
                     <span class="menu-title text-uppercase fw-semibold">Registro de Audiencia</span>
                 </a>
             </li>
 
-            <li class="menu-item {{ request()->routeIs('eventos.*') ? 'active' : '' }}">
+            <li class="menu-item {{ request()->routeIs('eventos.*') ? 'active' : '' }} me-2">
                 <a href="{{ route('eventos.create') }}" class="menu-link menu-evt">
                     <i class="menu-icon tf-icons bx bx-calendar-event"></i>
                     <span class="menu-title text-uppercase fw-semibold">Registro de Evento</span>
@@ -35,7 +35,7 @@
             <!-- Sección Consultas -->
             <li class="menu-header small text-muted">Consultas</li>
 
-            <li class="menu-item {{ request()->routeIs('calendario.*') ? 'active' : '' }}">
+            <li class="menu-item {{ request()->routeIs('calendario.*') ? 'active' : '' }} me-2">
                 <a href="{{ route('calendario.index') }}" class="menu-link menu-cal">
                     <i class="menu-icon tf-icons bx bx-calendar"></i>
                     <span class="menu-title text-uppercase fw-semibold">Calendario de Actividades</span>
