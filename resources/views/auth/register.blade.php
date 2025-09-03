@@ -7,7 +7,7 @@ data-template="horizontal-menu-template">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>iniciar sesion</title>
+    <title>Registrarse</title>
     
     <meta name="description" content="Most Powerful &amp; Comprehensive Bootstrap 5 HTML Admin Dashboard Template built for developers!" />
     <meta name="keywords" content="dashboard, bootstrap 5 dashboard, bootstrap 5 design, bootstrap 5">
@@ -37,8 +37,6 @@ data-template="horizontal-menu-template">
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/typeahead-js/typeahead.css') }}" />
 
     <!-- Vendor -->
-    <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/css/formValidation.min.css') }}" />
-
     <!-- Page CSS -->
     <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/css/pages/page-auth.css') }}" />
 
@@ -72,8 +70,8 @@ data-template="horizontal-menu-template">
 
    <div class="container-xxl">
     <div class="authentication-wrapper authentication-basic d-flex align-items-center min-vh-100">
-        <div class="authentication-inner w-100 mx-auto" style="max-width: 420px;">
-            <!-- Login Card -->
+        <div class="authentication-inner w-100 mx-auto" style="max-width: 500px;">
+            <!-- Register Card -->
             <div class="card shadow-sm rounded-5 bg-white bg-opacity-75">
                 <div class="card-body p-5">
 
@@ -82,72 +80,79 @@ data-template="horizontal-menu-template">
                         <span class="app-brand-text fw-bold fs-4 text-primary">Agenda</span>
                     </div>
 
-                    <h4 class="mb-2 text-center fw-semibold">Bienvenido a tu Agenda! 👋</h4>
-                    <p class="mb-4 text-center text-muted">Inicia sesión con tu cuenta y comienza a ver tus eventos</p>
+                    <h4 class="mb-2 text-center fw-semibold">Crear Nueva Cuenta 📝</h4>
+                    <p class="mb-4 text-center text-muted">Completa los datos para registrar tu cuenta</p>
 
-                    <form id="formAuthentications" action="{{ route('login') }}" method="POST" novalidate>
+                    <form id="formAuthentication" action="{{ route('register.submit') }}" method="POST" novalidate>
                         @csrf
 
-                        {{-- Mensaje de éxito --}}
-                        @if(session('success'))
-                        <div id="login-success" class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                        @endif
-
-                        {{-- Error general --}}
-                        @if($errors->any())
-                        <div id="login-error" class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {{ $errors->first() }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                        @endif
-
                         <div class="mb-3">
-                            <label for="username" class="form-label">Usuario</label>
+                            <label for="username" class="form-label">Usuario <span class="text-danger">*</span></label>
                             <div class="input-group input-group-merge">
                                 <span class="input-group-text"><i class="bx bx-user"></i></span>
                                 <input type="text" 
-                                    class="form-control @error('username') is-invalid @enderror" 
-                                    id="username" name="username" placeholder="Ingresa tu usuario" 
-                                    value="{{ old('username') }}" autofocus>
-                                <!-- @error('username')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror -->
+                                    class="form-control" 
+                                    id="username" name="username" placeholder="Ingresa tu nombre de usuario" 
+                                    minlength="3"
+                                    pattern="[a-zA-Z0-9._\-]+"
+                                    title="Solo letras, números, puntos, guiones y guiones bajos. Mínimo 3 caracteres."
+                                    autofocus required>
                             </div>
+                            <small class="text-muted">Solo letras, números, puntos (.), guiones (-) y guiones bajos (_)</small>
                         </div>
 
-                        <div class="mb-3 form-password-toggle">
-                            <label class="form-label" for="password">Contraseña</label>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
                             <div class="input-group input-group-merge">
-                                <span class="input-group-text"><i class="bx bx-lock"></i></span>
-                                <input type="password" 
-                                    class="form-control @error('password') is-invalid @enderror" 
-                                    id="password" name="password" 
-                                    placeholder="••••••••••••" aria-describedby="password" />
-                                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
-                                <!-- @error('password')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror -->
+                                <span class="input-group-text"><i class="bx bx-envelope"></i></span>
+                                <input type="email" 
+                                    class="form-control" 
+                                    id="email" name="email" placeholder="Ingresa tu correo electrónico" 
+                                    required>
                             </div>
                         </div>
 
-                        <div class="mb-4 form-check">
-                            <input class="form-check-input" type="checkbox" id="remember-me" name="remember">
-                            <label class="form-check-label" for="remember-me">Recuérdame</label>
+                        <div class="mb-3">
+                            <label for="area_id" class="form-label">Área <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-merge">
+                                <span class="input-group-text"><i class="bx bx-building"></i></span>
+                                <select class="form-control" id="area_id" name="area_id" required>
+                                    <option value="">Selecciona tu área</option>
+                                    @foreach($areas as $area)
+                                        <option value="{{ $area->id }}">{{ $area->area }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
 
-                        <div class="d-grid">
-                            <button class="btn btn-primary btn-lg fw-semibold" type="submit">Iniciar Sesión</button>
+                        <!-- Honeypot field (hidden from users, visible to bots) -->
+                        <div style="position: absolute; left: -9999px; top: -9999px;">
+                            <input type="text" name="website" value="" autocomplete="off" tabindex="-1">
                         </div>
 
-                        <div class="text-center mt-3">
-                            <p class="mb-2">
-                                <a href="{{ route('password.request') }}" class="text-muted">¿Olvidaste tu contraseña? <span class="text-primary fw-semibold">Aquí</span></a>
-                            </p>
-                            <p class="mb-0">¿No tienes una cuenta? 
-                                <a href="{{ route('register') }}" class="text-primary fw-semibold">Registrarse</a>
+                        <div class="d-grid mb-3">
+                            <button class="btn btn-primary btn-lg fw-semibold" type="submit" id="submit-btn">
+                                <span id="btn-text">
+                                    <i class="bx bx-user-plus me-2"></i>
+                                    Crear Cuenta
+                                </span>
+                                <span id="btn-loading" class="d-none">
+                                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                    Creando cuenta...
+                                </span>
+                            </button>
+                        </div>
+
+                        <div class="text-center mb-3">
+                            <small class="text-muted">
+                                <i class="bx bx-info-circle me-1"></i>
+                                Se enviará un enlace de verificación a tu email antes de crear la cuenta
+                            </small>
+                        </div>
+
+                        <div class="text-center">
+                            <p class="mb-0">¿Ya tienes una cuenta? 
+                                <a href="{{ route('login') }}" class="text-primary fw-semibold">Iniciar Sesión</a>
                             </p>
                         </div>
 
@@ -155,33 +160,10 @@ data-template="horizontal-menu-template">
 
                 </div>
             </div>
-            <!-- /Login Card -->
+            <!-- /Register Card -->
         </div>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const errorDiv = document.getElementById('login-error');
-    const successDiv = document.getElementById('login-success');
-    
-    if (errorDiv) {
-        setTimeout(() => {
-            errorDiv.style.transition = "opacity 0.5s";
-            errorDiv.style.opacity = 0;
-            setTimeout(() => errorDiv.remove(), 500);
-        }, 3000);
-    }
-    
-    if (successDiv) {
-        setTimeout(() => {
-            successDiv.style.transition = "opacity 0.5s";
-            successDiv.style.opacity = 0;
-            setTimeout(() => successDiv.remove(), 500);
-        }, 5000);
-    }
-});
-</script>
 
     <!-- / Content -->    
 
@@ -200,15 +182,19 @@ document.addEventListener('DOMContentLoaded', function () {
     <!-- endbuild -->
 
     <!-- Vendors JS -->
-    <script src="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js') }}"></script>
-    <script src="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js') }}"></script>
-    <script src="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js') }}"></script>
-
-    <!-- Main JS -->
-    <script src="{{ asset('sneat/assets/js/main.js') }}"></script>
+    <!-- jQuery Confirm Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
 
     <!-- Page JS -->
-    <script src="{{ asset('sneat/assets/js/pages-auth.js') }}"></script>
+    <script src="{{ asset('js/jquery-confirm/jquery-confirm.js') }}"></script>
+    
+    <!-- Routes Helper -->
+    <script>
+        @include('partials.routes')
+    </script>
+    
+    <script src="{{ asset('js/auth/register.js') }}"></script>
 
     
 </body>

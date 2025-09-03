@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
 class LoginController extends Controller
 {
@@ -23,6 +24,19 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
+            
+            // Verificar si el email está verificado
+            $user = Auth::user();
+            
+            if (is_null($user->email_verified_at)) {
+                // Si el usuario no tiene email verificado, algo está mal
+                // En el nuevo sistema, solo se crean usuarios con email verificado
+                Auth::logout();
+                return redirect()->route('login')->withErrors([
+                    'username' => 'Tu cuenta no está verificada. Por favor, contacta al administrador.',
+                ]);
+            }
+            
             return redirect()->intended('/dashboard');
         }
 

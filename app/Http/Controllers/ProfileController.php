@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
@@ -77,15 +78,14 @@ class ProfileController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
+        $response = ['ok' => false, 'message' => '', 'errors' => null];
         if ($user->id !== auth()->id()) {
-            return response()->json([
-                'ok'      => false,
-                'message' => 'No autorizado.',
-            ], 403);
+            $response['message'] = 'No autorizado.';
+            return response()->json($response, 403);
         }
 
         try {
-            $data = $request->only(['username', 'email']);
+            $data = $request->only(['username']);
 
             if ($request->hasFile('profile_photo')) {
                 // elimina la foto anterior si existe
@@ -96,30 +96,48 @@ class ProfileController extends Controller
                 $path = $request->file('profile_photo')->store('profiles', 'public');
                 $data['profile_photo_path'] = $path;
             }
-
-            if ($request->filled('password')) {
-                $data['password'] = Hash::make($request->password);
-            }
-
             $user->update($data);
-
-            return response()->json([
-                'ok'      => true,
-                'message' => 'Perfil actualizado correctamente.',
-                'user'    => [
-                    'username'   => $user->username,
-                    'email'      => $user->email,
-                    'avatar_url' => $user->avatar_url,
-                ],
-            ]);
+            $response['ok'] = true;
+            $response['message'] = 'Perfil actualizado correctamente.';
+            return response()->json($response);
         } catch (\Throwable $e) {
             report($e);
+            $response['message'] = 'No se pudo actualizar el perfil.';
+            return response()->json($response, 500);
+        }
+    }
 
-            return response()->json([
-                'ok'      => false,
-                'message' => 'No se pudo actualizar el perfil.',
-                'error'   => config('app.debug') ? $e->getMessage() : null,
-            ], 500);
+    /**
+     * Cambiar contraseña del usuario
+     *
+     * @param  \App\Http\Requests\ChangePasswordRequest  $request
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
+    public function changePassword(ChangePasswordRequest $request, User $user)
+    {
+        $response = ['ok' => false, 'message' => '', 'errors' => null];
+        // Verificar que el usuario solo pueda cambiar su propia contraseña
+        if ($user->id !== auth()->id()) {
+            
+            $response['message'] = 'No tienes permisos para cambiar esta contraseña.';
+            return response()->json($response, 403);
+        }
+
+        try {            
+            // Actualizar la contraseña
+            $user->update([
+                'password' => Hash::make($request->new_password)
+            ]);
+
+            $response['ok'] = true;
+            $response['message'] = 'Contraseña cambiada exitosamente.';
+            return response()->json($response, 200);
+
+        } catch (\Exception $e) {
+            report($e);
+            $response['message'] = 'Error al cambiar la contraseña. Por favor, inténtalo de nuevo.';
+            return response()->json($response, 500);
         }
     }
 

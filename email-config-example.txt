@@ -1,0 +1,58 @@
+# ===============================================
+# CONFIGURACIÓN DE EMAIL PARA VERIFICACIÓN
+# ===============================================
+
+# ✅ OPCIÓN 1: DESARROLLO LOCAL (RECOMENDADO PARA PRUEBAS)
+# Los emails se guardan en storage/logs/laravel.log
+MAIL_MAILER=log
+MAIL_HOST=127.0.0.1
+MAIL_PORT=2525
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="noreply@agenda-gob.local"
+MAIL_FROM_NAME="${APP_NAME}"
+
+# ===============================================
+# OTRAS OPCIONES PARA PRODUCCIÓN
+# ===============================================
+
+# ✅ OPCIÓN 2: GMAIL (Para producción)
+# Necesitas crear una "App Password" en tu cuenta de Gmail
+# MAIL_MAILER=smtp
+# MAIL_HOST=smtp.gmail.com
+# MAIL_PORT=587
+# MAIL_USERNAME=tu-email@gmail.com
+# MAIL_PASSWORD=tu-app-password-de-16-caracteres
+# MAIL_ENCRYPTION=tls
+# MAIL_FROM_ADDRESS="noreply@agenda-gob.com"
+# MAIL_FROM_NAME="${APP_NAME}"
+
+# ✅ OPCIÓN 3: MAILTRAP (Para testing profesional)
+# Crea una cuenta gratis en mailtrap.io
+# MAIL_MAILER=smtp
+# MAIL_HOST=smtp.mailtrap.io
+# MAIL_PORT=2525
+# MAIL_USERNAME=tu-mailtrap-username
+# MAIL_PASSWORD=tu-mailtrap-password
+# MAIL_ENCRYPTION=tls
+# MAIL_FROM_ADDRESS="noreply@agenda-gob.local"
+# MAIL_FROM_NAME="${APP_NAME}"
+
+# ===============================================
+# INSTRUCCIONES DE USO
+# ===============================================
+
+# 1. Copia la configuración que quieras usar
+# 2. Pégala en tu archivo .env
+# 3. Ejecuta: php artisan config:clear
+# 4. Prueba con: php artisan test:send-verification-email
+
+# ===============================================
+# SOLUCIÓN AL ERROR: Swift_TransportException
+# ===============================================
+
+# Si ves error "Connection could not be established with host mailhog":
+# - Cambia MAIL_MAILER=log (la configuración más simple)
+# - O usa una configuración SMTP válida
+# - Ejecuta: php artisan config:clear después del cambio

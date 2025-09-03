@@ -1,46 +1,62 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const input = document.getElementById('upload');
-    const imgPreview = document.getElementById('uploadedAvatar');
-    const resetBtn = document.getElementById('resetPhoto');
-    let originalSrc = imgPreview.getAttribute('src'); // ahora let para poder actualizar tras guardar
-    const form = document.getElementById('formAccountSettings');
-    const submitBtn = document.getElementById('btnSubmit');
+    // ==========================
+    // Elementos del DOM
+    // ==========================
+    const dom = {
+        inputFile: document.getElementById('upload'),
+        imgPreview: document.getElementById('uploadedAvatar'),
+        resetBtn: document.getElementById('resetPhoto'),
+        formProfile: document.getElementById('formAccountSettings'),
+        submitBtn: document.getElementById('btnSubmit'),
+        cropperModalEl: document.getElementById('cropperModal'),
+        cropperImage: document.getElementById('cropperImage'),
+        applyCropBtn: document.getElementById('applyCrop'),
+        changePasswordForm: document.getElementById('changePasswordForm'),
+        changePasswordBtn: document.getElementById('changePasswordBtn'),
+        passwordSpinner: document.getElementById('passwordSpinner')
+    };
 
-    const cropperModalEl = document.getElementById('cropperModal');
-    const cropperImage = document.getElementById('cropperImage');
-    const applyCropBtn = document.getElementById('applyCrop');
+    // ==========================
+    // Estado
+    // ==========================
+    let originalSrc = dom.imgPreview.getAttribute('src');
     let cropper = null;
     let fileSelected = false;
+    const modal = new bootstrap.Modal(dom.cropperModalEl);
 
-    // Habilita/deshabilita el botón de restablecer según cambios
-    function updateResetState() {
-        const changed = fileSelected || imgPreview.src !== originalSrc;
-        resetBtn.disabled = !changed;
-        resetBtn.classList.toggle('disabled', !changed);
-        resetBtn.title = changed ? '' : 'No hay cambios que restablecer';
-    }
+    // ==========================
+    // Funciones auxiliares
+    // ==========================
+    const showAlert = (type, message, errors = null, timeout = 5000, onOk = null) => {
+        let fullMessage = message;
 
-    const modal = new bootstrap.Modal(cropperModalEl);
+        if (errors) {
+            fullMessage += '<ul class="mb-0 mt-2">';
+            Object.values(errors).forEach(fieldErrors => {
+                if (Array.isArray(fieldErrors)) fieldErrors.forEach(e => fullMessage += `<li>${e}</li>`);
+                else fullMessage += `<li>${fieldErrors}</li>`;
+            });
+            fullMessage += '</ul>';
+        }
 
-    // seleccionar archivo -> abrir cropper
-    input.addEventListener('change', (e) => {
-        const file = e.target.files && e.target.files[0];
-        if (!file) return;
+        const typeMap = { success: 'green', danger: 'red', warning: 'orange', info: 'blue' };
+        const titleMap = { success: 'Éxito', danger: 'Error', warning: 'Advertencia', info: 'Información' };
+        const alertType = typeMap[type] || 'blue';
+        const title = titleMap[type] || 'Información';
 
-        fileSelected = true;
-        updateResetState();
+        UI.alert(fullMessage, alertType, title, onOk, timeout);
+    };
 
-        const reader = new FileReader();
-        reader.onload = () => {
-            cropperImage.src = reader.result;
-            modal.show();
-        };
-        reader.readAsDataURL(file);
-    });
+    const updateResetState = () => {
+        const changed = fileSelected || dom.imgPreview.src !== originalSrc;
+        dom.resetBtn.disabled = !changed;
+        dom.resetBtn.classList.toggle('disabled', !changed);
+        dom.resetBtn.title = changed ? '' : 'No hay cambios que restablecer';
+    };
 
-    cropperModalEl.addEventListener('shown.bs.modal', () => {
+    const initCropper = () => {
         if (cropper) cropper.destroy();
-        cropper = new Cropper(cropperImage, {
+        cropper = new Cropper(dom.cropperImage, {
             viewMode: 1,
             aspectRatio: 1,
             dragMode: 'move',
@@ -54,30 +70,67 @@ document.addEventListener('DOMContentLoaded', () => {
             minContainerWidth: 400,
             minContainerHeight: 300
         });
+    };
+
+    const getCroppedBlob = async (width = 600, height = 600) => {
+        if (!cropper) return null;
+        const canvas = cropper.getCroppedCanvas({ width, height, imageSmoothingEnabled: true, imageSmoothingQuality: 'high' });
+        return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.92));
+    };
+
+    const sendFormData = async (formData, form, submitBtnOverride = null) => {
+        const btn = submitBtnOverride || dom.submitBtn;
+        btn.disabled = true;
+        try {
+            const res = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            });
+            const data = await res.json();
+            if (data.ok) showAlert('success', data.message, null, 5000, () => window.location.reload());
+            else showAlert('danger', data.message || 'Ocurrió un error', data.errors || null);
+        } catch (err) {
+            console.error(err);
+            showAlert('danger', 'Error de conexión. Por favor, inténtalo de nuevo.');
+        } finally {
+            btn.disabled = false;
+        }
+    };
+
+    // ==========================
+    // Eventos
+    // ==========================
+    // Selección de archivo -> abrir cropper
+    dom.inputFile.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        fileSelected = true;
+        updateResetState();
+        const reader = new FileReader();
+        reader.onload = () => {
+            dom.cropperImage.src = reader.result;
+            modal.show();
+        };
+        reader.readAsDataURL(file);
     });
 
-    applyCropBtn.addEventListener('click', () => {
+    // Iniciar cropper al mostrar modal
+    dom.cropperModalEl.addEventListener('shown.bs.modal', initCropper);
+
+    // Aplicar recorte
+    dom.applyCropBtn.addEventListener('click', async () => {
         if (!cropper) return;
-        const canvas = cropper.getCroppedCanvas({
-            width: 300,
-            height: 300,
-            imageSmoothingEnabled: true,
-            imageSmoothingQuality: 'high'
-        });
-        imgPreview.src = canvas.toDataURL('image/jpeg', 0.92);
+        const canvas = cropper.getCroppedCanvas({ width: 300, height: 300 });
+        dom.imgPreview.src = canvas.toDataURL('image/jpeg', 0.92);
         modal.hide();
         updateResetState();
     });
 
-    // Restablecer solo si hay algo que restablecer
-    resetBtn.addEventListener('click', (e) => {
+    // Reset foto
+    dom.resetBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        const changed = fileSelected || imgPreview.src !== originalSrc;
-        if (!changed) {
-            if (window.UI?.alert) UI.alert('No hay nada que restablecer.', 'orange', 'Aviso');
-            return;
-        }
-
+        if (!fileSelected && dom.imgPreview.src === originalSrc) return UI.alert('No hay nada que restablecer.', 'orange', 'Aviso');
         UI.confirm({
             title: 'Restablecer foto',
             message: '¿Deseas restablecer la foto al valor anterior?',
@@ -85,20 +138,18 @@ document.addEventListener('DOMContentLoaded', () => {
             text: 'Restablecer',
             class: 'btn-warning',
             onConfirm() {
-                imgPreview.src = originalSrc;
-                input.value = '';
+                dom.imgPreview.src = originalSrc;
+                dom.inputFile.value = '';
                 fileSelected = false;
-                if (cropper) {
-                    cropper.destroy();
-                    cropper = null;
-                }
+                if (cropper) cropper.destroy();
+                cropper = null;
                 updateResetState();
             }
         });
     });
 
-    // submit AJAX con confirm
-    form.addEventListener('submit', async (e) => {
+    // Submit perfil
+    dom.formProfile.addEventListener('submit', async (e) => {
         e.preventDefault();
         UI.confirm({
             title: 'Guardar cambios',
@@ -107,78 +158,35 @@ document.addEventListener('DOMContentLoaded', () => {
             text: 'Guardar',
             class: 'btn-primary',
             onConfirm: async () => {
-                submitBtn.disabled = true;
-                submitBtn.innerText = 'Guardando...';
-
-                const formData = new FormData(form);
-
-                // si hubo recorte, reemplaza el archivo
+                const formData = new FormData(dom.formProfile);
                 if (fileSelected && cropper) {
-                    const canvas = cropper.getCroppedCanvas({
-                        width: 600,
-                        height: 600,
-                        imageSmoothingEnabled: true,
-                        imageSmoothingQuality: 'high'
-                    });
-                    const blob = await new Promise(resolve => canvas.toBlob(resolve,
-                        'image/jpeg', 0.92));
+                    const blob = await getCroppedBlob();
                     formData.delete('profile_photo');
                     formData.append('profile_photo', blob, 'avatar.jpg');
                 }
+                await sendFormData(formData, dom.formProfile);
+            }
+        });
+    });
 
-                UI.ajax({
-                    url: form.action,
-                    method: 'POST', // respeta _method=PUT
-                    data: formData,
-                    success: (data) => {
-                        if (data && data.ok === false) {
-                            UI.alert(data.message ||
-                                'Ocurrió un error.', 'red', 'Error');
-                            return;
-                        }
-
-                        if (data.user && data.user.avatar_url) {
-                            imgPreview.src = data.user.avatar_url +
-                                '?t=' + Date.now();
-                            originalSrc = imgPreview.src;
-                        }
-
-                        // Mostrar alert y recargar al presionar OK
-                        UI.alert(data.message ||
-                            'Perfil actualizado correctamente.',
-                            'green', 'Éxito', () => {
-                                window.location.reload();
-                            });
-
-                        // limpiar estado de recorte
-                        fileSelected = false;
-                        if (cropper) {
-                            cropper.destroy();
-                            cropper = null;
-                        }
-                        input.value = '';
-                        updateResetState();
-                    },
-                    fail: (jq) => {
-                        const resp = jq.responseJSON || {};
-                        // Errores de validación
-                        if (jq.status === 422 && resp.errors) {
-                            const errs = Object.values(resp.errors)
-                                .flat().join('<br>');
-                            UI.alert(errs || 'Errores de validación.',
-                                'red', 'Errores');
-                            return;
-                        }
-                        // 401/403/419/500 u otros
-                        const msg = resp.message ||
-                            'No se pudo actualizar el perfil. Intenta de nuevo.';
-                        UI.alert(msg, 'red', 'Error');
-                    },
-                    always: () => {
-                        submitBtn.disabled = false;
-                        submitBtn.innerText = 'Guardar cambios';
-                    }
-                });
+    // Submit contraseña
+    dom.changePasswordForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(dom.changePasswordForm);
+        UI.confirm({
+            title: 'Cambiar contraseña',
+            message: '¿Deseas cambiar tu contraseña?',
+            type: 'blue',
+            text: 'Cambiar',
+            class: 'btn-primary',
+            onConfirm: async () => {
+                dom.changePasswordBtn.disabled = true;
+                dom.passwordSpinner.classList.remove('d-none');
+                try {
+                    await sendFormData(formData, dom.changePasswordForm, dom.changePasswordBtn);
+                } finally {
+                    dom.passwordSpinner.classList.add('d-none');
+                }
             }
         });
     });
@@ -186,3 +194,30 @@ document.addEventListener('DOMContentLoaded', () => {
     // Estado inicial
     updateResetState();
 });
+
+// ==========================
+// Toggle ver contraseña
+// ==========================
+function setupPasswordToggle(toggleId, inputId) {
+    const toggle = document.getElementById(toggleId);
+    const input = document.getElementById(inputId);
+
+    if (toggle && input) {
+        toggle.addEventListener('click', () => {
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+
+            // Cambiar el ícono
+            const icon = toggle.querySelector('i');
+            if (icon) {
+                icon.classList.toggle('bx-hide', !isPassword);
+                icon.classList.toggle('bx-show', isPassword);
+            }
+        });
+    }
+}
+
+// Inicializar toggles
+setupPasswordToggle('toggleCurrentPassword', 'current_password');
+setupPasswordToggle('toggleNewPassword', 'new_password');
+setupPasswordToggle('toggleConfirmPassword', 'password_confirmation');
