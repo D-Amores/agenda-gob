@@ -28,7 +28,7 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'username.required' => 'El nombre de usuario es obligatorio.',
-            'username.unique'   => 'Este nombre de usuario ya está en uso.',
+            'username.unique'   => 'Usa otro nombre de usuario.',
             //'email.required'    => 'El correo electrónico es obligatorio.',
             //'email.email'       => 'Debes ingresar un correo electrónico válido.',
             //'email.unique'      => 'Este correo electrónico ya está en uso.',

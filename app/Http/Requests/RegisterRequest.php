@@ -41,13 +41,13 @@ class RegisterRequest extends FormRequest
             'username.required' => 'El nombre de usuario es obligatorio.',
             'username.min' => 'El nombre de usuario debe tener al menos 3 caracteres.',
             'username.max' => 'El nombre de usuario no puede exceder 255 caracteres.',
-            'username.unique' => 'Este nombre de usuario ya está en uso.',
+            'username.unique' => 'Usa otro nombre de usuario.',
             'username.regex' => 'El nombre de usuario solo puede contener letras, números, puntos, guiones y guiones bajos.',
             
             'email.required' => 'El correo electrónico es obligatorio.',
             'email.email' => 'El correo electrónico debe ser válido.',
             'email.max' => 'El correo electrónico no puede exceder 255 caracteres.',
-            'email.unique' => 'Este correo electrónico ya está registrado.',
+            'email.unique' => 'Este correo electrónico ya está siendo usado.',
             
             'area_id.required' => 'Debe seleccionar un área.',
             'area_id.exists' => 'El área seleccionada no es válida.',
