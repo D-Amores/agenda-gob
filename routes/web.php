@@ -58,6 +58,11 @@ Route::middleware(['auth'])->group(function () {
     // Perfil (URIs: profile/{user}/edit, profile/{user})
     Route::resource('profile', ProfileController::class)->parameters(['profile' => 'user'])
         ->only(['edit', 'update']);
+    
+    // Cambio de contraseña
+    Route::put('/profile/{user}/change-password', [ProfileController::class, 'changePassword'])
+        ->middleware('throttle.registration')
+        ->name('profile.change-password');
 
     // Audiencias
     Route::resource('audiencias', AudienciaController::class)->parameters([
