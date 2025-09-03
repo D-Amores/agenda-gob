@@ -10,13 +10,25 @@
         .menu-link.menu-home .menu-icon { color: #6a5cff; }
         .menu-link.menu-cal .menu-icon { color: #ffd166; }
         .menu-link.menu-aud:hover, .menu-link.menu-evt:hover, .menu-link.menu-home:hover, .menu-link.menu-cal:hover { background: rgba(0,0,0,0.02); }
+
+        /* Estados activos - fondo más fuerte y texto en blanco */
+        .menu-item.active .menu-link.menu-aud { background: #28c76f; border-left: 4px solid #1e9653; }
+        .menu-item.active .menu-link.menu-evt { background: #ff9f43; border-left: 4px solid #e6892b; }
+        .menu-item.active .menu-link.menu-home { background: #6a5cff; border-left: 4px solid #5a4bff; }
+        .menu-item.active .menu-link.menu-cal { background: #ffd166; border-left: 4px solid #e6bc4d; }
+
+        .menu-item.active .menu-link .menu-icon { color: white !important; }
+        .menu-item.active .menu-link .menu-title { color: white !important; }
+
+        /* Hover en elementos activos */
+        .menu-item.active .menu-link:hover { opacity: 0.9; }
     </style>
     <div class="container-xxl d-flex h-100">
         <ul class="menu-inner">
 
             <!-- Página Principal -->
-            <li class="menu-item">
-                <a href="{{ route('dashboard') }}" class="menu-link menu-home active">
+            <li class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                <a href="{{ route('dashboard') }}" class="menu-link menu-home">
                     <i class="menu-icon tf-icons bx bx-home"></i>
                     <span class="menu-title text-uppercase fw-semibold">Página Principal</span>
                 </a>
@@ -25,14 +37,14 @@
             <!-- Sección Registros -->
             <li class="menu-header small text-muted">Registros</li>
 
-            <li class="menu-item">
+            <li class="menu-item {{ request()->routeIs('audiencias.*') ? 'active' : '' }}">
                 <a href="{{ route('audiencias.create') }}" class="menu-link menu-aud">
                     <i class="menu-icon tf-icons bx bx-group"></i>
                     <span class="menu-title text-uppercase fw-semibold">Registro de Audiencia</span>
                 </a>
             </li>
 
-            <li class="menu-item">
+            <li class="menu-item {{ request()->routeIs('eventos.*') ? 'active' : '' }}">
                 <a href="{{ route('eventos.create') }}" class="menu-link menu-evt">
                     <i class="menu-icon tf-icons bx bx-calendar-event"></i>
                     <span class="menu-title text-uppercase fw-semibold">Registro de Evento</span>
@@ -42,7 +54,7 @@
             <!-- Sección Consultas -->
             <li class="menu-header small text-muted">Consultas</li>
 
-            <li class="menu-item">
+            <li class="menu-item {{ request()->routeIs('calendario.*') ? 'active' : '' }}">
                 <a href="{{ route('calendario.index') }}" class="menu-link menu-cal">
                     <i class="menu-icon tf-icons bx bx-calendar"></i>
                     <span class="menu-title text-uppercase fw-semibold">Calendario de Actividades</span>
