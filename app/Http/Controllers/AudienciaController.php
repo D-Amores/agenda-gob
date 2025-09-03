@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Estatus;
 use App\Models\Audiencia;
 use Illuminate\Support\Facades\Auth;
-use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 

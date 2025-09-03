@@ -6,6 +6,7 @@ use App\Http\Requests\StoreEventoRequest;
 use App\Http\Requests\UpdateEventoRequest;
 use App\Models\Evento;
 use App\Models\Estatus;
+use App\Models\Vestimenta;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
@@ -29,7 +30,8 @@ class EventoController extends Controller
     public function create()
     {
         $estatusLista = Estatus::all();
-        return view('evento.registro', compact('estatusLista'));
+        $vestimentaLista = Vestimenta::all();
+        return view('evento.registro', compact('estatusLista', 'vestimentaLista'));
     }
     /**
      * Store a newly created resource in storage.
