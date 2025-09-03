@@ -1,16 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\EmailVerificationRegistrationController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\AudienciaController;
 use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventoController;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\LogoutController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\EmailVerificationRegistrationController;
-use App\Http\Controllers\PasswordResetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,8 +30,8 @@ Route::get('/', function () {
 Route::middleware('guest')->group(function () {
     // Login routes
     Route::get('/login', [LoginController::class, 'index'])->name('login');
-    Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1')->name('login.submit');
-    
+    Route::post('/login', [LoginController::class, 'login'])->middleware('throttle.registration')->name('login.submit');
+
     // Register routes
     Route::get('/register', [RegisterController::class, 'index'])->name('register');
     Route::post('/register', [RegisterController::class, 'register'])
@@ -58,10 +58,7 @@ Route::middleware(['auth'])->group(function () {
     // Perfil (URIs: profile/{user}/edit, profile/{user})
     Route::resource('profile', ProfileController::class)->parameters(['profile' => 'user'])
         ->only(['edit', 'update']);
-    
-    // Cambio de contraseña
     Route::put('/profile/{user}/change-password', [ProfileController::class, 'changePassword'])
-        ->middleware('throttle.registration')
         ->name('profile.change-password');
 
     // Audiencias

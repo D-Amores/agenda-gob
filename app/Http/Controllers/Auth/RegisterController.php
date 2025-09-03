@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
@@ -8,6 +8,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Models\Area;
 use App\Models\PendingRegistration;
 use App\Notifications\VerifyRegistrationEmail;
+use App\Http\Controllers\Controller;
 
 class RegisterController extends Controller
 {

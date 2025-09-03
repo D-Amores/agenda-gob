@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\PasswordResetRequest;
 use App\Models\User;
 use App\Notifications\NewPasswordNotification;
+use App\Http\Controllers\Controller;
+
 
 class PasswordResetController extends Controller
 {

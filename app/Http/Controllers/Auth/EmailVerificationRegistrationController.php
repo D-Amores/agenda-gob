@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\PendingRegistration;
 use App\Models\User;
 use App\Notifications\PasswordDeliveryNotification;
+use App\Http\Controllers\Controller;
 
 class EmailVerificationRegistrationController extends Controller
 {
