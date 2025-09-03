@@ -24,7 +24,7 @@
     animation: gradientMove 8s ease infinite;
 }
 
-.container {
+.custom-footer .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
@@ -32,7 +32,7 @@
     z-index: 2;
 }
 
-.row {
+.custom-footer .row {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -40,7 +40,7 @@
 }
 
 /* Logo */
-.footer-logo {
+.custom-footer .footer-logo {
     font-size: 2.5rem;
     color: #3498db;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -52,7 +52,7 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-.footer-logo:hover {
+.custom-footer .footer-logo:hover {
     transform: scale(1.2) rotate(12deg);
     color: #2ecc71;
     background: rgba(255, 255, 255, 0.15);
@@ -60,7 +60,7 @@
 }
 
 /* Texto */
-.secretaria-name {
+.custom-footer .secretaria-name {
     font-weight: 700;
     color: #fff;
     text-transform: uppercase;
@@ -70,30 +70,30 @@
     transition: all 0.3s ease;
 }
 
-.secretaria-name:hover {
+.custom-footer .secretaria-name:hover {
     color: #f1c40f;
     text-shadow: 0 0 10px rgba(241, 196, 15, 0.7);
 }
 
-.divider {
+.custom-footer .divider {
     color: rgba(255, 255, 255, 0.5);
     font-weight: 300;
     margin: 0 1rem;
 }
 
-.copyright {
+.custom-footer .copyright {
     font-size: 0.95rem;
     color: #bdc3c7;
     font-weight: 400;
     transition: all 0.3s ease;
 }
 
-.copyright:hover {
+.custom-footer .copyright:hover {
     color: #3498db;
 }
 
 /* Flexbox para alineación */
-.d-flex {
+.custom-footer .d-flex {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -101,7 +101,7 @@
 }
 
 /* Efecto de partículas sutiles */
-.particles {
+.custom-footer .particles {
     position: absolute;
     top: 0;
     left: 0;
@@ -111,7 +111,7 @@
     z-index: 1;
 }
 
-.particle {
+.custom-footer .particle {
     position: absolute;
     background: rgba(255, 255, 255, 0.3);
     border-radius: 50%;
@@ -151,7 +151,7 @@
 
 /* Media Queries para responsividad */
 @media (min-width: 768px) {
-    .d-flex {
+    .custom-footer .d-flex {
         flex-direction: row;
         justify-content: center;
         gap: 1rem;
@@ -161,42 +161,42 @@
         padding: 1.2rem 0;
     }
 
-    .footer-logo {
+    .custom-footer .footer-logo {
         font-size: 2.2rem;
     }
 }
 
 @media (max-width: 767px) {
-    .divider {
+    .custom-footer .divider {
         display: none;
     }
 
-    .secretaria-name, .copyright {
+    .custom-footer .secretaria-name, .custom-footer .copyright {
         text-align: center;
     }
 }
 
 /* Utilidades de espaciado */
-.mb-2 {
+.custom-footer .mb-2 {
     margin-bottom: 0.5rem;
 }
 
-.mb-md-0 {
+.custom-footer .mb-md-0 {
     margin-bottom: 0;
 }
 
-.text-center {
+.custom-footer .text-center {
     text-align: center;
 }
 
-.text-md-start {
+.custom-footer .text-md-start {
     text-align: left;
 }
 
-.align-items-center {
+.custom-footer .align-items-center {
     align-items: center;
 }
 
-.justify-content-center {
+.custom-footer .justify-content-center {
     justify-content: center;
 }
