@@ -171,7 +171,10 @@ class EventoController extends Controller
             $response['message'] = 'No autorizado.';
             return response()->json($response, 403);
         }
-
+        if (Evento::isEventoPast($evento->fecha_evento, $evento->hora_fin_evento)) {
+            $response['message'] = 'No se puede eliminar un evento pasado.';
+            return response()->json($response, 403);
+        }
         try {
             $evento->delete();
             $response['ok'] = true;
