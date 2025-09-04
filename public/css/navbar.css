@@ -220,6 +220,40 @@
     width: 70%;
 }
 
+/* ===== ELIMINAR ANIMACIONES SOLO DEL ÁREA DE USUARIO ===== */
+#layout-navbar .navbar-nav .nav-item.navbar-dropdown .user-info {
+    text-align: right;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: none !important; /* Eliminar transición */
+}
+
+#layout-navbar .navbar-nav .nav-item.navbar-dropdown .user-info:hover {
+    background: transparent !important; /* Sin fondo al hover */
+}
+
+#layout-navbar .navbar-nav .nav-item.navbar-dropdown .fw-semibold.d-block {
+    color: #ecf0f1;
+    font-weight: 600;
+    transition: none !important; /* Eliminar transición */
+}
+
+#layout-navbar .navbar-nav .nav-item.navbar-dropdown .text-muted {
+    font-size: 0.85rem;
+    color: #bdc3c7 !important;
+    transition: none !important; /* Eliminar transición */
+}
+
+/* Eliminar la línea de hover específicamente para el área de usuario */
+#layout-navbar .navbar-nav .nav-item.navbar-dropdown::after {
+    display: none !important;
+}
+
+/* Eliminar cambio de color al hover para el área de usuario */
+#layout-navbar .navbar-nav .nav-item.navbar-dropdown:hover .fw-semibold.d-block {
+    color: #ecf0f1 !important; /* Mantener color original */
+}
+
 /* Responsividad */
 @media (max-width: 1199.98px) {
     #layout-navbar.layout-navbar {
@@ -265,16 +299,10 @@
     color: white;
 }
 
-/* Información de usuario en navbar */
+/* Información de usuario en navbar - SIN EFECTOS */
 #layout-navbar .user-info {
     text-align: right;
     padding: 0.5rem;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-#layout-navbar .user-info:hover {
-    background: rgba(255, 255, 255, 0.1);
 }
 
 #layout-navbar .user-info span {
