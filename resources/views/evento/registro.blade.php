@@ -110,11 +110,10 @@
                                 <div class="col-sm-6">
                                     <label class="form-label" for="vestimenta">Tipo de vestimenta</label>
                                     <select id="vestimenta" name="vestimenta" class="form-control" required>
-                                        <option value="" disabled selected>Seleccione un tipo</option>
-                                        <option value="1">Formal</option>
-                                        <option value="2">Casual</option>
-                                        <option value="3">Uniforme</option>
-                                        <option value="4">Deportivo</option>
+                                        @foreach ($vestimentaLista as $vestimenta)
+                                            <option value="{{ $vestimenta->id }}">
+                                                {{ ucfirst(strtolower($vestimenta->tipo)) }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
 
