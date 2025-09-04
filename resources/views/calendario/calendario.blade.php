@@ -20,11 +20,12 @@
 @endsection
 
 @section('content')
-    <div class="card app-calendar-wrapper">
-        <div class="row g-0">
-            <!-- Calendar Sidebar -->
-            <div class="col app-calendar-sidebar personalizado"
-                style="background-color: white !important; box-shadow: 3px 7px 15px -3px rgba(0, 0, 0, 0.15) !important;">
+<small class="text-light fw-semibold px-3">Calendario de Actividades</small>
+<div class="card app-calendar-wrapper mt-2">
+    <div class="row g-0">
+        <!-- Calendar Sidebar -->
+        <div class="col app-calendar-sidebar personalizado"
+        style="background-color: white !important; box-shadow: 3px 7px 15px -3px rgba(0, 0, 0, 0.15) !important;">
                 <div class="border-bottom p-4 my-sm-0 mb-3">
                     <div class="d-grid gap-2">
                         <!-- Botón Agregar Evento -->

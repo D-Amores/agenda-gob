@@ -1,0 +1,202 @@
+/* Footer mejorado */
+.custom-footer {
+    background: linear-gradient(135deg, #2c3e50 0%, #1a2530 100%);
+    color: #ecf0f1;
+    padding: 1.5rem 0;
+    border-top: 4px solid transparent;
+    border-image: linear-gradient(90deg, #3498db, #2ecc71, #f1c40f, #e74c3c);
+    border-image-slice: 1;
+    box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.custom-footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #3498db, #2ecc71, #f1c40f, #e74c3c);
+    background-size: 400% 400%;
+    animation: gradientMove 8s ease infinite;
+}
+
+.custom-footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    position: relative;
+    z-index: 2;
+}
+
+.custom-footer .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Logo */
+.custom-footer .footer-logo {
+    font-size: 2.5rem;
+    color: #3498db;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: inline-block;
+    padding: 0.5rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.custom-footer .footer-logo:hover {
+    transform: scale(1.2) rotate(12deg);
+    color: #2ecc71;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+}
+
+/* Texto */
+.custom-footer .secretaria-name {
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.custom-footer .secretaria-name:hover {
+    color: #f1c40f;
+    text-shadow: 0 0 10px rgba(241, 196, 15, 0.7);
+}
+
+.custom-footer .divider {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 300;
+    margin: 0 1rem;
+}
+
+.custom-footer .copyright {
+    font-size: 0.95rem;
+    color: #bdc3c7;
+    font-weight: 400;
+    transition: all 0.3s ease;
+}
+
+.custom-footer .copyright:hover {
+    color: #3498db;
+}
+
+/* Flexbox para alineación */
+.custom-footer .d-flex {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+/* Efecto de partículas sutiles */
+.custom-footer .particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.custom-footer .particle {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    opacity: 0;
+    animation: particleAnimation 12s linear infinite;
+}
+
+/* Animaciones */
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes particleAnimation {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) translateX(50px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Media Queries para responsividad */
+@media (min-width: 768px) {
+    .custom-footer .d-flex {
+        flex-direction: row;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .custom-footer {
+        padding: 1.2rem 0;
+    }
+
+    .custom-footer .footer-logo {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .custom-footer .divider {
+        display: none;
+    }
+
+    .custom-footer .secretaria-name, .custom-footer .copyright {
+        text-align: center;
+    }
+}
+
+/* Utilidades de espaciado */
+.custom-footer .mb-2 {
+    margin-bottom: 0.5rem;
+}
+
+.custom-footer .mb-md-0 {
+    margin-bottom: 0;
+}
+
+.custom-footer .text-center {
+    text-align: center;
+}
+
+.custom-footer .text-md-start {
+    text-align: left;
+}
+
+.custom-footer .align-items-center {
+    align-items: center;
+}
+
+.custom-footer .justify-content-center {
+    justify-content: center;
+}
