@@ -154,6 +154,12 @@
                                 <div class="border rounded p-3 bg-light">
 
                                     <div class="mb-2">
+                                        <i class="bx bx-category text-success fs-5 align-middle me-1"></i>
+                                        <span class="fw-semibold">Categoria:</span>
+                                        <span class="text-body" id="categoria"></span>
+                                    </div>
+
+                                    <div class="mb-2">
                                         <i class="bx bx-time-five text-success fs-5 align-middle me-1"></i>
                                         <span class="fw-semibold">Hora:</span>
                                         <span class="text-body" id="hora"></span>

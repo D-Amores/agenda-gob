@@ -141,42 +141,52 @@ document.addEventListener("DOMContentLoaded", function () {
         eventForm.classList.remove("d-none");
 
         document.getElementById("asunto").innerText = event.title;
+        document.getElementById("categoria").innerText = event.tipo.charAt(0).toUpperCase() + event.tipo.slice(1);
         document.getElementById("hora").innerText = `${moment(event.start).format('h:mm A')} - ${moment(event.end).format('h:mm A')}`;
-        document.getElementById("estatus").innerText = event.extendedProps.estatus || "N/D";
-        document.getElementById("vestimenta").innerText = event.extendedProps.vestimenta || "N/D";
+        document.getElementById("estatus").innerText = event.extendedProps.estatus.charAt(0).toUpperCase() + event.extendedProps.estatus.slice(1) || "N/D";
+        document.getElementById("vestimenta").innerText = event.extendedProps.vestimenta.charAt(0).toUpperCase() + event.extendedProps.vestimenta.slice(1) || "N/D";
 
         const btnEditar = document.getElementById("btnEditar");
         const btnEliminar = document.getElementById("btnEliminar");
         const formEnviar = document.getElementById("formEnviar");
 
         const puedeEditar = event.extendedProps.user_id == currentUserId;
+        const eventoFinalizado = moment(event.end).isBefore(moment());
+
+        // Limpieza inicial (por si vienes de otro evento)
+        btnEditar.classList.add("d-none");
+        btnEliminar.classList.add("d-none");
+        formEnviar.action = "";
 
         if (puedeEditar) {
+            let urlEliminar = "", urlEditar = "", id = event.id, tipo = event.tipo;
+
+            // Editar siempre que sea creador
             btnEditar.classList.remove("d-none");
-            btnEliminar.classList.remove("d-none");
-
-            let urlEliminar = '', urlEditar = '', id = event.id, tipo = event.tipo;
-
-            if (tipo === 'evento') {
-                urlEliminar = urlEventoEliminar.replace('__ID__', id);
-                urlEditar = urlEventoEditar.replace('__ID__', id);
-            } else if (tipo === 'audiencia') {
-                urlEliminar = urlAudienciaEliminar.replace('__ID__', id);
-                urlEditar = urlAudienciaEditar.replace('__ID__', id);
+            if (tipo === "evento") {
+                urlEditar = urlEventoEditar.replace("__ID__", id);
+            } else if (tipo === "audiencia") {
+                urlEditar = urlAudienciaEditar.replace("__ID__", id);
             }
-            formEnviar.action = urlEliminar;
             btnEditar.href = urlEditar;
             btnEditar.dataset.id = id;
             btnEditar.dataset.tipo = tipo;
-            btnEliminar.dataset.id = id;
-            btnEliminar.dataset.tipo = tipo;
 
-        } else {
-            // Oculta los botones si no puede editar
-            btnEditar.classList.add("d-none");
-            btnEliminar.classList.add("d-none");
+            // Eliminar solo si no ha pasado
+            if (!eventoFinalizado) {
+                btnEliminar.classList.remove("d-none");
+                if (tipo === "evento") {
+                    urlEliminar = urlEventoEliminar.replace("__ID__", id);
+                } else if (tipo === "audiencia") {
+                    urlEliminar = urlAudienciaEliminar.replace("__ID__", id);
+                }
+                formEnviar.action = urlEliminar;
+                btnEliminar.dataset.id = id;
+                btnEliminar.dataset.tipo = tipo;
+            }
         }
     }
+
 
     // Cargar audiencias desde la variable global `audiencias` generada en Blade
     if (typeof audiencias !== 'undefined') {

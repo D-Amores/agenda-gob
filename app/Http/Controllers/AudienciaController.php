@@ -210,11 +210,14 @@ class AudienciaController extends Controller
             $response['message'] = 'No autorizado.';
             return response()->json($response, 403);
         }
+        if (Audiencia::isAudienciaPast($audiencia->fecha_audiencia, $audiencia->hora_fin_audiencia)) {
+            $response['message'] = 'No se puede eliminar una audiencia pasada.';
+            return response()->json($response, 403);
+        }
         try {
             $audiencia->delete();
             $response['ok'] = true;
             $response['message'] = 'Audiencia eliminada correctamente.';
-            $response['id'] = $audiencia->id;
             return response()->json($response);
         } catch (\Throwable $e) {
             report($e);
