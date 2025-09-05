@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class VestimentasTableSeeder extends Seeder
+class VestimentasSeeder extends Seeder
 {
     /**
      * Run the database seeds.
