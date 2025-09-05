@@ -141,42 +141,72 @@ document.addEventListener("DOMContentLoaded", function () {
         eventForm.classList.remove("d-none");
 
         document.getElementById("asunto").innerText = event.title;
+        document.getElementById("categoria").innerText = event.tipo.charAt(0).toUpperCase() + event.tipo.slice(1);
         document.getElementById("hora").innerText = `${moment(event.start).format('h:mm A')} - ${moment(event.end).format('h:mm A')}`;
-        document.getElementById("estatus").innerText = event.extendedProps.estatus || "N/D";
-        document.getElementById("vestimenta").innerText = event.extendedProps.vestimenta || "N/D";
+        document.getElementById("estatus").innerText = event.extendedProps.estatus.charAt(0).toUpperCase() + event.extendedProps.estatus.slice(1) || "N/D";
+        document.getElementById("vestimenta").innerText = event.extendedProps.vestimenta.charAt(0).toUpperCase() + event.extendedProps.vestimenta.slice(1) || "N/D";
 
         const btnEditar = document.getElementById("btnEditar");
         const btnEliminar = document.getElementById("btnEliminar");
         const formEnviar = document.getElementById("formEnviar");
+        const btnCambiarEstatus = document.getElementById("btnCambiarEstatus");
 
         const puedeEditar = event.extendedProps.user_id == currentUserId;
+        const eventoFinalizado = moment(event.end).isBefore(moment());
+
+        // Limpieza inicial (por si vienes de otro evento)
+        btnEditar.classList.add("d-none");
+        btnEliminar.classList.add("d-none");
+        btnCambiarEstatus.classList.add("d-none");
+        formEnviar.action = "";
 
         if (puedeEditar) {
+            let urlEliminar = "", urlEditar = "", id = event.id, tipo = event.tipo;
+            // Editar siempre que sea creador
             btnEditar.classList.remove("d-none");
-            btnEliminar.classList.remove("d-none");
-
-            let urlEliminar = '', urlEditar = '', id = event.id, tipo = event.tipo;
-
-            if (tipo === 'evento') {
-                urlEliminar = urlEventoEliminar.replace('__ID__', id);
-                urlEditar = urlEventoEditar.replace('__ID__', id);
-            } else if (tipo === 'audiencia') {
-                urlEliminar = urlAudienciaEliminar.replace('__ID__', id);
-                urlEditar = urlAudienciaEditar.replace('__ID__', id);
+            if (tipo === "evento") {
+                urlEditar = urlEventoEditar.replace("__ID__", id);
+            } else if (tipo === "audiencia") {
+                urlEditar = urlAudienciaEditar.replace("__ID__", id);
             }
-            formEnviar.action = urlEliminar;
             btnEditar.href = urlEditar;
             btnEditar.dataset.id = id;
             btnEditar.dataset.tipo = tipo;
-            btnEliminar.dataset.id = id;
-            btnEliminar.dataset.tipo = tipo;
 
-        } else {
-            // Oculta los botones si no puede editar
-            btnEditar.classList.add("d-none");
-            btnEliminar.classList.add("d-none");
+            // Eliminar solo si no ha pasado
+            if (!eventoFinalizado) {
+                
+                let estatusActual = (event.extendedProps.estatus || "").toLowerCase();
+                
+                if(estatusActual !== "atendido") {
+            
+                }
+                
+
+                if(estatusActual === "atendido" || estatusActual === "cancelado") {
+                    btnCambiarEstatus.disabled = true;
+                } else {
+                    btnEliminar.classList.remove("d-none");
+                    if (tipo === "evento") {
+                        urlEliminar = urlEventoEliminar.replace("__ID__", id);
+                    } else if (tipo === "audiencia") {
+                        urlEliminar = urlAudienciaEliminar.replace("__ID__", id);
+                    }
+                    formEnviar.action = urlEliminar;
+                    btnEliminar.dataset.id = id;
+                    btnEliminar.dataset.tipo = tipo;
+                    
+                    btnCambiarEstatus.dataset.id = id;
+                    btnCambiarEstatus.dataset.tipo = tipo;
+                    btnCambiarEstatus.dataset.estatus = listaEstatus.find(e => e.estatus.toLowerCase() === "atendido")?.id || "";
+                    btnCambiarEstatus.classList.remove("d-none");
+                    btnCambiarEstatus.disabled = false;
+                }
+
+            }
         }
     }
+
 
     // Cargar audiencias desde la variable global `audiencias` generada en Blade
     if (typeof audiencias !== 'undefined') {
@@ -338,9 +368,56 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Referencias globales al form y al botón Eliminar
+    // Referencias globales al form, boton de atender y al botón Eliminar
     const formEliminar = document.getElementById("formEnviar");
     const btnEliminar = document.getElementById("btnEliminar");
+    const btnCambiarEstatus = document.getElementById("btnCambiarEstatus");
+
+    btnCambiarEstatus.addEventListener("click", async function () {
+        const id = this.dataset.id;
+        const tipo = this.dataset.tipo; // 'audiencia' | 'evento'
+        const estatusId = this.dataset.estatus; // id del estatus "Atendido"
+
+        if (!id || !tipo || !estatusId) return;
+
+        const url = `${urlEstatusAtender}/${tipo}/${id}`;
+
+        // Deshabilitar botón
+        this.disabled = true;
+        this.querySelector("span").innerText = "Procesando...";
+
+        try {
+            const res = await fetch(url, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": csrfToken,
+                    "Accept": "application/json",
+                },
+                body: JSON.stringify({ estatus_id: estatusId })
+            });
+
+            const data = await res.json();
+
+            if (data.ok) {
+                this.querySelector("span").innerText = "Atendido";
+                UI.alert(data.message, 'green', 'Éxito', () => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                this.disabled = false;
+                alert(data.message || "Error al cambiar estatus");
+                UI.alert(msg, 'red', 'Error');
+            }
+        } catch (e) {
+            console.error(e);
+            this.disabled = false;
+            this.querySelector("span").innerText = "Atender";
+            UI.alert('Error de red al eliminar.', 'red', 'Error');
+        }
+    });
+
+
 
     // Generaliza: elimina audiencia o evento por fetch
     async function eliminarItem(tipo, id, url) {

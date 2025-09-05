@@ -11,6 +11,7 @@ use App\Http\Controllers\AudienciaController;
 use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventoController;
+use App\Http\Controllers\ChangeEstatusController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,4 +74,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Calendario
     Route::get('/calendario', [CalendarioController::class, 'index'])->name('calendario.index');
+
+    // Cambiar estatus
+    Route::put('/change-estatus/{model}/{id}', [ChangeEstatusController::class, 'update'])->name('estatus.update');
 });

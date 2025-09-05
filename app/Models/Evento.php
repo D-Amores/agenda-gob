@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Evento extends Model
 {
@@ -46,6 +47,20 @@ class Evento extends Model
         }
 
         return $query->exists(); // true si hay conflicto
+    }
+
+    public static function isEventoPast($fechaEvento, $horaFinEvento): bool
+    {
+        if (empty($fechaEvento) || empty($horaFinEvento)) {
+            return false; // evita errores si faltan datos
+        }
+
+        try {
+            $fechaHoraFin = Carbon::parse("{$fechaEvento} {$horaFinEvento}");
+            return $fechaHoraFin->isPast();
+        } catch (\Exception $e) {
+            return false; // en caso de fecha/hora inválida
+        }
     }
 
     public function user()

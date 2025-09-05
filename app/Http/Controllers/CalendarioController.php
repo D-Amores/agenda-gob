@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Audiencia;
 use App\Models\Evento;
+use App\Models\Estatus;
 use Illuminate\Support\Facades\Auth;
-use RealRashid\SweetAlert\Facades\Alert;
 
 class CalendarioController extends Controller
 {
@@ -24,8 +23,9 @@ class CalendarioController extends Controller
         $audiencias = Audiencia::with(['estatus', 'user'])
             ->where('area_id', $areaId)
             ->get();
+        $estatus = Estatus::all();
 
         // Aquí puedes agregar la lógica para mostrar el calendario
-        return view('calendario.calendario', compact('audiencias', 'eventos'));	
+        return view('calendario.calendario', compact('audiencias', 'eventos', 'estatus'));
     }
 }

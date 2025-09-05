@@ -155,6 +155,12 @@
                                 <div class="border rounded p-3 bg-light">
 
                                     <div class="mb-2">
+                                        <i class="bx bx-category text-success fs-5 align-middle me-1"></i>
+                                        <span class="fw-semibold">Categoria:</span>
+                                        <span class="text-body" id="categoria"></span>
+                                    </div>
+
+                                    <div class="mb-2">
                                         <i class="bx bx-time-five text-success fs-5 align-middle me-1"></i>
                                         <span class="fw-semibold">Hora:</span>
                                         <span class="text-body" id="hora"></span>
@@ -175,10 +181,17 @@
                             </div>
                             <!-- Botones de acción del detalle -->
                             <form action="" method="POST" id="formEnviar"
-                                class="d-flex justify-content-end gap-2 mb-3 mt-3 flex-wrap">
+                                class="d-flex justify-content-end gap-2 mb-3 mx-auto mt-3 flex-wrap pe-1" style="max-width: 320px;">
                                 @csrf
                                 @method('DELETE')
-                                <!-- Botón Editar -->
+                                <!-- Botón cambiar estatus -->
+                                <button type="button" class="btn btn-success btn-sm w-auto px-3" id="btnCambiarEstatus"
+                                    data-id="" data-tipo="">
+                                    <i class="bx bx-refresh"></i>
+                                    <span class="align-middle">Atendido</span>
+                                </button>
+
+                                 <!-- Botón Editar -->
                                 <a class="btn btn-warning btn-sm w-auto text-white px-3 btnAccion" id="btnEditar">
                                     <i class="bx bx-edit"></i>
                                     <span class="align-middle">Editar</span>
@@ -211,12 +224,14 @@
     <script>
         const audiencias = @json($audiencias);
         const eventos = @json($eventos);
+        const listaEstatus = @json($estatus);
         const urlEventoEliminar = "{{ route('eventos.destroy', ['evento' => '__ID__']) }}";
         const urlAudienciaEliminar = "{{ route('audiencias.destroy', ['audiencia' => '__ID__']) }}";
         const csrfToken = "{{ csrf_token() }}";
         const urlEventoEditar = "{{ route('eventos.edit', ['evento' => '__ID__']) }}";
         const urlAudienciaEditar = "{{ route('audiencias.edit', ['audiencia' => '__ID__']) }}";
         const currentUserId = {{ Auth::id() }};
+        const urlEstatusAtender = "{{ url('/change-estatus') }}";
     </script>
 
 
