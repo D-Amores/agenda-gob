@@ -149,6 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const btnEditar = document.getElementById("btnEditar");
         const btnEliminar = document.getElementById("btnEliminar");
         const formEnviar = document.getElementById("formEnviar");
+        const btnCambiarEstatus = document.getElementById("btnCambiarEstatus");
 
         const puedeEditar = event.extendedProps.user_id == currentUserId;
         const eventoFinalizado = moment(event.end).isBefore(moment());
@@ -156,11 +157,11 @@ document.addEventListener("DOMContentLoaded", function () {
         // Limpieza inicial (por si vienes de otro evento)
         btnEditar.classList.add("d-none");
         btnEliminar.classList.add("d-none");
+        btnCambiarEstatus.classList.add("d-none");
         formEnviar.action = "";
 
         if (puedeEditar) {
             let urlEliminar = "", urlEditar = "", id = event.id, tipo = event.tipo;
-
             // Editar siempre que sea creador
             btnEditar.classList.remove("d-none");
             if (tipo === "evento") {
@@ -174,15 +175,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Eliminar solo si no ha pasado
             if (!eventoFinalizado) {
-                btnEliminar.classList.remove("d-none");
-                if (tipo === "evento") {
-                    urlEliminar = urlEventoEliminar.replace("__ID__", id);
-                } else if (tipo === "audiencia") {
-                    urlEliminar = urlAudienciaEliminar.replace("__ID__", id);
+                
+                let estatusActual = (event.extendedProps.estatus || "").toLowerCase();
+                
+                if(estatusActual !== "atendido") {
+            
                 }
-                formEnviar.action = urlEliminar;
-                btnEliminar.dataset.id = id;
-                btnEliminar.dataset.tipo = tipo;
+                
+
+                if(estatusActual === "atendido" || estatusActual === "cancelado") {
+                    btnCambiarEstatus.disabled = true;
+                } else {
+                    btnEliminar.classList.remove("d-none");
+                    if (tipo === "evento") {
+                        urlEliminar = urlEventoEliminar.replace("__ID__", id);
+                    } else if (tipo === "audiencia") {
+                        urlEliminar = urlAudienciaEliminar.replace("__ID__", id);
+                    }
+                    formEnviar.action = urlEliminar;
+                    btnEliminar.dataset.id = id;
+                    btnEliminar.dataset.tipo = tipo;
+                    
+                    btnCambiarEstatus.dataset.id = id;
+                    btnCambiarEstatus.dataset.tipo = tipo;
+                    btnCambiarEstatus.dataset.estatus = listaEstatus.find(e => e.estatus.toLowerCase() === "atendido")?.id || "";
+                    btnCambiarEstatus.classList.remove("d-none");
+                    btnCambiarEstatus.disabled = false;
+                }
+
             }
         }
     }
@@ -348,9 +368,56 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Referencias globales al form y al botón Eliminar
+    // Referencias globales al form, boton de atender y al botón Eliminar
     const formEliminar = document.getElementById("formEnviar");
     const btnEliminar = document.getElementById("btnEliminar");
+    const btnCambiarEstatus = document.getElementById("btnCambiarEstatus");
+
+    btnCambiarEstatus.addEventListener("click", async function () {
+        const id = this.dataset.id;
+        const tipo = this.dataset.tipo; // 'audiencia' | 'evento'
+        const estatusId = this.dataset.estatus; // id del estatus "Atendido"
+
+        if (!id || !tipo || !estatusId) return;
+
+        const url = `${urlEstatusAtender}/${tipo}/${id}`;
+
+        // Deshabilitar botón
+        this.disabled = true;
+        this.querySelector("span").innerText = "Procesando...";
+
+        try {
+            const res = await fetch(url, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": csrfToken,
+                    "Accept": "application/json",
+                },
+                body: JSON.stringify({ estatus_id: estatusId })
+            });
+
+            const data = await res.json();
+
+            if (data.ok) {
+                this.querySelector("span").innerText = "Atendido";
+                UI.alert(data.message, 'green', 'Éxito', () => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                this.disabled = false;
+                alert(data.message || "Error al cambiar estatus");
+                UI.alert(msg, 'red', 'Error');
+            }
+        } catch (e) {
+            console.error(e);
+            this.disabled = false;
+            this.querySelector("span").innerText = "Atender";
+            UI.alert('Error de red al eliminar.', 'red', 'Error');
+        }
+    });
+
+
 
     // Generaliza: elimina audiencia o evento por fetch
     async function eliminarItem(tipo, id, url) {
