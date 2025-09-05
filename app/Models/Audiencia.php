@@ -65,7 +65,6 @@ class Audiencia extends Model
         }
     }
 
-
     // Relaciones
     public function estatus()
     {

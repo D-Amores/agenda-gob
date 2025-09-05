@@ -159,11 +159,7 @@
                                 <!-- Estatus -->
                                 <div class="col-sm-6">
                                     <label class="form-label" for="estatus_id">Estatus</label>
-                                    <select class="form-select" id="estatus_id" name="estatus_id" required>
-                                        @foreach ($estatusLista as $estatus)
-                                            <option value="{{ $estatus->id }}">
-                                                {{ ucfirst(strtolower($estatus->estatus)) }}</option>
-                                        @endforeach
+                                    <input class="form-control" id="estatus_id" name="estatus_id" value="{{ ucfirst(strtolower($estatus->estatus)) }}" readonly>
                                     </select>
                                 </div>
 
