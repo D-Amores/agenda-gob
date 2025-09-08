@@ -15,6 +15,16 @@
                 </a>
             </li>
 
+            <!-- Sección Consultas -->
+            <li class="menu-header small text-muted">Consultas</li>
+
+            <li class="menu-item {{ request()->routeIs('calendario.*') ? 'active' : '' }} me-2">
+                <a href="{{ route('calendario.index') }}" class="menu-link menu-cal">
+                    <i class="menu-icon tf-icons bx bx-calendar"></i>
+                    <span class="menu-title text-uppercase fw-semibold">Calendario de Actividades</span>
+                </a>
+            </li>
+
             <!-- Sección Registros -->
             <li class="menu-header small text-muted">Registros</li>
 
@@ -29,16 +39,6 @@
                 <a href="{{ route('eventos.create') }}" class="menu-link menu-evt">
                     <i class="menu-icon tf-icons bx bx-calendar-event"></i>
                     <span class="menu-title text-uppercase fw-semibold">Registro de Evento</span>
-                </a>
-            </li>
-
-            <!-- Sección Consultas -->
-            <li class="menu-header small text-muted">Consultas</li>
-
-            <li class="menu-item {{ request()->routeIs('calendario.*') ? 'active' : '' }} me-2">
-                <a href="{{ route('calendario.index') }}" class="menu-link menu-cal">
-                    <i class="menu-icon tf-icons bx bx-calendar"></i>
-                    <span class="menu-title text-uppercase fw-semibold">Calendario de Actividades</span>
                 </a>
             </li>
 
