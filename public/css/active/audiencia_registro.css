@@ -1,0 +1,16 @@
+#wizard-validation .bs-stepper-header .step.active .bs-stepper-circle {
+    background-color: #28c76f !important;
+}
+
+#wizard-validation .bs-stepper-header .step.active .bs-stepper-label {
+    color: #28c76f !important;
+}
+
+#wizard-validation .bs-stepper-header .line {
+    border-top-color: #28c76f !important;
+}
+
+#wizard-validation .bs-stepper-header .step-trigger:hover .bs-stepper-circle {
+    background-color: #28c76f !important;
+    opacity: 0.9;
+}
