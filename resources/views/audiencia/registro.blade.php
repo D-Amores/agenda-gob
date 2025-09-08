@@ -15,9 +15,9 @@
 @endsection
 
 @section('content')
-    <div class="row">
+    <div class="row justify-content-center">
         <!-- Validation Wizard -->
-        <div class="col-12 mb-4">
+        <div class="col-8 mb-4">
             <small class="text-light fw-semibold">Audiencia</small>
             <div id="wizard-validation" class="bs-stepper mt-2">
                 <div class="bs-stepper-header">
@@ -50,7 +50,7 @@
                             <span class="bs-stepper-circle">3</span>
                             <span class="bs-stepper-label mt-1">
                                 <span class="bs-stepper-title">Información adicional</span>
-                                <span class="bs-stepper-subtitle">Seleccione un estatus e ingrese una descripción
+                                <span class="bs-stepper-subtitle">Agrega una descripción
                                     opcional.</span>
                             </span>
                         </button>
@@ -81,7 +81,7 @@
                                         minlength="10" />
                                     <div class="invalid-feedback">Debe tener al menos 10 caracteres.</div>
                                 </div>
-                                <div class="col-sm-6">
+                                <div class="col-sm-3">
                                     <label class="form-label" for="formValidationFecha">Fecha</label>
                                     <input type="text" name="formValidationFecha" id="formValidationFecha"
                                         class="form-control" aria-label="Fecha" required />
@@ -109,19 +109,19 @@
                                     <input type="text" id="procedencia" name="procedencia"
                                         class="form-control timepicker" placeholder="Ingrese la procedencia" />
                                 </div>
+                                
+                                <!-- Área (select) -->
+                                <div class="col-sm-6">
+                                    <label class="form-label">Área</label>
+                                    <input type="text" class="form-control"
+                                    value="{{ Auth::user()->area->area ?? 'Sin área' }}" readonly>
+                                </div>
 
                                 <!-- Hora de Audiencia -->
                                 <div class="col-sm-6">
                                     <label class="form-label" for="hora_audiencia">Hora de inicio</label>
                                     <input type="text" id="hora_audiencia" name="hora_audiencia"
                                         class="form-control timepicker" required readonly />
-                                </div>
-
-                                <!-- Área (select) -->
-                                <div class="col-sm-6">
-                                    <label class="form-label">Área</label>
-                                    <input type="text" class="form-control"
-                                        value="{{ Auth::user()->area->area ?? 'Sin área' }}" readonly>
                                 </div>
 
                                 <!-- Hora de Audiencia -->
@@ -150,7 +150,7 @@
 
                             <div class="row g-3">
                                 <!-- Estatus -->
-                                <div class="col-sm-6">
+                                <div class="col-sm-2">
                                     <label class="form-label" for="estatus_id">Estatus</label>
                                     <input class="form-control" id="estatus_id" name="estatus_id" value="{{ ucfirst(strtolower($estatus->estatus)) }}" readonly>
                                     
