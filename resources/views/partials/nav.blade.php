@@ -4,7 +4,7 @@
 <nav class="layout-navbar navbar navbar-expand-xl align-items-center" id="layout-navbar">
     <div class="container-xxl">
         <div class="navbar-brand app-brand demo d-none d-xl-flex py-0 me-4">
-            <a href="#" class="app-brand-link gap-2">
+            <a href="{{ route('dashboard') }}" class="app-brand-link gap-2">
                 <span class="app-brand-logo demo">
                     <i class='bx bx-calendar-event'></i>
                 </span>
@@ -16,10 +16,11 @@
             </a>
         </div>
 
+        <!-- Botón de menú hamburguesa -->
         <div class="navbar-nav align-items-center me-3 me-xl-0 d-xl-none">
-            <a class="nav-item nav-link px-3 py-2 me-xl-4 layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none" href="javascript:void(0)">
-    <i class="bx bx-menu bx-sm"></i>
-</a>
+            <a class="nav-link layout-menu-toggle p-2" href="javascript:void(0)">
+                <i class="bx bx-menu bx-sm"></i>
+            </a>
         </div>
 
         <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
@@ -32,15 +33,16 @@
                     </div>
                 </li>
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
-                    <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
-                        data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown"
+                        id="userDropdownToggle">
                         <div class="avatar avatar-online">
                             <img src="{{ auth()->user()->avatar_url }}" alt class="w-px-40 h-auto rounded-circle">
                         </div>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
+                    <ul class="dropdown-menu dropdown-menu-end" id="userDropdownMenu">
                         <li>
-                            <a class="dropdown-item" href="{{ route('profile.edit', auth()->user()) }}">
+                            <!-- SOLO VISUAL - No es clickeable -->
+                            <div class="dropdown-item visual-item">
                                 <div class="d-flex">
                                     <div class="flex-shrink-0 me-3">
                                         <div class="avatar avatar-online">
@@ -53,12 +55,13 @@
                                         <small class="text-muted">{{ auth()->user()->area->area }}</small>
                                     </div>
                                 </div>
-                            </a>
+                            </div>
                         </li>
                         <li>
                             <div class="dropdown-divider"></div>
                         </li>
                         <li>
+                            <!-- ENLACE REAL para editar perfil -->
                             <a class="dropdown-item" href="{{ route('profile.edit', auth()->user()) }}">
                                 <i class="bx bx-user me-2"></i>
                                 <span class="align-middle">Editar Perfil</span>
@@ -68,15 +71,12 @@
                             <div class="dropdown-divider"></div>
                         </li>
                         <li>
+                            <!-- ENLACE REAL para cerrar sesión -->
                             <a class="dropdown-item" href="#"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <i class="bx bx-power-off me-2"></i>
                                 <span class="align-middle">Cerrar Sesión</span>
                             </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                style="display: none;">
-                                @csrf
-                            </form>
                         </li>
                     </ul>
                 </li>
@@ -85,3 +85,34 @@
         </div>
     </div>
 </nav>
+
+<!-- Formulario de logout -->
+<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+    @csrf
+</form>
+
+<script>
+    // Solución para el problema del dropdown que no se abre después de navegar
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdownToggle = document.getElementById('userDropdownToggle');
+        const dropdownMenu = document.getElementById('userDropdownMenu');
+
+        if (dropdownToggle && dropdownMenu) {
+            // Re-inicializar el dropdown de Bootstrap
+            const bsDropdown = new bootstrap.Dropdown(dropdownToggle);
+
+            // Mantener el dropdown abierto cuando se hace clic dentro de él
+            dropdownMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            // Forzar la re-inicialización si hay problemas
+            dropdownToggle.addEventListener('click', function(e) {
+                // Solo si el dropdown no está mostrándose
+                if (!dropdownMenu.classList.contains('show')) {
+                    bsDropdown.show();
+                }
+            });
+        }
+    });
+</script>
