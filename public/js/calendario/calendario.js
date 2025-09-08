@@ -331,8 +331,21 @@ document.addEventListener("DOMContentLoaded", function () {
             minute: '2-digit',
             hour12: false // o true si quieres 12h con AM/PM
         },
-        eventClassNames: function ({ event: e }) {
-            return ["fc-event-" + M[e._def.extendedProps.estatus]];
+        eventClassNames: function ({ event }) {
+            let clases = [];
+            // 1. Fondo según tipo
+            if (event.extendedProps.tipo === "audiencia") {
+                clases.push("bg-audiencia");
+            } else if (event.extendedProps.tipo === "evento") {
+                clases.push("bg-evento");
+            }
+            // 2. Texto según estatus (warning, primary, success, danger, info)
+            const estatus = (event.extendedProps.estatus || "").toLowerCase();
+            if (M[estatus]) {
+                clases.push(`text-${M[estatus]}`);
+            }
+
+            return clases;
         },
         eventDidMount: function ({ event, el }) {
             // le asignamos el title al elemento DOM del evento
