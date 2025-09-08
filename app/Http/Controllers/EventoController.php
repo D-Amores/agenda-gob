@@ -29,9 +29,9 @@ class EventoController extends Controller
      */
     public function create()
     {
-        $estatusLista = Estatus::all();
+        $estatus = Estatus::statusProgramado();
         $vestimentaLista = Vestimenta::all();
-        return view('evento.registro', compact('estatusLista', 'vestimentaLista'));
+        return view('evento.registro', compact('estatus', 'vestimentaLista'));
     }
     /**
      * Store a newly created resource in storage.
@@ -70,7 +70,7 @@ class EventoController extends Controller
                 'hora_evento' => $validated['hora_evento'],
                 'hora_fin_evento' => $validated['hora_fin_evento'],
                 'vestimenta_id' => $validated['vestimenta'], // mapeo del input al campo
-                'estatus_id' => $validated['estatus_id'],
+                'estatus_id' => Estatus::statusProgramado()->id,
                 'descripcion' => $validated['descripcion'] ?? null,
                 'area_id' => Auth::user()->area_id,
                 'user_id' => Auth::id(),
@@ -104,9 +104,9 @@ class EventoController extends Controller
      */
     public function edit(Evento $evento)
     {
-        $estatusLista = Estatus::all();
+        $estatus = Estatus::statusWithOutProgramado();
         $evento->fecha_evento = \Carbon\Carbon::parse($evento->fecha_evento)->format('Y-m-d');
-        return view('evento.editar', compact('evento', 'estatusLista'));
+        return view('evento.editar', compact('evento', 'estatus'));
     }
     /**
      * Update the specified resource in storage.
@@ -171,7 +171,10 @@ class EventoController extends Controller
             $response['message'] = 'No autorizado.';
             return response()->json($response, 403);
         }
-
+        if (Evento::isEventoPast($evento->fecha_evento, $evento->hora_fin_evento)) {
+            $response['message'] = 'No se puede eliminar un evento pasado.';
+            return response()->json($response, 403);
+        }
         try {
             $evento->delete();
             $response['ok'] = true;
