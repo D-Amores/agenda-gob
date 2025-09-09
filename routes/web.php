@@ -12,6 +12,7 @@ use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\ChangeEstatusController;
+use App\Http\Controllers\PdfController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,8 @@ use App\Http\Controllers\ChangeEstatusController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/calendario/pdf', [PdfController::class, 'download'])->name('calendario.pdf');
 
 Route::get('/', function () {
     return redirect()->route('login');
