@@ -80,4 +80,9 @@ class Audiencia extends Model
     {
         return $this->belongsTo(Area::class);
     }
+
+    public function vestimenta()
+    {
+        return $this->belongsTo(Vestimenta::class);
+    }
 }
