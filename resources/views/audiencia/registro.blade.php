@@ -17,7 +17,7 @@
 @section('content')
     <div class="row justify-content-center">
         <!-- Validation Wizard -->
-        <div class="col-8 mb-4">
+        <div class="col-12 mb-4">
             <small class="text-light fw-semibold">Audiencia</small>
             <div id="wizard-validation" class="bs-stepper mt-2">
                 <div class="bs-stepper-header">
