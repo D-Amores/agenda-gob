@@ -137,12 +137,23 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Versión minimalista pero elegante */
+/* Versión con degradados más sutiles */
 .bg-audiencia {
-    background-color: #e9ffea !important;
-    /* Azul pastel */
+    border-left: 9px solid #46cf4d !important;
+    border-radius: 5px;
 }
 
 .bg-evento {
-    background-color: #fff7e9 !important;
-    /* Verde pastel */
+    border-left: 9px solid #ff9c08 !important;
+    border-radius: 5px;
+}
+
+/* Efecto hover mejorado */
+.bg-audiencia:hover {
+    background: #c5e1a5 !important;
+}
+
+.bg-evento:hover {
+    background: #ffe082 !important;
 }
