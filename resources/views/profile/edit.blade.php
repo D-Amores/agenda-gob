@@ -31,12 +31,17 @@
                             <div class="row">
                                 <!-- Avatar Section -->
                                 <div class="col-12 mb-4">
-                                    <div class="d-flex align-items-start align-items-sm-center gap-4 p-3 border rounded">
-                                        <img src="{{ $user->avatar_url }}" alt="user-avatar" class="d-block rounded shadow-sm" 
-                                             height="120" width="120" id="uploadedAvatar" />
-                                        <div class="button-wrapper">
+                                    <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-start justify-content-center justify-content-sm-start gap-4 p-3 border rounded">
+                                        <img src="{{ $user->avatar_url }}" alt="user-avatar" 
+                                            class="d-block rounded shadow-sm w-50 w-sm-auto" 
+                                            style="max-width: 120px; height: auto;" id="uploadedAvatar" />
+
+                                        <div class="button-wrapper text-center text-sm-start">
                                             <h6 class="mb-2">Foto de Perfil</h6>
-                                            <p class="text-muted mb-3">Sube una nueva foto de perfil. Se recomienda una imagen cuadrada de al menos 300x300 píxeles.</p>
+                                            <p class="text-muted mb-3">
+                                                Sube una nueva foto de perfil. Se recomienda una imagen cuadrada de al menos 300x300 píxeles.
+                                            </p>
+
                                             <label for="upload" class="btn btn-primary me-2 mb-2" tabindex="0">
                                                 <span class="d-none d-sm-block">
                                                     <i class="bx bx-upload me-1"></i>
@@ -56,6 +61,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
 
                             <!-- Profile Form -->
@@ -89,8 +95,8 @@
                                     </div>
                                 </div>
                                 
-                                <div class="mt-4">
-                                    <button type="submit" id="btnSubmit" class="btn btn-primary me-2">
+                                <div class="mt-4 d-flex flex-column flex-sm-row gap-2">
+                                    <button type="submit" id="btnSubmit" class="btn btn-primary">
                                         <i class="bx bx-check me-1"></i>
                                         Guardar Cambios
                                     </button>
@@ -173,8 +179,8 @@
                                     </div>
                                 </div>
                                 
-                                <div class="mt-4">
-                                    <button type="submit" class="btn btn-primary me-2" id="changePasswordBtn">
+                                <div class="mt-4 d-flex flex-column flex-sm-row gap-2">
+                                    <button type="submit" class="btn btn-primary" id="changePasswordBtn">
                                         <span class="spinner-border spinner-border-sm me-2 d-none" id="passwordSpinner"></span>
                                         <i class="bx bx-key me-1"></i>
                                         Cambiar Contraseña
@@ -204,9 +210,9 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                    </div>
+                </div>
         </div>
-    </div>
 </div>
 
 

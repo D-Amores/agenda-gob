@@ -17,9 +17,9 @@
         </div>
 
         <!-- Botón de menú hamburguesa -->
-        <div class="navbar-nav align-items-center me-3 me-xl-0 d-xl-none">
-            <a class="nav-link layout-menu-toggle p-2" href="javascript:void(0)">
-                <i class="bx bx-menu bx-sm"></i>
+        <div class="navbar-nav align-items-center d-xl-none">
+            <a class="nav-link layout-menu-toggle" href="javascript:void(0)">
+                <i class="bx bx-menu bx-md"></i>
             </a>
         </div>
 
