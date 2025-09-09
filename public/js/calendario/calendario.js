@@ -175,15 +175,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Eliminar solo si no ha pasado
             if (!eventoFinalizado) {
-                
-                let estatusActual = (event.extendedProps.estatus || "").toLowerCase();
-                
-                if(estatusActual !== "atendido") {
-            
-                }
-                
 
-                if(estatusActual === "atendido" || estatusActual === "cancelado") {
+                let estatusActual = (event.extendedProps.estatus || "").toLowerCase();
+
+                if (estatusActual !== "atendido") {
+
+                }
+
+
+                if (estatusActual === "atendido" || estatusActual === "cancelado") {
                     btnCambiarEstatus.disabled = true;
                 } else {
                     btnEliminar.classList.remove("d-none");
@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     formEnviar.action = urlEliminar;
                     btnEliminar.dataset.id = id;
                     btnEliminar.dataset.tipo = tipo;
-                    
+
                     btnCambiarEstatus.dataset.id = id;
                     btnCambiarEstatus.dataset.tipo = tipo;
                     btnCambiarEstatus.dataset.estatus = listaEstatus.find(e => e.estatus.toLowerCase() === "atendido")?.id || "";
@@ -342,7 +342,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // 2. Texto según estatus (warning, primary, success, danger, info)
             const estatus = (event.extendedProps.estatus || "").toLowerCase();
             if (M[estatus]) {
-                clases.push(`text-${M[estatus]}`);
+                clases.push(`fc-event-${M[estatus]}`);
             }
 
             return clases;

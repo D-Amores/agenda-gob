@@ -103,21 +103,21 @@
                     </div>
                 </div>
 
-<!-- Botón para abrir modal de PDF - Diseño Mejorado -->
-<div class="p-4 border-top">
-    <div class="mb-2">
-        <small class="text-small text-muted text-uppercase align-middle fw-bold">Exportar Reportes</small>
-    </div>
-    <button type="button" class="btn btn-danger btn-sm w-100 shadow-sm" data-bs-toggle="modal" data-bs-target="#pdfModal"
-            style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-                   border: none;
-                   border-radius: 8px;
-                   padding: 10px;
-                   transition: all 0.3s ease;">
-        <i class='bx bxs-file-pdf fs-5 align-middle'></i>
-        <span class="align-middle fw-semibold ms-1">Generar PDF</span>
-    </button>
-</div>
+            <!-- Botón para abrir modal de PDF - Diseño Mejorado -->
+            <div class="p-4 border-top">
+                <div class="mb-2">
+                    <small class="text-small text-muted text-uppercase align-middle fw-bold">Exportar Reportes</small>
+                </div>
+                <button type="button" class="btn btn-danger btn-sm w-100 shadow-sm" data-bs-toggle="modal" data-bs-target="#pdfModal"
+                        style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+                            border: none;
+                            border-radius: 8px;
+                            padding: 10px;
+                            transition: all 0.3s ease;">
+                    <i class='bx bxs-file-pdf fs-5 align-middle'></i>
+                    <span class="align-middle fw-semibold ms-1">Generar PDF</span>
+                </button>
+            </div>
 
             </div>
             <!-- /Calendar Sidebar -->
@@ -333,46 +333,46 @@
     </script>
 
     <script>
-function generatePDF() {
-    // Animación de carga en el botón
-    const generateBtn = document.querySelector('.modal-footer .btn-danger');
-    const originalText = generateBtn.innerHTML;
+    function generatePDF() {
+        // Animación de carga en el botón
+        const generateBtn = document.querySelector('.modal-footer .btn-danger');
+        const originalText = generateBtn.innerHTML;
 
-    generateBtn.innerHTML = '<i class="bx bx-loader bx-spin me-1"></i> Generando...';
-    generateBtn.disabled = true;
+        generateBtn.innerHTML = '<i class="bx bx-loader bx-spin me-1"></i> Generando...';
+        generateBtn.disabled = true;
 
-    // Pequeña pausa para que se vea la animación
-    setTimeout(() => {
-        document.getElementById('pdfForm').submit();
-
-        // Restaurar botón después de 1 segundo
+        // Pequeña pausa para que se vea la animación
         setTimeout(() => {
-            generateBtn.innerHTML = originalText;
-            generateBtn.disabled = false;
+            document.getElementById('pdfForm').submit();
 
-            // Cerrar modal suavemente
-            const modal = bootstrap.Modal.getInstance(document.getElementById('pdfModal'));
-            modal.hide();
-        }, 1000);
+            // Restaurar botón después de 1 segundo
+            setTimeout(() => {
+                generateBtn.innerHTML = originalText;
+                generateBtn.disabled = false;
 
-    }, 500);
-}
+                // Cerrar modal suavemente
+                const modal = bootstrap.Modal.getInstance(document.getElementById('pdfModal'));
+                modal.hide();
+            }, 1000);
 
-// Efecto hover para el botón del sidebar
-document.addEventListener('DOMContentLoaded', function() {
-    const pdfButton = document.querySelector('.sidebar-pdf-btn');
-    if (pdfButton) {
-        pdfButton.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px)';
-            this.style.boxShadow = '0 4px 12px rgba(220, 53, 69, 0.3)';
-        });
-
-        pdfButton.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-            this.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.1)';
-        });
+        }, 500);
     }
-});
+
+    // Efecto hover para el botón del sidebar
+    document.addEventListener('DOMContentLoaded', function() {
+        const pdfButton = document.querySelector('.sidebar-pdf-btn');
+        if (pdfButton) {
+            pdfButton.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 4px 12px rgba(220, 53, 69, 0.3)';
+            });
+
+            pdfButton.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.1)';
+            });
+        }
+    });
     </script>
 
 
