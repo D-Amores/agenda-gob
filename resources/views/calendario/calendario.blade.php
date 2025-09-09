@@ -103,6 +103,51 @@
                     </div>
                 </div>
 
+                <!-- Sección para generar PDF -->
+                <div class="p-4 border-top">
+                    <div class="mb-3">
+                        <small class="text-small text-muted text-uppercase align-middle">Generar Reporte PDF</small>
+                    </div>
+                    
+                    <form action="{{ route('calendario.pdf') }}" method="GET" target="_blank">
+                        <!-- Selección de tipo de contenido -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Incluir en el reporte:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="incluir_audiencias" name="incluir_audiencias" value="1" checked>
+                                <label class="form-check-label" for="incluir_audiencias">Audiencias</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="incluir_eventos" name="incluir_eventos" value="1" checked>
+                                <label class="form-check-label" for="incluir_eventos">Eventos</label>
+                            </div>
+                        </div>
+
+                        <!-- Selección de rango de fechas -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Rango de fechas:</label>
+                            <div class="row">
+                                <div class="col-12 mb-2">
+                                    <label class="form-label text-muted small">Desde:</label>
+                                    <input type="date" class="form-control form-control-sm" name="fecha_inicio" id="fecha_inicio">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label text-muted small">Hasta:</label>
+                                    <input type="date" class="form-control form-control-sm" name="fecha_fin" id="fecha_fin">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botón para generar PDF -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-outline-info btn-sm">
+                                <i class='bx bxs-file-pdf'></i>
+                                <span class="align-middle">Generar PDF</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
             </div>
             <!-- /Calendar Sidebar -->
 
