@@ -2,3 +2,5 @@
 seeders/*.php
 !seeders/DatabaseSeeder.php
 !seeders/PermisoSeeder.php
+!seeders/VestimentaSeeder.php
+!seeders/EstatusSeeder.php

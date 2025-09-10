@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Audiencia extends Model
 {
@@ -50,6 +51,19 @@ class Audiencia extends Model
         return $query->exists(); // true si hay conflicto, false si no
     }
 
+    public static function isAudienciaPast($fechaAudiencia, $horaFinAudiencia): bool
+    {
+        if (empty($fechaAudiencia) || empty($horaFinAudiencia)) {
+            return false; // evita errores si faltan datos
+        }
+
+        try {
+            $fechaHoraFin = Carbon::parse("{$fechaAudiencia} {$horaFinAudiencia}");
+            return $fechaHoraFin->isPast();
+        } catch (\Exception $e) {
+            return false; // en caso de fecha/hora inválida
+        }
+    }
 
     // Relaciones
     public function estatus()
@@ -65,5 +79,10 @@ class Audiencia extends Model
     public function area()
     {
         return $this->belongsTo(Area::class);
+    }
+
+    public function vestimenta()
+    {
+        return $this->belongsTo(Vestimenta::class);
     }
 }

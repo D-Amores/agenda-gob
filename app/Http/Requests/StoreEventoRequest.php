@@ -31,7 +31,7 @@ class StoreEventoRequest extends FormRequest
             'vestimenta'           => ['required', 'exists:vestimentas,id'],
             'hora_evento'          => 'required|date_format:H:i',
             'hora_fin_evento'      => 'required|date_format:H:i|after:hora_evento',
-            'estatus_id'           => 'required|exists:estatus,id',
+            //'estatus_id'           => 'required|exists:estatus,id',
             'descripcion'          => 'nullable|string|max:500',
         ];
     }

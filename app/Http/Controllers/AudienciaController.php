@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Estatus;
 use App\Models\Audiencia;
 use Illuminate\Support\Facades\Auth;
-use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
@@ -33,8 +32,8 @@ class AudienciaController extends Controller
      */
     public function create()
     {
-        $estatusLista = Estatus::all();
-        return view('audiencia.registro', compact('estatusLista'));
+        $estatus = Estatus::statusProgramado();
+        return view('audiencia.registro', compact('estatus'));
     }
 
     /**
@@ -56,7 +55,7 @@ class AudienciaController extends Controller
             'procedencia'          => 'nullable|string|max:255',
             'hora_audiencia'       => 'required|date_format:H:i',
             'hora_fin_audiencia'   => 'required|date_format:H:i|after:hora_audiencia',
-            'estatus_id'           => 'required|exists:estatus,id',
+            //'estatus_id'           => 'required|exists:estatus,id',
             'descripcion'          => 'nullable|string|max:500',
         ]);
 
@@ -91,7 +90,7 @@ class AudienciaController extends Controller
                 'hora_audiencia'    => $validated['hora_audiencia'],
                 'hora_fin_audiencia' => $validated['hora_fin_audiencia'],
                 'area_id'           => Auth::user()->area_id,
-                'estatus_id'        => $validated['estatus_id'],
+                'estatus_id'        => Estatus::statusProgramado()->id,
                 'descripcion'       => $validated['descripcion'] ?? null,
                 'user_id'           => Auth::id(),
             ]);
@@ -126,7 +125,16 @@ class AudienciaController extends Controller
     public function edit(Audiencia $audiencia)
     {
         $this->authorize('update', $audiencia);
-        $estatusLista = Estatus::all();
+        $estatusLista = Estatus::statusWithOutProgramado();
+        // Revisar si la audiencia ya pasó usando el método del modelo
+        $audienciaPasada = Audiencia::isAudienciaPast($audiencia->fecha_audiencia, $audiencia->hora_fin_audiencia);
+
+        // Si ya pasó, filtrar el estatus "programado"
+        if ($audienciaPasada) {
+            $estatusLista = $estatusLista->filter(function($estatus) {
+                return strtolower($estatus->estatus) !== 'programado';
+            });
+        }
         $audiencia->fecha_audiencia = \Carbon\Carbon::parse($audiencia->fecha_audiencia)->format('Y-m-d');
         return view('audiencia.editar', compact('audiencia', 'estatusLista'));
     }
@@ -211,11 +219,14 @@ class AudienciaController extends Controller
             $response['message'] = 'No autorizado.';
             return response()->json($response, 403);
         }
+        if (Audiencia::isAudienciaPast($audiencia->fecha_audiencia, $audiencia->hora_fin_audiencia)) {
+            $response['message'] = 'No se puede eliminar una audiencia pasada.';
+            return response()->json($response, 403);
+        }
         try {
             $audiencia->delete();
             $response['ok'] = true;
             $response['message'] = 'Audiencia eliminada correctamente.';
-            $response['id'] = $audiencia->id;
             return response()->json($response);
         } catch (\Throwable $e) {
             report($e);

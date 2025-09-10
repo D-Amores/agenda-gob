@@ -111,10 +111,10 @@
                             <select class="form-select" id="estatus_id" name="estatus_id">
                                 <option value="">Seleccione un estatus</option>
                                 {{-- Aquí se debe iterar estatusList si está disponible --}}
-                                @foreach ($estatusLista as $estatus)
-                                    <option value="{{ $estatus->id }}"
-                                        {{ old('estatus_id', $evento->estatus_id) == $estatus->id ? 'selected' : '' }}>
-                                        {{ $estatus->estatus }}
+                                @foreach ($estatus as $status)
+                                    <option value="{{ $status->id }}"
+                                        {{ old('estatus_id', $evento->estatus_id) == $status->id ? 'selected' : '' }}>
+                                        {{ $status->estatus }}
                                     </option>
                                 @endforeach
                             </select>

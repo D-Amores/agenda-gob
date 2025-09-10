@@ -15,7 +15,7 @@
 @endsection
 
 @section('content')
-    <div class="row">
+    <div class="row justify-content-center">
         <!-- Validation Wizard -->
         <div class="col-12 mb-4">
             <small class="text-light fw-semibold">Evento</small>
@@ -50,7 +50,7 @@
                             <span class="bs-stepper-circle">3</span>
                             <span class="bs-stepper-label mt-1">
                                 <span class="bs-stepper-title">Información adicional</span>
-                                <span class="bs-stepper-subtitle">Seleccione un estatus e ingrese una descripción
+                                <span class="bs-stepper-subtitle">Agrega una descripción
                                     opcional.</span>
                             </span>
                         </button>
@@ -86,7 +86,7 @@
                                         minlength="10" />
                                     <div class="invalid-feedback">Debe tener al menos 10 caracteres.</div>
                                 </div>
-                                <div class="col-sm-6">
+                                <div class="col-sm-3">
                                     <label class="form-label" for="formValidationFecha">Fecha</label>
                                     <input type="text" name="formValidationFecha" id="formValidationFecha"
                                         class="form-control" aria-label="Fecha" required />
@@ -111,11 +111,10 @@
                                 <div class="col-sm-6">
                                     <label class="form-label" for="vestimenta">Tipo de vestimenta</label>
                                     <select id="vestimenta" name="vestimenta" class="form-control" required>
-                                        <option value="" disabled selected>Seleccione un tipo</option>
-                                        <option value="1">Formal</option>
-                                        <option value="2">Casual</option>
-                                        <option value="3">Uniforme</option>
-                                        <option value="4">Deportivo</option>
+                                        @foreach ($vestimentaLista as $vestimenta)
+                                            <option value="{{ $vestimenta->id }}">
+                                                {{ ucfirst(strtolower($vestimenta->tipo)) }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
 
@@ -159,13 +158,9 @@
 
                             <div class="row g-3">
                                 <!-- Estatus -->
-                                <div class="col-sm-6">
+                                <div class="col-sm-2">
                                     <label class="form-label" for="estatus_id">Estatus</label>
-                                    <select class="form-select" id="estatus_id" name="estatus_id" required>
-                                        @foreach ($estatusLista as $estatus)
-                                            <option value="{{ $estatus->id }}">
-                                                {{ ucfirst(strtolower($estatus->estatus)) }}</option>
-                                        @endforeach
+                                    <input class="form-control" id="estatus_id" name="estatus_id" value="{{ ucfirst(strtolower($estatus->estatus)) }}" readonly>
                                     </select>
                                 </div>
 

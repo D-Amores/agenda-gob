@@ -134,7 +134,7 @@
 
 
   <!-- Drag Target Area To SlideIn Menu On Small Screens -->
-  <div class="drag-target"></div>
+  <!--<div class="drag-target"></div>-->
 
 
 
