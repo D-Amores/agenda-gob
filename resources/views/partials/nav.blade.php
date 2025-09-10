@@ -29,8 +29,7 @@
                 <li class="nav-item navbar-dropdown dropdown-user dropdown me-3">
                     <div class="flex-grow-1 user-info">
                         <span class="fw-semibold d-block">{{ auth()->user()->username }}</span>
-                        <small class="text-muted d-block text-truncate"
-                            style="max-width: 180px;">{{ auth()->user()->area->area }}</small>
+                        <small class="text-muted d-block">{{ auth()->user()->area->area }}</small>
                     </div>
                 </li>
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
@@ -53,8 +52,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <span class="fw-semibold d-block">{{ auth()->user()->username }}</span>
-                                        <small class="text-muted text-truncate d-block"
-                                            style="max-width: 180px;">{{ auth()->user()->area->area }}</small>
+                                        <small class="text-muted">{{ auth()->user()->area->area }}</small>
                                     </div>
                                 </div>
                             </div>
