@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -107,10 +108,25 @@
             white-space: nowrap;
         }
 
-        .badge-success { background-color: #28a745; color: white; }
-        .badge-warning { background-color: #ffc107; color: #212529; }
-        .badge-danger { background-color: #dc3545; color: white; }
-        .badge-secondary { background-color: #6c757d; color: white; }
+        .badge-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .badge-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .badge-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .badge-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
 
         .footer {
             margin-top: 20px;
@@ -139,11 +155,25 @@
         }
 
         /* Anchuras de columnas optimizadas */
-        .col-xsmall { width: 7%; }
-        .col-small { width: 9%; }
-        .col-medium { width: 15%; }
-        .col-large { width: 20%; }
-        .col-xlarge { width: 25%; }
+        .col-xsmall {
+            width: 7%;
+        }
+
+        .col-small {
+            width: 9%;
+        }
+
+        .col-medium {
+            width: 15%;
+        }
+
+        .col-large {
+            width: 20%;
+        }
+
+        .col-xlarge {
+            width: 25%;
+        }
 
         /* Altura de filas flexible */
         tr {
@@ -166,7 +196,8 @@
                 page-break-after: auto;
             }
 
-            td, th {
+            td,
+            th {
                 page-break-inside: avoid;
             }
         }
@@ -177,7 +208,7 @@
     <!-- Encabezado -->
     <div class="header">
         <h1>Calendario de Actividades</h1>
-        <p class="subtitle">Secretaría Anticorrupción y Buen Gobierno</p>
+        <p class="subtitle">{{ $areaUsuario ?? 'Área no especificada' }}</p>
     </div>
 
     <!-- Información del reporte -->
@@ -185,15 +216,21 @@
         <strong>Generado:</strong> {{ date('d/m/Y H:i') }} |
         <strong>Período:</strong>
         @if ($fechaInicio || $fechaFin)
-            @if ($fechaInicio){{ \Carbon\Carbon::parse($fechaInicio)->format('d/m/Y') }}@endif
-            @if ($fechaFin)@if ($fechaInicio)-@else>@endif{{ \Carbon\Carbon::parse($fechaFin)->format('d/m/Y') }}@endif
+            @if ($fechaInicio)
+                {{ \Carbon\Carbon::parse($fechaInicio)->format('d/m/Y') }}
+            @endif
+            @if ($fechaFin)
+                @if ($fechaInicio)
+                -@else>
+                @endif{{ \Carbon\Carbon::parse($fechaFin)->format('d/m/Y') }}
+            @endif
         @else
             Todas las fechas
         @endif
     </div>
 
     <!-- Sección de Audiencias -->
-    @if($incluirAudiencias && $audiencias->count() > 0)
+    @if ($incluirAudiencias && $audiencias->count() > 0)
         <div class="section-title">AUDIENCIAS ({{ $audiencias->count() }})</div>
         <table>
             <thead>
@@ -209,14 +246,17 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($audiencias as $audiencia)
+                @foreach ($audiencias as $audiencia)
                     <tr>
                         <td class="multi-line"><strong>{{ $audiencia->nombre }}</strong></td>
                         <td class="multi-line">{{ $audiencia->lugar }}</td>
                         <td class="multi-line">{{ $audiencia->asunto_audiencia }}</td>
-                        <td class="compact-cell">{{ \Carbon\Carbon::parse($audiencia->fecha_audiencia)->format('d/m/Y') }}</td>
-                        <td class="compact-cell">{{ \Carbon\Carbon::parse($audiencia->hora_audiencia)->format('H:i') }}</td>
-                        <td class="compact-cell">{{ \Carbon\Carbon::parse($audiencia->hora_fin_audiencia)->format('H:i') }}</td>
+                        <td class="compact-cell">
+                            {{ \Carbon\Carbon::parse($audiencia->fecha_audiencia)->format('d/m/Y') }}</td>
+                        <td class="compact-cell">{{ \Carbon\Carbon::parse($audiencia->hora_audiencia)->format('H:i') }}
+                        </td>
+                        <td class="compact-cell">
+                            {{ \Carbon\Carbon::parse($audiencia->hora_fin_audiencia)->format('H:i') }}</td>
                         <td class="compact-cell">
                             @php
                                 $inicio = \Carbon\Carbon::parse($audiencia->hora_audiencia);
@@ -228,9 +268,13 @@
                             @php
                                 $estatus = strtolower($audiencia->estatus->estatus);
                                 $estatusClass = 'badge-secondary';
-                                if(strpos($estatus, 'confirm') !== false) $estatusClass = 'badge-success';
-                                elseif(strpos($estatus, 'pendiente') !== false) $estatusClass = 'badge-warning';
-                                elseif(strpos($estatus, 'cancel') !== false) $estatusClass = 'badge-danger';
+                                if (strpos($estatus, 'confirm') !== false) {
+                                    $estatusClass = 'badge-success';
+                                } elseif (strpos($estatus, 'pendiente') !== false) {
+                                    $estatusClass = 'badge-warning';
+                                } elseif (strpos($estatus, 'cancel') !== false) {
+                                    $estatusClass = 'badge-danger';
+                                }
                             @endphp
                             <span class="badge {{ $estatusClass }}">{{ $audiencia->estatus->estatus }}</span>
                         </td>
@@ -244,7 +288,7 @@
     @endif
 
     <!-- Sección de Eventos -->
-    @if($incluirEventos && $eventos->count() > 0)
+    @if ($incluirEventos && $eventos->count() > 0)
         <div class="section-title">EVENTOS ({{ $eventos->count() }})</div>
         <table>
             <thead>
@@ -260,20 +304,22 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($eventos as $evento)
+                @foreach ($eventos as $evento)
                     <tr>
                         <td class="multi-line"><strong>{{ $evento->nombre }}</strong></td>
                         <td class="multi-line">{{ $evento->lugar }}</td>
                         <td class="compact-cell">
-                            @if($evento->asistencia_de_gobernador == 1)
+                            @if ($evento->asistencia_de_gobernador == 1)
                                 <span class="badge badge-success">Sí</span>
                             @else
                                 <span class="badge badge-secondary">No</span>
                             @endif
                         </td>
-                        <td class="compact-cell">{{ \Carbon\Carbon::parse($evento->fecha_evento)->format('d/m/Y') }}</td>
+                        <td class="compact-cell">{{ \Carbon\Carbon::parse($evento->fecha_evento)->format('d/m/Y') }}
+                        </td>
                         <td class="compact-cell">{{ \Carbon\Carbon::parse($evento->hora_evento)->format('H:i') }}</td>
-                        <td class="compact-cell">{{ \Carbon\Carbon::parse($evento->hora_fin_evento)->format('H:i') }}</td>
+                        <td class="compact-cell">{{ \Carbon\Carbon::parse($evento->hora_fin_evento)->format('H:i') }}
+                        </td>
                         <td class="compact-cell">
                             @php
                                 $inicio = \Carbon\Carbon::parse($evento->hora_evento);
@@ -285,9 +331,13 @@
                             @php
                                 $estatus = strtolower($evento->estatus->estatus);
                                 $estatusClass = 'badge-secondary';
-                                if(strpos($estatus, 'confirm') !== false) $estatusClass = 'badge-success';
-                                elseif(strpos($estatus, 'pendiente') !== false) $estatusClass = 'badge-warning';
-                                elseif(strpos($estatus, 'cancel') !== false) $estatusClass = 'badge-danger';
+                                if (strpos($estatus, 'confirm') !== false) {
+                                    $estatusClass = 'badge-success';
+                                } elseif (strpos($estatus, 'pendiente') !== false) {
+                                    $estatusClass = 'badge-warning';
+                                } elseif (strpos($estatus, 'cancel') !== false) {
+                                    $estatusClass = 'badge-danger';
+                                }
                             @endphp
                             <span class="badge {{ $estatusClass }}">{{ $evento->estatus->estatus }}</span>
                         </td>
@@ -315,4 +365,5 @@
         Sistema de Gestión de Agenda y Eventos • {{ date('d/m/Y') }}
     </div>
 </body>
+
 </html>

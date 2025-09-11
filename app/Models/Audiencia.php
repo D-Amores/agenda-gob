@@ -65,6 +65,27 @@ class Audiencia extends Model
         }
     }
 
+    /**
+     * Verifica si la audiencia debe ser marcada como cancelada automáticamente
+     * (pasó 1 hora después de su finalización y sigue en estatus programado/reprogramado)
+     */
+    public function debeSerCancelada(): bool
+    {
+        try {
+            $now = Carbon::now();
+            $horaFinalizacion = Carbon::parse("{$this->fecha_audiencia} {$this->hora_fin_audiencia}");
+            $tiempoLimite = $horaFinalizacion->addHour();
+
+            // Solo si está en estatus programado o reprogramado
+            $estatusValidos = ['Programado', 'Reprogramado'];
+            $estatusActual = $this->estatus->estatus ?? '';
+
+            return $now->greaterThan($tiempoLimite) && in_array($estatusActual, $estatusValidos);
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     // Relaciones
     public function estatus()
     {
