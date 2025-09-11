@@ -13,6 +13,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\ChangeEstatusController;
 use App\Http\Controllers\PdfController;
+use App\Http\Controllers\Admin\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,12 +39,12 @@ Route::middleware('guest')->group(function () {
 
     // Register routes
     Route::get('/register', [RegisterController::class, 'index'])->name('register');
-    Route::post('/register', [RegisterController::class, 'register'])
-        ->middleware('throttle.registration')
-        ->name('register.submit');
+    //Route::post('/register', [RegisterController::class, 'register'])
+    //    ->middleware('throttle.registration')
+    //   ->name('register.submit');
     
     // Registration verification routes
-    Route::get('/registration/pending', [EmailVerificationRegistrationController::class, 'pending'])->name('registration.pending');
+    //Route::get('/registration/pending', [EmailVerificationRegistrationController::class, 'pending'])->name('registration.pending');
     Route::get('/registration/verify/{token}', [EmailVerificationRegistrationController::class, 'verify'])->name('registration.verify');
     
     // Password reset routes
@@ -80,4 +81,21 @@ Route::middleware(['auth'])->group(function () {
 
     // Cambiar estatus
     Route::put('/change-estatus/{model}/{id}', [ChangeEstatusController::class, 'update'])->name('estatus.update');
+
+    // Administración (solo para admins)
+    Route::resource('users', AdminController::class)->middleware('role:admin')->only(['index', 'store', 'update']);
+    // API protegida solo para admins
+    Route::middleware(['auth', 'role:admin'])->group(function () {
+        Route::post('/users/users-api', [AdminController::class, 'users_api'])->name('users.api');
+    });
+
+    /*
+    Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
+        Route::get('/panel', [AdminController::class, 'panel'])->name('panel');
+        Route::post('/usuarios', [AdminController::class, 'registrarUsuario'])->name('registrar-usuario');
+        Route::get('/usuarios/{usuario}/edit', [AdminController::class, 'editarUsuario'])->name('editar-usuario');
+        Route::put('/usuarios/{usuario}', [AdminController::class, 'actualizarUsuario'])->name('actualizar-usuario');
+        Route::delete('/usuarios/{usuario}', [AdminController::class, 'eliminarUsuario'])->name('eliminar-usuario');
+    });
+    */
 });
