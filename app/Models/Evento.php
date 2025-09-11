@@ -63,6 +63,27 @@ class Evento extends Model
         }
     }
 
+    /**
+     * Verifica si el evento debe ser marcado como cancelado automáticamente
+     * (pasó 1 hora después de su finalización y sigue en estatus programado/reprogramado)
+     */
+    public function debeSerCancelado(): bool
+    {
+        try {
+            $now = Carbon::now();
+            $horaFinalizacion = Carbon::parse("{$this->fecha_evento} {$this->hora_fin_evento}");
+            $tiempoLimite = $horaFinalizacion->addHour();
+
+            // Solo si está en estatus programado o reprogramado
+            $estatusValidos = ['Programado', 'Reprogramado'];
+            $estatusActual = $this->estatus->estatus ?? '';
+
+            return $now->greaterThan($tiempoLimite) && in_array($estatusActual, $estatusValidos);
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

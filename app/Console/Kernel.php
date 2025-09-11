@@ -15,7 +15,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+                // Comando para cambiar estatus de eventos/audiencias vencidos
+        $schedule->command('eventos:cambiar-estatus-vencidos')
+                 ->everyThirtyMinutes()
+                 ->withoutOverlapping()
+                 ->runInBackground();
     }
 
     /**
