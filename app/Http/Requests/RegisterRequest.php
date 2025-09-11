@@ -24,6 +24,7 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         return [
+            'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'min:3', 'max:255', 'unique:users', 'regex:/^[a-zA-Z0-9._-]+$/'],
             'email' => ['required', 'string', 'email:rfc,dns', 'max:255', 'unique:users'],
             'area_id' => ['required', 'exists:c_area,id'],

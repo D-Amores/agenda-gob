@@ -88,7 +88,7 @@ class EmailVerificationRegistrationController extends Controller
 
             // Para acceso directo desde enlaces, mostrar la vista de verificación con éxito
             return view('auth.email-verification', [
-                'success' => true,
+                'ok' => true,
                 'message' => 'Email verificado exitosamente. Hemos enviado tu contraseña a tu correo electrónico.',
                 'email' => $user->email,
                 'redirect_url' => route('login'),
