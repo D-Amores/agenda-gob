@@ -164,7 +164,9 @@ document.getElementById('custom-cancel').addEventListener('click', function(e){
 
 // fetch helper
 function fetchChartData(filter, params = {}) {
-    let url = `/dashboard/chart-data?filter=${encodeURIComponent(filter)}`;
+    // Usar la URL configurada desde Laravel o fallback a ruta relativa
+    let baseUrl = window.dashboardConfig?.chartDataUrl || 'dashboard/chart-data';
+    let url = `${baseUrl}?filter=${encodeURIComponent(filter)}`;
     if (params.start) url += `&start=${encodeURIComponent(params.start)}`;
     if (params.end) url += `&end=${encodeURIComponent(params.end)}`;
 

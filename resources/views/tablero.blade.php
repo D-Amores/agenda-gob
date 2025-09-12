@@ -111,6 +111,19 @@
         var fechasTodas = @json($fechasTodas);
         var audiencias = @json($audienciasData);
         var eventos = @json($eventosData);
+        // Pasar la URL base para que funcione en cualquier subdirectorio
+        window.dashboardConfig = {
+            baseUrl: '{{ url("/") }}',
+            chartDataUrl: '{{ route("dashboard.chart-data") }}',
+            debug: true // Para debugging
+        };
+        
+        // Debug info
+        if (window.dashboardConfig.debug) {
+            console.log('🔧 Dashboard Config:', window.dashboardConfig);
+            console.log('📍 Current URL:', window.location.href);
+            console.log('🔗 Chart Data URL:', window.dashboardConfig.chartDataUrl);
+        }
     </script>
 
     <script src="{{ asset('js/dashboard/tablero.js') }}"></script>
