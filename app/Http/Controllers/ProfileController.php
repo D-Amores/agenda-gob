@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
-use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
@@ -72,11 +72,11 @@ class ProfileController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateUserRequest  $request
+     * @param  \App\Http\Requests\UpdateProfileRequest  $request
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateUserRequest $request, User $user)
+    public function update(UpdateProfileRequest $request, User $user)
     {
         $response = ['ok' => false, 'message' => '', 'errors' => null];
         if ($user->id !== auth()->id()) {
