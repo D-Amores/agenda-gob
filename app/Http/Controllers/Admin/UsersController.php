@@ -19,7 +19,7 @@ use App\Notifications\VerifyRegistrationEmail;
 use Exception;
 use Illuminate\Http\Request;
 
-class AdminController extends Controller
+class UsersController extends Controller
 {
     public function __construct()
     {
@@ -33,7 +33,7 @@ class AdminController extends Controller
         $response = [
             'ok' => true,
             'icono' => 'success',
-            'mensaje' => 'Éxito'
+            'message' => 'Éxito'
         ];
 
         try {
@@ -43,7 +43,7 @@ class AdminController extends Controller
                 return response()->json([
                     'ok' => false,
                     'icono' => 'warning',
-                    'mensaje' => 'Método inválido o no proporcionado.'
+                    'message' => 'Método inválido o no proporcionado.'
                 ], 400);
             }
 
@@ -59,12 +59,16 @@ class AdminController extends Controller
 
                 case 'get':
                     // Lista de usuarios y registros pendientes
-                    $users = User::all();
-                    $pending = PendingRegistration::all();
+                    $users = User::with('roles', 'area')->get();
+                    $pending = PendingRegistration::with('area')->get();
+                    $roles = Role::all();
+                    $areas = Area::all();
 
                     $response['data'] = [
                         'users' => $users,
                         'pending_registrations' => $pending,
+                        'roles' => $roles,
+                        'areas' => $areas,
                     ];
                     break;
             }
@@ -74,7 +78,7 @@ class AdminController extends Controller
             $response = [
                 'codigo' => -1,
                 'icono' => 'error',
-                'mensaje' => $e->getMessage()
+                'message' => $e->getMessage()
             ];
         }
 
@@ -125,6 +129,8 @@ class AdminController extends Controller
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
+            'phone' => $request->phone,
+            'rol' => strtolower($request->rol),
             'password' => Hash::make($generatedPassword),
             'area_id' => $request->area_id,
             'verification_token' => $verificationToken,
@@ -145,7 +151,7 @@ class AdminController extends Controller
         Notification::route('mail', $request->email)->notify(new VerifyRegistrationEmail($pendingRegistration, $verificationUrl));
 
         $response['ok'] = true;
-        $response['message'] = 'Se envió correctamente el enlace de verificación.';
+        $response['message'] = 'Se envió correctamente el enlace de verificación al Email, el usuario será creado una vez verificado.';
         return response()->json($response, 200);
     }
 
@@ -180,7 +186,37 @@ class AdminController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        //
+        $response = ['ok' => false, 'message' => ''];
+        $status = 422;
+        if (!$user) {
+            $response['message'] = 'Usuario no encontrado.';
+            $status = 404;
+            return response()->json($response, $status);
+        }
+
+        if ($user->id === auth()->id()) {
+            $response['message'] = 'No puedes modificar tu propio usuario aquí.';
+            $status = 403;
+            return response()->json($response, $status);
+        }
+        
+        try{
+            $data = $request->only(['username', 'area_id']);
+            $user->update($data);
+
+            if ($request->filled('rol')) {
+                $user->syncRoles([$request->rol]);
+            }
+            $response['ok'] = true;
+            $response['message'] = 'Usuario actualizado correctamente.';
+            $status = 200;
+    
+        } catch (Exception $e) {
+            Log::error('Error al actualizar usuario: ' . $e->getMessage());
+            $response['message'] = 'Error al actualizar el usuario.';
+            $status = 500;
+        }
+        return response()->json($response, $status);
     }
 
     /**
@@ -191,6 +227,29 @@ class AdminController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        $response = ['ok' => false, 'message' => ''];
+        $status = 200;
+
+        try{
+            if (!$user) {
+                $response['message'] = 'Usuario no encontrado.';
+                $status = 404;
+                return response()->json($response, $status);
+            }
+
+            if ($user->id === auth()->id()) {
+                $response['message'] = 'No puedes eliminar tu propio usuario.';
+                $status = 403;
+                return response()->json($response, $status);
+            }
+            $user->delete();
+            $response['ok'] = true;
+            $response['message'] = 'Usuario eliminado correctamente.';
+        }catch(Exception $e){
+            Log::error('Error al eliminar usuario: ' . $e->getMessage());
+            $response['message'] = 'Error al eliminar el usuario.';
+            $status = 500;
+        }
+        return response()->json($response, $status);
     }
 }

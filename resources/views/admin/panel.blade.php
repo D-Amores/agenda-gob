@@ -25,7 +25,7 @@
             <!-- Tabs -->
             <ul class="nav nav-tabs" id="adminTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active rounded-top" id="pendientes-tab" data-bs-toggle="tab" data-bs-target="#pendientes" type="button" role="tab" aria-controls="pendientes" aria-selected="true">
+                    <button class="nav-link rounded-top" id="pendientes-tab" data-bs-toggle="tab" data-bs-target="#pendientes" type="button" role="tab" aria-controls="pendientes" aria-selected="true">
                         Registros Pendientes
                     </button>
                 </li>
@@ -37,7 +37,7 @@
             </ul>
             <div class="tab-content card mb-3" id="adminTabsContent">
                 <!-- Tabla Registros Pendientes -->
-                <div class="tab-pane fade show active" id="pendientes" role="tabpanel" aria-labelledby="pendientes-tab">
+                <div class="tab-pane fade" id="pendientes" role="tabpanel" aria-labelledby="pendientes-tab">
                     <div class="card-header">
                         <h5 class="mb-0">
                             <i class="bx bx-time-five me-2"></i>
@@ -51,7 +51,9 @@
                                     <tr>
                                         <th>Usuario</th>
                                         <th>Email</th>
+                                        <th>Teléfono</th>
                                         <th>Área</th>
+                                        <th>Rol</th>
                                         <th>Expira</th>
                                         <th class="text-center">Acciones</th>
                                     </tr>
@@ -135,7 +137,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
             <!-- /Tabs -->
 
@@ -144,7 +145,7 @@
 </div>
 
 <!-- Modal Crear Usuario -->
-<div class="modal fade" id="crearUsuarioModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="crearUsuarioModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Centrado y tamaño grande -->
         <div class="modal-content">
             <div class="modal-header">
@@ -154,11 +155,8 @@
                 </h5>
                 <!-- Quité el botón de cierre (X) para que solo se cierre con Cancelar) -->
             </div>
-            <form id="crearUsuarioForm">
-                <div class="modal-body">
-                    <!-- Alertas del modal -->
-                    <div id="modalAlert" class="alert d-none" role="alert"></div>
-
+            <form id="userCreateForm">
+                <div class="modal-body pb-0">
                     <div class="row g-3"> <!-- Espaciado responsivo -->
                         <div class="col-md-6">
                             <label for="name" class="form-label">
@@ -190,7 +188,7 @@
                             <label for="area_id" class="form-label">
                                 <i class="bx bx-buildings me-1"></i> Área
                             </label>
-                            <select class="form-select" id="area_id" name="area_id">
+                            <select class="form-select areaSelect" id="area_id" name="area_id">
                                 <option value="">Seleccionar área...</option>
                             </select>
                         </div>
@@ -198,22 +196,21 @@
                             <label for="rol" class="form-label">
                                 <i class="bx bx-shield me-1"></i> Rol *
                             </label>
-                            <select class="form-select" id="rol" name="rol" required>
+                            <select class="form-select rol-select" id="rol" name="rol" required>
                                 <option value="">Seleccionar rol...</option>
-                                <option value="admin">Administrador</option>
-                                <option value="user">Usuario</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="alert alert-info mt-3">
                         <i class="bx bx-info-circle me-2"></i>
-                        Se generará automáticamente una contraseña segura y se enviará al usuario por correo electrónico.
+                        Se generará automáticamente una contraseña segura y se enviará al usuario por correo electrónico despues de confirmar su correo.
                     </div>
                 </div>
                 <div class="modal-footer ps-1 d-flex flex-row justify-content-end">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="crearUsuarioBtn">
+                    <button type="button" class="btn btn-primary" id="btnUserCreate">
+                        <span class="spinner-border spinner-border-sm me-2 d-none" id="userCreateSpinner" role="status"></span>
                         <i class="bx d-none d-md-inline bx-plus me-1"></i>
                         Crear Usuario
                     </button>
@@ -224,7 +221,7 @@
 </div>
 
 <!-- Modal Editar Usuario -->
-<div class="modal fade" id="editarUsuarioModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="editarUsuarioModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -234,19 +231,17 @@
                 </h5>
                 <!-- Quité el botón de cierre (X) -->
             </div>
-            <form id="editarUsuarioForm">
-                <input type="hidden" id="edit_usuario_id" name="usuario_id">
+            <form id="userEditForm">
+                <input type="hidden" id="edit_usuario_id" name="user_id">
                 <div class="modal-body">
-                    <!-- Alertas del modal -->
-                    <div id="editModalAlert" class="alert d-none" role="alert"></div>
 
                     <div class="row g-3">
-                        <div class="col-md-6">
+                        {{-- <div class="col-md-6">
                             <label for="edit_name" class="form-label">
                                 <i class="bx bx-user me-1"></i> Nombre Completo *
                             </label>
                             <input type="text" class="form-control" id="edit_name" name="name" required>
-                        </div>
+                        </div> --}}
                         <div class="col-md-6">
                             <label for="edit_username" class="form-label">
                                 <i class="bx bx-at me-1"></i> Nombre de Usuario *
@@ -254,7 +249,7 @@
                             <input type="text" class="form-control" id="edit_username" name="username" required>
                         </div>
 
-                        <div class="col-md-6">
+                        {{-- <div class="col-md-6">
                             <label for="edit_email" class="form-label">
                                 <i class="bx bx-envelope me-1"></i> Correo Electrónico *
                             </label>
@@ -265,13 +260,13 @@
                                 <i class="bx bx-phone me-1"></i> Teléfono
                             </label>
                             <input type="text" class="form-control" id="edit_phone" name="phone">
-                        </div>
+                        </div> --}}
 
                         <div class="col-md-6">
                             <label for="edit_area_id" class="form-label">
                                 <i class="bx bx-buildings me-1"></i> Área
                             </label>
-                            <select class="form-select" id="edit_area_id" name="area_id">
+                            <select class="form-select areaSelect" id="edit_area_id" name="area_id">
                                 <option value="">Seleccionar área...</option>
                             </select>
                         </div>
@@ -279,18 +274,16 @@
                             <label for="edit_rol" class="form-label">
                                 <i class="bx bx-shield me-1"></i> Rol *
                             </label>
-                            <select class="form-select" id="edit_rol" name="rol" required>
+                            <select class="form-select rol-select" id="edit_rol" name="rol" required>
                                 <option value="">Seleccionar rol...</option>
-                                <option value="admin">Administrador</option>
-                                <option value="user">Usuario</option>
                             </select>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer d-flex flex-row justify-content-md-end ps-1 justify-content-center">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="editarUsuarioBtn">
-                        <span class="spinner-border spinner-border-sm me-2 d-none" id="editarUsuarioSpinner"></span>
+                    <button type="button" class="btn btn-primary" id="btnUserEdit">
+                        <span class="spinner-border spinner-border-sm me-2 d-none" id="userEditSpinner" role="status"></span>
                         <i class="bx bx-save d-none d-md-inline me-1"></i> Guardar Cambios
                     </button>
                 </div>
@@ -307,5 +300,8 @@
 </script> --}}
 <script src="{{ asset('js/jquery-confirm/jquery-confirm.js') }}"></script>
 <script src="{{ asset('js/admin/panel.js') }}"></script>
-<script>var vURL=window.location.origin + '/users';</script>
+<script>
+    var vURL=window.location.origin + '/admin/users';
+    const authUserId = {{ auth()->id() }};
+</script>
 @endsection

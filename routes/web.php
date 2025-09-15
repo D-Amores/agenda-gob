@@ -13,7 +13,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\ChangeEstatusController;
 use App\Http\Controllers\PdfController;
-use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,12 +39,12 @@ Route::middleware('guest')->group(function () {
 
     // Register routes
     Route::get('/register', [RegisterController::class, 'index'])->name('register');
-    //Route::post('/register', [RegisterController::class, 'register'])
-    //    ->middleware('throttle.registration')
-    //   ->name('register.submit');
+    Route::post('/register', [RegisterController::class, 'register'])
+        ->middleware('throttle.registration')
+       ->name('register.submit');
     
     // Registration verification routes
-    //Route::get('/registration/pending', [EmailVerificationRegistrationController::class, 'pending'])->name('registration.pending');
+    Route::get('/registration/pending', [EmailVerificationRegistrationController::class, 'pending'])->name('registration.pending');
     Route::get('/registration/verify/{token}', [EmailVerificationRegistrationController::class, 'verify'])->name('registration.verify');
     
     // Password reset routes
@@ -61,15 +61,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])->name('dashboard.chart-data');
 
     // Perfil (URIs: profile/{user}/edit, profile/{user})
-    Route::resource('profile', ProfileController::class)->parameters(['profile' => 'user'])
-        ->only(['edit', 'update']);
-    Route::put('/profile/{user}/change-password', [ProfileController::class, 'changePassword'])
-        ->name('profile.change-password');
+    Route::resource('profile', ProfileController::class)->parameters(['profile' => 'user'])->only(['edit', 'update']);
+    Route::put('/profile/{user}/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
 
     // Audiencias
-    Route::resource('audiencias', AudienciaController::class)->parameters([
-        'audiencia' => 'audiencia'
-    ])->except(['index', 'show']);
+    Route::resource('audiencias', AudienciaController::class)->parameters(['audiencia' => 'audiencia'])->except(['index', 'show']);
 
     //Eventos
     Route::resource('eventos', EventoController::class)->parameters([
@@ -82,12 +78,13 @@ Route::middleware(['auth'])->group(function () {
     // Cambiar estatus
     Route::put('/change-estatus/{model}/{id}', [ChangeEstatusController::class, 'update'])->name('estatus.update');
 
-    // Administración (solo para admins)
-    Route::resource('users', AdminController::class)->middleware('role:admin')->only(['index', 'store', 'update']);
-    // API protegida solo para admins
     Route::middleware(['auth', 'role:admin'])->group(function () {
-        Route::post('/users/users-api', [AdminController::class, 'users_api'])->name('users.api');
+        // Administración (solo para admins)
+        Route::resource('admin/users', UsersController::class)->parameters(['admin' => 'user'])->only(['index', 'store', 'update', 'destroy']);
+        // API protegida solo para admins
+        Route::post('/admin/users/users-api', [UsersController::class, 'users_api'])->name('users.api');
     });
+    
 
     /*
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {

@@ -27,7 +27,9 @@ class RegisterRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'min:3', 'max:255', 'unique:users', 'regex:/^[a-zA-Z0-9._-]+$/'],
             'email' => ['required', 'string', 'email:rfc,dns', 'max:255', 'unique:users'],
+            'phone' => ['nullable', 'string', 'max:20'],
             'area_id' => ['required', 'exists:c_area,id'],
+            'rol'     => 'required|string|exists:roles,name',
         ];
     }
 
@@ -52,6 +54,17 @@ class RegisterRequest extends FormRequest
             
             'area_id.required' => 'Debe seleccionar un área.',
             'area_id.exists' => 'El área seleccionada no es válida.',
+
+            'name.required' => 'El nombre es obligatorio.',
+            'name.string' => 'El nombre debe ser una cadena de texto.',
+            'name.max' => 'El nombre no puede exceder 255 caracteres.',
+
+            'phone.string' => 'El teléfono debe ser una cadena de texto.',
+            'phone.max' => 'El teléfono no puede exceder 20 caracteres.',
+
+            'rol.required' => 'El rol es obligatorio.',
+            'rol.string' => 'El rol debe ser una cadena de texto.',
+            'rol.exists' => 'El rol seleccionado no es válido.',
         ];
     }
 
@@ -63,9 +76,12 @@ class RegisterRequest extends FormRequest
     public function attributes()
     {
         return [
+            'name' => 'nombre',
             'username' => 'nombre de usuario',
             'email' => 'correo electrónico',
+            'phone' => 'teléfono',
             'area_id' => 'área',
+            'rol' => 'rol',
         ];
     }
 
@@ -99,17 +115,13 @@ class RegisterRequest extends FormRequest
      */
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {
-        if ($this->wantsJson()) {
-            $response = response()->json([
-                'success' => false,
-                'message' => 'Error de validación.',
-                'errors' => $validator->errors()
-            ], 422);
-
-            throw new \Illuminate\Http\Exceptions\HttpResponseException($response);
-        }
-
-        parent::failedValidation($validator);
+        
+        $response = response()->json([
+            'success' => false,
+            'message' => 'Error de validación.',
+            'errors' => $validator->errors()
+        ], 422);
+        throw new \Illuminate\Http\Exceptions\HttpResponseException($response);
     }
 
     /**
