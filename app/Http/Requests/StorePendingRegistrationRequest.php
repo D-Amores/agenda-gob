@@ -96,7 +96,7 @@ class StorePendingRegistrationRequest extends FormRequest
         if ($this->filled('website')) {
             if ($this->wantsJson()) {
                 abort(response()->json([
-                    'success' => false,
+                    'ok' => false,
                     'message' => 'Solicitud no válida.',
                     'errors' => ['security' => ['Solicitud no válida.']]
                 ], 422));
@@ -117,7 +117,7 @@ class StorePendingRegistrationRequest extends FormRequest
     {
         
         $response = response()->json([
-            'success' => false,
+            'ok' => false,
             'message' => 'Error de validación.',
             'errors' => $validator->errors()
         ], 422);

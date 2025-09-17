@@ -9,6 +9,8 @@ use App\Models\PendingRegistration;
 use App\Models\User;
 use App\Notifications\PasswordDeliveryNotification;
 use App\Http\Controllers\Controller;
+use App\Http\Tools\Tools;
+
 
 class EmailVerificationRegistrationController extends Controller
 {
@@ -17,34 +19,25 @@ class EmailVerificationRegistrationController extends Controller
      */
     public function verify(Request $request, $token)
     {
-        $response = ['ok' => false, 'message' => '', 'errors' => null, 'data' => null];
+        $response = ['ok' => false, 'message' => ''];
         
         // Buscar el registro pendiente
-        $pendingRegistration = PendingRegistration::where('verification_token', $token)
-            ->notExpired()
-            ->first();
+        $pendingRegistration = PendingRegistration::where('verification_token', $token)->notExpired()->first();
 
         if (!$pendingRegistration) {
             $response['message'] = 'El enlace de verificación es inválido o ha expirado.';
             $response['errors'] = ['verification' => 'El enlace de verificación es inválido o ha expirado.'];
             
-            if ($request->expectsJson()) {
-                return response()->json($response, 400);
-            }
-            
-            // Para acceso directo desde enlaces, mostrar la vista de verificación
-            return view('auth.email-verification', [
-                'error' => true,
-                'message' => 'El enlace de verificación es inválido o ha expirado.',
-                'token' => $token
-            ]);
+            return response()->json($response, 400);
         }
 
         try {
             // Crear el usuario definitivo
             $user = User::create([
+                'name' => $pendingRegistration->name,
                 'username' => $pendingRegistration->username,
                 'email' => $pendingRegistration->email,
+                'phone' => $pendingRegistration->phone,
                 'password' => $pendingRegistration->password, // Ya está hasheada
                 'area_id' => $pendingRegistration->area_id,
                 'email_verified_at' => now(),
@@ -62,7 +55,7 @@ class EmailVerificationRegistrationController extends Controller
             ]);
 
             // Generar una nueva contraseña para enviar al usuario
-            $newPassword = $this->generateSecurePassword();
+            $newPassword = Tools::generateSecurePassword();
             $user->update(['password' => Hash::make($newPassword)]);
 
             // Enviar la contraseña por email
@@ -76,24 +69,7 @@ class EmailVerificationRegistrationController extends Controller
 
             $response['ok'] = true;
             $response['message'] = 'Email verificado exitosamente. Hemos enviado tu contraseña a tu correo electrónico.';
-            $response['data'] = [
-                'user_id' => $user->id,
-                'email' => $user->email,
-                'redirect_url' => route('login')
-            ];
-
-            if ($request->expectsJson()) {
-                return response()->json($response);
-            }
-
-            // Para acceso directo desde enlaces, mostrar la vista de verificación con éxito
-            return view('auth.email-verification', [
-                'ok' => true,
-                'message' => 'Email verificado exitosamente. Hemos enviado tu contraseña a tu correo electrónico.',
-                'email' => $user->email,
-                'redirect_url' => route('login'),
-                'token' => $token
-            ]);
+            $status = 200;
 
         } catch (\Exception $e) {
             Log::error('Error en verificación de email', [
@@ -103,18 +79,18 @@ class EmailVerificationRegistrationController extends Controller
             
             $response['message'] = 'Error al procesar la verificación. Por favor, inténtalo de nuevo.';
             $response['errors'] = ['verification' => 'Error al procesar la verificación. Por favor, inténtalo de nuevo.'];
-            
-            if ($request->expectsJson()) {
-                return response()->json($response, 500);
-            }
-            
-            // Para acceso directo desde enlaces, mostrar la vista de verificación con error
-            return view('auth.email-verification', [
-                'error' => true,
-                'message' => 'Error al procesar la verificación. Por favor, inténtalo de nuevo.',
+            $status = 500;
+        }
+        if($request->expectsJson()) {
+            return response()->json($response, $status);
+        }
+        return view('auth.email-verification', [
+                'success' => $response['ok'],
+                'message' => $response['message'],
+                'email' => $user->email??'',
+                'redirect_url' => route('login'),
                 'token' => $token
             ]);
-        }
     }
 
     /**
@@ -150,32 +126,5 @@ class EmailVerificationRegistrationController extends Controller
         }
         
         return view('auth.registration-pending');
-    }
-
-    /**
-     * Generar una contraseña segura automáticamente
-     */
-    private function generateSecurePassword($length = 12)
-    {
-        $lowercase = 'abcdefghijklmnopqrstuvwxyz';
-        $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $numbers = '0123456789';
-        $symbols = '@$!%*?&';
-        
-        // Asegurar que tenga al menos uno de cada tipo
-        $password = '';
-        $password .= $lowercase[random_int(0, strlen($lowercase) - 1)];
-        $password .= $uppercase[random_int(0, strlen($uppercase) - 1)];
-        $password .= $numbers[random_int(0, strlen($numbers) - 1)];
-        $password .= $symbols[random_int(0, strlen($symbols) - 1)];
-        
-        // Llenar el resto con caracteres aleatorios
-        $allChars = $lowercase . $uppercase . $numbers . $symbols;
-        for ($i = 4; $i < $length; $i++) {
-            $password .= $allChars[random_int(0, strlen($allChars) - 1)];
-        }
-        
-        // Mezclar los caracteres
-        return str_shuffle($password);
     }
 }
