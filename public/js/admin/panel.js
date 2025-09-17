@@ -1,5 +1,4 @@
 let usersData = []; // Guardar datos de usuarios para edición
-
 // Función para hacer peticiones fetch con CSRF token
 async function getData() {
     const data = { method: 'get' };
@@ -16,66 +15,7 @@ async function getData() {
     return await response.json();
 }
 
-async function store() {
-    const btn = document.getElementById('btnUserCreate');
-    const spinner = document.getElementById('userCreateSpinner');
-
-    // Mostrar spinner y desactivar botón
-    spinner.classList.remove('d-none');
-    btn.disabled = true;
-
-    const form = document.getElementById('userCreateForm');
-    const formData = new FormData(form);
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-    // Convertir FormData a objeto plano
-    const data = {};
-    formData.forEach((value, key) => {
-        data[key] = value.trim();
-    });
-
-    try {
-        const url = vURL;
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            },
-            body: JSON.stringify(data)
-        });
-
-        const result = await response.json();
-
-        if (result.ok) {
-            alert(result.message, 'green', 'Éxito', null, 3000);
-            form.reset();
-
-            const newData = await getData(); // Obtener datos actualizados
-            if (newData.ok && newData.data?.pending_registrations) {
-                pendingDataTableOnHTML(newData.data.pending_registrations); // Actualizar tabla de pendientes
-            }
-
-            // Cerrar modal de creación
-            const modal = bootstrap.Modal.getInstance(document.getElementById('crearUsuarioModal'));
-
-            // Mover el foco a un botón fuera del modal
-            document.getElementById('btnAbrirCrearUsuario')?.focus();
-
-            // Ahora sí cerrar modal
-            modal?.hide();
-
-        } else {
-            alert(result.message || 'Error al crear usuario', 'red', 'Error', null, 5000);
-        }
-    } catch (error) {
-        alert('Error en la solicitud', 'red', 'Error', null, 5000);
-    } finally {
-        // Ocultar spinner y habilitar botón
-        spinner.classList.add('d-none');
-        btn.disabled = false;
-    }
-}
+// CRUD para usuarios - inicio
 
 async function update() {
     const btn = document.getElementById('btnUserEdit');
@@ -169,7 +109,100 @@ async function destroy(userId) {
         alert('Error en la solicitud', 'red', 'Error', null, 5000);
     }
 }
+// CRUD para usuarios - fin
+//CRUD para registros pendientes - inicio
+async function storePendingRegistration() {
+    const btn = document.getElementById('btnUserCreate');
+    const spinner = document.getElementById('userCreateSpinner');
 
+    // Mostrar spinner y desactivar botón
+    spinner.classList.remove('d-none');
+    btn.disabled = true;
+
+    const form = document.getElementById('userCreateForm');
+    const formData = new FormData(form);
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    // Convertir FormData a objeto plano
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value.trim();
+    });
+
+    try {
+        const url = vURLPending;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (result.ok) {
+            alert(result.message, 'green', 'Éxito', null, 3000);
+            form.reset();
+
+            const newData = await getData(); // Obtener datos actualizados
+            if (newData.ok && newData.data?.pending_registrations) {
+                pendingDataTableOnHTML(newData.data.pending_registrations); // Actualizar tabla de pendientes
+            }
+
+            // Cerrar modal de creación
+            const modal = bootstrap.Modal.getInstance(document.getElementById('crearUsuarioModal'));
+
+            // Mover el foco a un botón fuera del modal
+            document.getElementById('btnAbrirCrearUsuario')?.focus();
+
+            // Ahora sí cerrar modal
+            modal?.hide();
+
+        } else {
+            alert(result.message || 'Error al crear usuario', 'red', 'Error', null, 5000);
+        }
+    } catch (error) {
+        alert('Error en la solicitud', 'red', 'Error', null, 5000);
+    } finally {
+        // Ocultar spinner y habilitar botón
+        spinner.classList.add('d-none');
+        btn.disabled = false;
+    }
+}
+
+async function destroyPendingRegistration(pendingId) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const url = vURLPending + '/' + pendingId;
+    try {
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            }
+        });
+
+        const result = await response.json();
+
+        if (result.ok) {
+            alert(result.message, 'green', 'Éxito', null, 3000);
+
+            // Actualizar tabla
+            const newData = await getData();
+            if (newData.ok && newData.data?.users && newData.data?.pending_registrations) {
+                usersData = newData.data.users;
+                userDataTableOnHTML(newData.data.users);
+                pendingDataTableOnHTML(newData.data.pending_registrations);
+            }
+        } else {
+            alert(result.message || 'Error al eliminar registro pendiente', 'red', 'Error', null, 5000);
+        }
+    } catch (error) {
+        alert('Error en la solicitud', 'red', 'Error', null, 5000);
+    }
+}
 
 //funciones para llenar tablas y selects
 function userDataTableOnHTML(users) {
@@ -212,6 +245,7 @@ function pendingDataTableOnHTML(pending) {
 
     pending.forEach(p => {
         const tr = document.createElement('tr');
+        tr.dataset.pendingId = p.id;
         tr.innerHTML = `
                 <td>
                     <strong>${p.name}</strong><br>
@@ -225,7 +259,7 @@ function pendingDataTableOnHTML(pending) {
                 <td class="text-center">
                     <div class="btn-group" role="group">
                         <button class="btn btn-sm btn-outline-success" title="Aprobar"><i class="bx bx-check"></i></button>
-                        <button class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="bx bx-trash"></i></button>
+                        <button class="btn btn-sm btn-outline-danger btnPendingDelete" title="Eliminar"><i class="bx bx-trash"></i></button>
                     </div>
                 </td>
             `;
@@ -302,7 +336,6 @@ function openEditModal(user) {
         option.selected = option.value.toLowerCase() == (user.roles?.[0]?.name || '').toLowerCase();
     });
 }
-
 //Funciones generales
 function saveTabsState() {
     let adminTabs = document.querySelectorAll('#adminTabs button[data-bs-toggle="tab"]');
@@ -351,7 +384,6 @@ function validateCreateForm(form) {
     }
     return true;
 }
-
 function validateEditForm(form) {
     let errors = [];
     if (!form.username.value.trim() || form.username.value.trim().length < 3) errors.push("El nombre de usuario es obligatorio y debe tener más de 3 caracteres.");
@@ -364,7 +396,6 @@ function validateEditForm(form) {
     }
     return true;
 }
-
 // Función de alerta personalizada
 function alert(message, type = "blue", title = "Información", onOk, timeout = 0) {
     const jc = $.alert({
@@ -394,24 +425,6 @@ function alert(message, type = "blue", title = "Información", onOk, timeout = 0
     }
 
     return jc;
-}
-
-function confirmStore()
-{
-    $.confirm({
-        title: 'Advertencia',
-        content: '¿Está seguro de guardar el registro? Esta acción no podrá ser revertida.',
-        type: 'orange',
-        theme: 'material',
-        buttons: {
-            Cancelar: function() { 
-                //alert('Acción cancelada', 'blue', 'Información', null, 2000);
-            },
-            Guardar: function() {
-                store();
-            }
-        }
-    });
 }
 
 function confirmUpdate()
@@ -447,6 +460,39 @@ function confirmDestroy(userId) {
         }
     });
 }
+// Confirmar creación de usuario
+function confirmStorePending()
+{
+    $.confirm({
+        title: 'Advertencia',
+        content: '¿Está seguro de guardar el registro? Esta acción no podrá ser revertida.',
+        type: 'orange',
+        theme: 'material',
+        buttons: {
+            Cancelar: function() { 
+                //alert('Acción cancelada', 'blue', 'Información', null, 2000);
+            },
+            Guardar: function() {
+                storePendingRegistration();
+            }
+        }
+    });
+}
+// Confirmar eliminación de registro pendiente
+function confirmDestroyPending(pendingId) {
+    $.confirm({
+        title: 'Advertencia',
+        content: '¿Está seguro de eliminar este registro pendiente? Esta acción no podrá ser revertida.',
+        type: 'red',
+        theme: 'material',
+        buttons: {
+            Cancelar: function () {},
+            Eliminar: function () {
+                destroyPendingRegistration(pendingId);
+            }
+        }
+    });
+}
 
 
 document.addEventListener('DOMContentLoaded', async function () {
@@ -458,7 +504,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     //Botones para crear usuario y editar usuario
     const btnUserCreate = document.getElementById('btnUserCreate');
     const btnUserEdit = document.getElementById('btnUserEdit');
+    //Contenedor de botones de acción en tabla de usuarios y pendientes
     const userActionBtn = document.querySelector('#usuarios tbody');
+    const pendingActionBtn = document.querySelector('#pendientes tbody');
 
     if(!newData.ok){
         alert(newData.message, 'red', 'Error', null, 5000);
@@ -472,7 +520,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     btnUserCreate.addEventListener('click', function (e) {
         const form = document.getElementById('userCreateForm');
         if (!validateCreateForm(form)) return;
-        confirmStore();
+        confirmStorePending();
     });
 
     btnUserEdit.addEventListener('click', function (e) {
@@ -500,6 +548,15 @@ document.addEventListener('DOMContentLoaded', async function () {
             const row = btnDelete.closest('tr');
             const userId = row.dataset.userId;
             confirmDestroy(userId);
+        }
+    });
+    // Delegación de eventos para eliminar registro pendiente
+    pendingActionBtn.addEventListener('click', function(e) {
+        const btnDelete = e.target.closest('.btnPendingDelete');
+        if (btnDelete) {
+            const row = btnDelete.closest('tr');
+            const pendingId = row.dataset.pendingId;
+            confirmDestroyPending(pendingId);
         }
     });
 });

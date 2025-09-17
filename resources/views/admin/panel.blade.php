@@ -302,6 +302,7 @@
 <script src="{{ asset('js/admin/panel.js') }}"></script>
 <script>
     var vURL=window.location.origin + '/admin/users';
+    var vURLPending=window.location.origin + '/admin/pending-registrations';
     const authUserId = {{ auth()->id() }};
 </script>
 @endsection

@@ -14,6 +14,7 @@ use App\Http\Controllers\EventoController;
 use App\Http\Controllers\ChangeEstatusController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\Admin\UsersController;
+use App\Http\Controllers\Admin\PendingRegistrationsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -83,6 +84,8 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('admin/users', UsersController::class)->parameters(['admin' => 'user'])->only(['index', 'store', 'update', 'destroy']);
         // API protegida solo para admins
         Route::post('/admin/users/users-api', [UsersController::class, 'users_api'])->name('users.api');
+        // Usuarios pendientes
+        Route::resource('admin/pending-registrations', PendingRegistrationsController::class)->parameters(['pending-registrations' => 'pendingRegistration'])->only(['store','destroy']);
     });
     
 
