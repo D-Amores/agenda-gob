@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class PendingRegistration extends Model
@@ -12,9 +11,12 @@ class PendingRegistration extends Model
     use HasFactory;
 
     protected $fillable = [
+        'name',
         'username',
         'email',
+        'phone',
         'area_id',
+        'rol',
         'verification_token',
         'password',
         'expires_at',

@@ -13,6 +13,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\ChangeEstatusController;
 use App\Http\Controllers\PdfController;
+use App\Http\Controllers\Admin\UsersController;
+use App\Http\Controllers\Admin\PendingRegistrationsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,20 +39,16 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])->middleware('throttle.registration')->name('login.submit');
 
     // Register routes
-    Route::get('/register', [RegisterController::class, 'index'])->name('register');
-    Route::post('/register', [RegisterController::class, 'register'])
-        ->middleware('throttle.registration')
-        ->name('register.submit');
+    //Route::get('/register', [RegisterController::class, 'index'])->name('register');
+    //Route::post('/register', [RegisterController::class, 'register'])->middleware('throttle.registration')->name('register.submit');
     
     // Registration verification routes
-    Route::get('/registration/pending', [EmailVerificationRegistrationController::class, 'pending'])->name('registration.pending');
+    //Route::get('/registration/pending', [EmailVerificationRegistrationController::class, 'pending'])->name('registration.pending');
     Route::get('/registration/verify/{token}', [EmailVerificationRegistrationController::class, 'verify'])->name('registration.verify');
     
     // Password reset routes
     Route::get('/forgot-password', [PasswordResetController::class, 'showForm'])->name('password.request');
-    Route::post('/forgot-password', [PasswordResetController::class, 'sendNewPassword'])
-        ->middleware('throttle.registration')
-        ->name('password.send');
+    Route::post('/forgot-password', [PasswordResetController::class, 'sendNewPassword'])->middleware('throttle.registration')->name('password.send');
 });
 
 
@@ -60,15 +58,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])->name('dashboard.chart-data');
 
     // Perfil (URIs: profile/{user}/edit, profile/{user})
-    Route::resource('profile', ProfileController::class)->parameters(['profile' => 'user'])
-        ->only(['edit', 'update']);
-    Route::put('/profile/{user}/change-password', [ProfileController::class, 'changePassword'])
-        ->name('profile.change-password');
+    Route::resource('profile', ProfileController::class)->parameters(['profile' => 'user'])->only(['edit', 'update']);
+    Route::put('/profile/{user}/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
 
     // Audiencias
-    Route::resource('audiencias', AudienciaController::class)->parameters([
-        'audiencia' => 'audiencia'
-    ])->except(['index', 'show']);
+    Route::resource('audiencias', AudienciaController::class)->parameters(['audiencia' => 'audiencia'])->except(['index', 'show']);
 
     //Eventos
     Route::resource('eventos', EventoController::class)->parameters([
@@ -80,4 +74,13 @@ Route::middleware(['auth'])->group(function () {
 
     // Cambiar estatus
     Route::put('/change-estatus/{model}/{id}', [ChangeEstatusController::class, 'update'])->name('estatus.update');
+
+    Route::middleware(['auth', 'role:admin'])->group(function () {
+        // Administración (solo para admins)
+        Route::resource('admin/users', UsersController::class)->parameters(['admin' => 'user'])->only(['index', 'store', 'update', 'destroy']);
+        // API protegida solo para admins
+        Route::post('/admin/users/users-api', [UsersController::class, 'users_api'])->name('users.api');
+        // Usuarios pendientes
+        Route::resource('admin/pending-registrations', PendingRegistrationsController::class)->parameters(['pending-registrations' => 'pendingRegistration'])->only(['store','destroy']);
+    });
 });

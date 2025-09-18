@@ -43,6 +43,13 @@ return [
             'password' => env('MAIL_PASSWORD'),
             'timeout' => null,
             'auth_mode' => null,
+            'stream' => [
+                'ssl' => [
+                    'cafile' => '/etc/ssl/certs/zerossl-ca.pem',
+                    'verify_peer' => true,
+                    'verify_peer_name' => true,
+                ],
+            ],
         ],
 
         'ses' => [
