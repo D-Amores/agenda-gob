@@ -39,20 +39,16 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])->middleware('throttle.registration')->name('login.submit');
 
     // Register routes
-    Route::get('/register', [RegisterController::class, 'index'])->name('register');
-    Route::post('/register', [RegisterController::class, 'register'])
-        ->middleware('throttle.registration')
-       ->name('register.submit');
+    //Route::get('/register', [RegisterController::class, 'index'])->name('register');
+    //Route::post('/register', [RegisterController::class, 'register'])->middleware('throttle.registration')->name('register.submit');
     
     // Registration verification routes
-    Route::get('/registration/pending', [EmailVerificationRegistrationController::class, 'pending'])->name('registration.pending');
+    //Route::get('/registration/pending', [EmailVerificationRegistrationController::class, 'pending'])->name('registration.pending');
     Route::get('/registration/verify/{token}', [EmailVerificationRegistrationController::class, 'verify'])->name('registration.verify');
     
     // Password reset routes
     Route::get('/forgot-password', [PasswordResetController::class, 'showForm'])->name('password.request');
-    Route::post('/forgot-password', [PasswordResetController::class, 'sendNewPassword'])
-        ->middleware('throttle.registration')
-        ->name('password.send');
+    Route::post('/forgot-password', [PasswordResetController::class, 'sendNewPassword'])->middleware('throttle.registration')->name('password.send');
 });
 
 
@@ -87,15 +83,4 @@ Route::middleware(['auth'])->group(function () {
         // Usuarios pendientes
         Route::resource('admin/pending-registrations', PendingRegistrationsController::class)->parameters(['pending-registrations' => 'pendingRegistration'])->only(['store','destroy']);
     });
-    
-
-    /*
-    Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
-        Route::get('/panel', [AdminController::class, 'panel'])->name('panel');
-        Route::post('/usuarios', [AdminController::class, 'registrarUsuario'])->name('registrar-usuario');
-        Route::get('/usuarios/{usuario}/edit', [AdminController::class, 'editarUsuario'])->name('editar-usuario');
-        Route::put('/usuarios/{usuario}', [AdminController::class, 'actualizarUsuario'])->name('actualizar-usuario');
-        Route::delete('/usuarios/{usuario}', [AdminController::class, 'eliminarUsuario'])->name('eliminar-usuario');
-    });
-    */
 });

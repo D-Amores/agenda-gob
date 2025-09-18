@@ -27,7 +27,7 @@ class EmailVerificationRegistrationController extends Controller
             
             return response()->json($response, 400);
         }
-
+        $user = null;
         try {
             // Crear el usuario definitivo
             $user = $service->confirm($pendingRegistration);

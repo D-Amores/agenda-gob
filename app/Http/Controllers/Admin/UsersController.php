@@ -3,21 +3,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use App\Models\PendingRegistration;
 use App\Models\Area;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
-use App\Notifications\PasswordDeliveryNotification;
 use Spatie\Permission\Models\Role;
-use App\Http\Tools\Tools;
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\VerifyRegistrationEmail;
-use Exception;
 use Illuminate\Http\Request;
+use Exception;
+use App\Http\Requests\StoreUserRequest;
+use App\Services\PendingRegistrationService;
 
 class UsersController extends Controller
 {
@@ -113,46 +108,32 @@ class UsersController extends Controller
      * @param  \App\Http\Requests\StoreUserRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(RegisterRequest $request)
+    public function store(StoreUserRequest $request, PendingRegistrationService $pendingRegistrationService)
     {
-        $response = ['ok' => false, 'message' => '', 'errors' => null];
-        $status = 422;   
+        $response = ['ok'=>false, 'message'=>''];
+        $status = 422;
 
-        PendingRegistration::expired()->delete();
-
-        // Generar contraseña segura automáticamente
-        $generatedPassword = Tools::generateSecurePassword();
-        $verificationToken = PendingRegistration::generateVerificationToken();
-
-        // Crear registro pendiente (no crear usuario aún)
-        $pendingRegistration = new PendingRegistration([
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'rol' => strtolower($request->rol),
-            'password' => Hash::make($generatedPassword),
-            'area_id' => $request->area_id,
-            'verification_token' => $verificationToken,
-            'expires_at' => now()->addDay(), // Expira en 24 horas
-        ]);
-
-        // Verificar duplicados
-        if ($pendingRegistration->isExist()) {
-            $response['message'] = 'El usuario o correo ya está en proceso de registro o ya existe.';
+        $pendingRegistration = PendingRegistration::find($request->id);
+        if (!$pendingRegistration) {
+            $response['message'] = 'Registro pendiente no encontrado.';
+            $status = 404;
             return response()->json($response, $status);
         }
-        $pendingRegistration->save();
+        try{
 
-        // Crear URL de verificación
-        $verificationUrl = route('registration.verify', ['token' => $verificationToken]);
+            // Crear usuario a partir del registro pendiente
+            $user = $pendingRegistrationService->confirm($pendingRegistration);
 
-        // Enviar email de verificación
-        Notification::route('mail', $request->email)->notify(new VerifyRegistrationEmail($pendingRegistration, $verificationUrl));
+            $response['ok'] = true;
+            $response['message'] = "Usuario creado correctamente el usuario: {$user->username}. Se ha enviado la contraseña al correo electrónico.";
+            $status = 201;
 
-        $response['ok'] = true;
-        $response['message'] = 'Se envió correctamente el enlace de verificación al Email, el usuario será creado una vez verificado.';
-        return response()->json($response, 200);
+        }catch(Exception $e){
+            Log::error('Error al crear usuario: ' . $e->getMessage());
+            $response['message'] = 'Error al crear el usuario.';
+            $status = 500;
+        }
+        return response()->json($response, $status);
     }
 
     /**

@@ -16,6 +16,56 @@ async function getData() {
 }
 
 // CRUD para usuarios - inicio
+async function store(userId) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    // Buscar la fila pendiente
+    const row = document.querySelector(`tr[data-pending-id="${userId}"]`);
+
+    // Guardar contenido original
+    const originalHTML = row.innerHTML;
+
+    // Mostrar animación en la fila
+    row.innerHTML = `
+        <td colspan="7" class="text-center py-3">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Procesando...</span>
+            </div>
+        </td>
+    `;
+
+    try {
+        const url = vURL;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({ id: userId })
+        });
+
+
+        const result = await response.json();
+
+        if (result.ok) {
+            alert(result.message, 'green', 'Éxito', null, 3000);
+
+            const newData = await getData(); // Obtener datos actualizados
+            if (newData.ok && newData.data?.pending_registrations && newData.data?.users) {
+                pendingDataTableOnHTML(newData.data.pending_registrations);
+                userDataTableOnHTML(newData.data.users);
+            }
+        } else {
+            alert(result.message || 'Error al crear usuario', 'red', 'Error', null, 5000);
+            row.innerHTML = originalHTML; // restaurar fila si falla
+        }
+    } catch (error) {
+        alert('Error en la solicitud', 'red', 'Error', null, 5000);
+        row.innerHTML = originalHTML; // restaurar fila si hay excepción
+    }
+}
+
 
 async function update() {
     const btn = document.getElementById('btnUserEdit');
@@ -258,7 +308,7 @@ function pendingDataTableOnHTML(pending) {
                 <td><span class="text-muted small">${new Date(p.expires_at).toLocaleString()}</span></td>
                 <td class="text-center">
                     <div class="btn-group" role="group">
-                        <button class="btn btn-sm btn-outline-success" title="Aprobar"><i class="bx bx-check"></i></button>
+                        <button class="btn btn-sm btn-outline-success btnPendingConfirm" title="Aprobar"><i class="bx bx-check"></i></button>
                         <button class="btn btn-sm btn-outline-danger btnPendingDelete" title="Eliminar"><i class="bx bx-trash"></i></button>
                     </div>
                 </td>
@@ -426,7 +476,25 @@ function alert(message, type = "blue", title = "Información", onOk, timeout = 0
 
     return jc;
 }
-
+// Confirmar creación de usuario sin necesidad de que el usuario lo confirme en su email
+function confirmStore(userId)
+{
+    $.confirm({
+        title: 'Advertencia',
+        content: '¿Está seguro de aprobar este registro pendiente? Esta acción no podrá ser revertida.',
+        type: 'orange',
+        theme: 'material',
+        buttons: {
+            Cancelar: function() { 
+                //alert('Acción cancelada', 'blue', 'Información', null, 2000);
+            },
+            Guardar: function() {
+                store(userId);
+            }
+        }
+    });
+}
+// Confirmar edición de usuario en la tabla de usuarios
 function confirmUpdate()
 {
     $.confirm({
@@ -446,6 +514,7 @@ function confirmUpdate()
     });
 }
 
+// Confirmar eliminación de usuario en la tabla de usuarios
 function confirmDestroy(userId) {
     $.confirm({
         title: 'Advertencia',
@@ -460,7 +529,8 @@ function confirmDestroy(userId) {
         }
     });
 }
-// Confirmar creación de usuario
+
+// Confirmar creación de usuario en la tabla de registros pendientes
 function confirmStorePending()
 {
     $.confirm({
@@ -552,6 +622,16 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
     // Delegación de eventos para eliminar registro pendiente
     pendingActionBtn.addEventListener('click', function(e) {
+        // Aprobar
+        const btnConfirm = e.target.closest('.btnPendingConfirm');
+        if (btnConfirm) {
+            const row = btnConfirm.closest('tr');
+            const pendingId = row.dataset.pendingId;
+            confirmStore(pendingId);
+            return;
+        }
+    
+        // Eliminar
         const btnDelete = e.target.closest('.btnPendingDelete');
         if (btnDelete) {
             const row = btnDelete.closest('tr');

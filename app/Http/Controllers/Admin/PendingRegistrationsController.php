@@ -11,6 +11,7 @@ use App\Http\Tools\Tools;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\VerifyRegistrationEmail;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class PendingRegistrationsController extends Controller
 {
@@ -79,7 +80,15 @@ class PendingRegistrationsController extends Controller
         $verificationUrl = route('registration.verify', ['token' => $verificationToken]);
 
         // Enviar email de verificación
-        Notification::route('mail', $request->email)->notify(new VerifyRegistrationEmail($pendingRegistration, $verificationUrl));
+        try {
+            Notification::route('mail', $request->email)
+                ->notify(new VerifyRegistrationEmail($pendingRegistration, $verificationUrl));
+        } catch (\Throwable $e) {
+            Log::error("Error enviando correo: " . $e->getMessage());
+            // Si quieres, devuelve un warning pero no rompas el flujo
+            $response['message'] = 'Registro creado, pero no se pudo enviar el correo de verificación.';
+            return response()->json($response, 200);
+        }
 
         $response['ok'] = true;
         $response['message'] = 'Se envió correctamente el enlace de verificación al Email, el usuario será creado una vez verificado.';

@@ -281,7 +281,7 @@
                     </div>
                 </div>
                 <div class="modal-footer d-flex flex-row justify-content-md-end ps-1 justify-content-center">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-outline-secondary" id="btnCloseEdit">Cancelar</button>
                     <button type="button" class="btn btn-primary" id="btnUserEdit">
                         <span class="spinner-border spinner-border-sm me-2 d-none" id="userEditSpinner" role="status"></span>
                         <i class="bx bx-save d-none d-md-inline me-1"></i> Guardar Cambios

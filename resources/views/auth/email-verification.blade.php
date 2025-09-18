@@ -62,13 +62,6 @@ data-template="horizontal-menu-template">
                             <span class="app-brand-text fw-bold fs-4 text-primary">Agenda</span>
                         </div>
 
-                        <!-- Icono principal -->
-                        <div class="mb-4">
-                            <i class="bx bx-envelope-open display-1 text-primary"></i>
-                        </div>
-
-                        <h4 class="mb-3 fw-semibold">Verificación de Email 📧</h4>
-
                         <!-- Mensaje dinámico -->
                         <div id="verification-content">
                             @if(isset($success) && $success)
@@ -123,15 +116,7 @@ data-template="horizontal-menu-template">
                                     <i class="bx bx-log-in me-2"></i>
                                     Ir al Login
                                 </a>
-                                <a href="{{ route('register') }}" class="btn btn-outline-secondary">
-                                    <i class="bx bx-user-plus me-2"></i>
-                                    Registrar otra cuenta
-                                </a>
                             @elseif(isset($error) && $error)
-                                <a href="{{ route('register') }}" class="btn btn-primary">
-                                    <i class="bx bx-user-plus me-2"></i>
-                                    Registrarme de nuevo
-                                </a>
                                 <a href="{{ route('login') }}" class="btn btn-outline-secondary">
                                     <i class="bx bx-log-in me-2"></i>
                                     Ir al Login
@@ -140,10 +125,6 @@ data-template="horizontal-menu-template">
                                 <a href="{{ route('login') }}" class="btn btn-primary">
                                     <i class="bx bx-log-in me-2"></i>
                                     Ir al Login
-                                </a>
-                                <a href="{{ route('register') }}" class="btn btn-outline-secondary">
-                                    <i class="bx bx-user-plus me-2"></i>
-                                    Registrar otra cuenta
                                 </a>
                             @endif
                         </div>

@@ -92,18 +92,23 @@ class StorePendingRegistrationRequest extends FormRequest
      */
     protected function prepareForValidation()
     {
-        // Verificar honeypot (anti-bot)
+        // Merge datos del body JSON si hay
+        if ($this->isJson()) {
+            $this->merge($this->json()->all());
+        }
+
+        // Honeypot
         if ($this->filled('website')) {
-            if ($this->wantsJson()) {
-                abort(response()->json([
-                    'ok' => false,
-                    'message' => 'Solicitud no válida.',
-                    'errors' => ['security' => ['Solicitud no válida.']]
-                ], 422));
-            }
-            abort(422, 'Solicitud no válida.');
+            $response = response()->json([
+                'ok' => false,
+                'message' => 'Solicitud no válida.',
+                'errors' => ['security' => ['Solicitud no válida.']]
+            ], 422);
+            throw new \Illuminate\Http\Exceptions\HttpResponseException($response);
         }
     }
+
+
 
     /**
      * Handle a failed validation attempt.
@@ -118,7 +123,7 @@ class StorePendingRegistrationRequest extends FormRequest
         
         $response = response()->json([
             'ok' => false,
-            'message' => 'Error de validación.',
+            'message' => 'Error de validación: ' . $validator->errors()->first(),
             'errors' => $validator->errors()
         ], 422);
         throw new \Illuminate\Http\Exceptions\HttpResponseException($response);

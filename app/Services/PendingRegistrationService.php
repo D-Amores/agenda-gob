@@ -38,7 +38,11 @@ class PendingRegistrationService
         $user->update(['password' => Hash::make($newPassword)]);
 
         // Notificar por correo
-        $user->notify(new PasswordDeliveryNotification($newPassword));
+        try{
+            $user->notify(new PasswordDeliveryNotification($newPassword));
+        }catch(\Throwable $e){
+            Log::error('Error al enviar la notificación de contraseña: ' . $e->getMessage());
+        }
 
         // Eliminar el registro pendiente
         $pendingRegistration->delete();
