@@ -23,6 +23,10 @@ class PendingRegistrationService
             'area_id' => $pendingRegistration->area_id,
             'email_verified_at' => now(),
         ]);
+        // Asignar rol automáticamente
+        $roleToAssign = $pendingRegistration->rol ?: 'user';
+        $user->assignRole($roleToAssign);
+
 
         // Verificar que el email se marcó como verificado
         $user->markEmailAsVerified();

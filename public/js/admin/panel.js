@@ -257,6 +257,7 @@ async function destroyPendingRegistration(pendingId) {
 //funciones para llenar tablas y selects
 function userDataTableOnHTML(users) {
     // Pintar Usuarios
+    console.log(users);
     const usuariosTbody = document.querySelector('#usuarios tbody');
     usuariosTbody.innerHTML = ''; // limpiar tabla
     users.forEach(user => {

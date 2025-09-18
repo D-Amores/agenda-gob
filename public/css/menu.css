@@ -3,23 +3,26 @@
 .menu-link.menu-evt { border-left: 4px solid #ff9f43; padding-left: .75rem; }
 .menu-link.menu-home { border-left: 4px solid #6a5cff; padding-left: .75rem; } /* morado */
 .menu-link.menu-cal { border-left: 4px solid #ffd166; padding-left: .75rem; }  /* amarillo */
+.menu-link.menu-adm { border-left: 4px solid #5b7bfc; padding-left: .75rem; }  /* amarillo */
 .menu-link.menu-aud .menu-icon { color: #28c76f; }
 .menu-link.menu-evt .menu-icon { color: #ff9f43; }
 .menu-link.menu-home .menu-icon { color: #6a5cff; }
 .menu-link.menu-cal .menu-icon { color: #ffd166; }
-.menu-link.menu-aud:hover, .menu-link.menu-evt:hover, .menu-link.menu-home:hover, .menu-link.menu-cal:hover { background: rgba(0,0,0,0.02); }
+.menu-link.menu-adm .menu-icon { color: #5b7bfc; }
+.menu-link.menu-aud:hover, .menu-link.menu-evt:hover, .menu-link.menu-home:hover, .menu-link.menu-cal:hover, .menu-link.menu-adm:hover { background: rgba(0,0,0,0.02); }
 
 /* Estados activos - fondo más fuerte y texto en blanco (MENÚ HORIZONTAL) */
 .menu-horizontal .menu-inner > .menu-item.active > .menu-link.menu-aud { background: #2ddc7c !important; border-left: 4px solid #1e9653; }
 .menu-horizontal .menu-inner > .menu-item.active > .menu-link.menu-evt { background: #fcb24b !important; border-left: 4px solid #e6892b; }
 .menu-horizontal .menu-inner > .menu-item.active > .menu-link.menu-home { background: #7c9fff !important; border-left: 4px solid #5a4bff; }
 .menu-horizontal .menu-inner > .menu-item.active > .menu-link.menu-cal { background: #fbd376 !important; border-left: 4px solid #e6bc4d; }
-
+.menu-horizontal .menu-inner > .menu-item.active > .menu-link.menu-adm { background: #5b7bfc !important; border-left: 4px solid #4b58d4; }
 /* Estados activos - fondo más fuerte y texto en blanco (MENÚ VERTICAL) */
 .layout-menu-expanded .menu-inner .menu-item.active > .menu-link.menu-aud { background: #2ddc7c !important; }
 .layout-menu-expanded .menu-inner .menu-item.active > .menu-link.menu-evt { background: #fcb24b !important; }
 .layout-menu-expanded .menu-inner .menu-item.active > .menu-link.menu-home { background: #7c9fff !important; }
 .layout-menu-expanded .menu-inner .menu-item.active > .menu-link.menu-cal { background: #fbd376 !important; }
+.layout-menu-expanded .menu-inner .menu-item.active > .menu-link.menu-adm { background: #5b7bfc !important; }
 
 .menu-item.active .menu-link .menu-icon { color: white !important; }
 .menu-item.active .menu-link .menu-title { color: white !important; }
