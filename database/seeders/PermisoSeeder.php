@@ -67,14 +67,5 @@ class PermisoSeeder extends Seeder
         if ($primerUsuario && !$primerUsuario->hasAnyRole()) {
             $primerUsuario->assignRole('admin');
         }
-
-        // Asignar rol de user a todos los demás usuarios existentes
-        $primerUsuarioId = $primerUsuario ? $primerUsuario->id : 0;
-        $otrosUsuarios = User::where('id', '!=', $primerUsuarioId)->get();
-        foreach ($otrosUsuarios as $usuario) {
-            if (!$usuario->hasAnyRole()) {
-                $usuario->assignRole('user');
-            }
-        }
     }
 }
