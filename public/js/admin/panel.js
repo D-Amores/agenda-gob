@@ -582,6 +582,13 @@ document.addEventListener('DOMContentLoaded', async function () {
         alert(newData.message, 'red', 'Error', null, 5000);
         return;
     }
+    
+    const btnCancelarEdicion = document.getElementById('btnCloseEdit');
+    btnCancelarEdicion.addEventListener('click', function() {
+        // Mover el foco a un botón fuera del modal
+        document.getElementById('btnAbrirCrearUsuario')?.focus();
+        $('#editarUsuarioModal').modal('hide');
+    });
     //Llenar tablas y selects
     index(newData.data);
     usersData = newData.data.users;
