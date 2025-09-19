@@ -217,6 +217,7 @@ async function storePendingRegistration() {
         alert('Error en la solicitud', 'red', 'Error', null, 5000);
     } finally {
         // Ocultar spinner y habilitar botón
+        form.reset();
         spinner.classList.add('d-none');
         btn.disabled = false;
     }
