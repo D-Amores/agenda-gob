@@ -301,8 +301,8 @@
 <script src="{{ asset('js/jquery-confirm/jquery-confirm.js') }}"></script>
 <script src="{{ asset('js/admin/panel.js') }}"></script>
 <script>
-    var vURL=window.location.origin + '/admin/users';
-    var vURLPending=window.location.origin + '/admin/pending-registrations';
+    var vURL=window.location.origin + '/agenda-new/admin/users';
+    var vURLPending=window.location.origin + '/agenda-new/admin/pending-registrations';
     const authUserId = {{ auth()->id() }};
 </script>
 @endsection
