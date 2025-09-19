@@ -168,8 +168,8 @@ data-template="horizontal-menu-template">
 
     <!-- Vendors JS -->
     <!-- jQuery Confirm Library -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+    <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/jquery-confirm/jquery-confirm.min.css') }}">
+    <script src="{{ asset('js/vendors/jquery-confirm.min.js') }}"></script>
 
     <!-- Page JS -->
     <script src="{{ asset('js/jquery-confirm/jquery-confirm.js') }}"></script>
