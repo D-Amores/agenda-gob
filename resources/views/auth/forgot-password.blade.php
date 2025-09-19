@@ -139,7 +139,7 @@ data-template="horizontal-menu-template">
 
         <!-- jQuery Confirm Library -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+    <script src="{{ asset('js/jquery-confirm/jquery-confirm.min.js') }}"></script>
 
     <!-- Page JS -->
     <script src="{{ asset('js/jquery-confirm/jquery-confirm.js') }}"></script>
