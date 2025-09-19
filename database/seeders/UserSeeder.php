@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
                 'email' => 'soporte.sistemas@anticorrupcionybg.gob.mx',
                 'phone' => null,
                 'profile_photo_path' => null,
+                'area_id' => 17,
                 'email_verified_at' => now(),
                 'password' => Hash::make('admin12345'),
                 'created_at' => now(),
