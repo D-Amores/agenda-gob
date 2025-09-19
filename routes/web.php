@@ -65,9 +65,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('audiencias', AudienciaController::class)->parameters(['audiencia' => 'audiencia'])->except(['index', 'show']);
 
     //Eventos
-    Route::resource('eventos', EventoController::class)->parameters([
-        'evento' => 'evento'
-    ])->except(['index', 'show']);
+    Route::resource('eventos', EventoController::class)->parameters(['evento' => 'evento'])->except(['index', 'show']);
 
     // Calendario
     Route::get('/calendario', [CalendarioController::class, 'index'])->name('calendario.index');

@@ -47,21 +47,6 @@ data-template="horizontal-menu-template">
     <script src="{{ asset('sneat/assets/vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('sneat/assets/js/config.js') }}"></script>
 
-    
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag('js', new Date());
-    gtag('config', 'GA_MEASUREMENT_ID');
-    </script>
-    <!-- Custom notification for demo -->
-    <!-- beautify ignore:end -->
-
 </head>
 
 <body>
