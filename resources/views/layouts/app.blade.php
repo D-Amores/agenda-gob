@@ -164,7 +164,7 @@
 <script src="{{ asset('sneat/assets/js/dashboards-analytics.js') }}"></script>
 
 <!-- JQUERY CONFIRM -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js"></script>
+<script src="{{ asset('js/jquery-confirm/jquery-confirm.min.js') }}"></script>
 
 @yield('script')
 </body>
