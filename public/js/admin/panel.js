@@ -66,7 +66,6 @@ async function store(userId) {
     }
 }
 
-
 async function update() {
     const btn = document.getElementById('btnUserEdit');
     const spinner = document.getElementById('userEditSpinner');
@@ -123,6 +122,10 @@ async function update() {
     }catch (error) {
         alert('Error en la solicitud', 'red', 'Error', null, 5000);
     }finally {
+        form.reset();
+        document.getElementById('btnAbrirCrearUsuario')?.focus();
+        $('#editarUsuarioModal').modal('hide');
+         // Ocultar spinner y habilitar botón
         spinner.classList.add('d-none');
         btn.disabled = false;
     }
@@ -192,7 +195,7 @@ async function storePendingRegistration() {
 
         const result = await response.json();
 
-        if (result.ok) {
+        if (result.ok && response.ok) {
             alert(result.message, 'green', 'Éxito', null, 3000);
             form.reset();
 
@@ -220,6 +223,8 @@ async function storePendingRegistration() {
         form.reset();
         spinner.classList.add('d-none');
         btn.disabled = false;
+        document.getElementById('btnAbrirCrearUsuario')?.focus();
+        $('#crearUsuarioModal').modal('hide');
     }
 }
 

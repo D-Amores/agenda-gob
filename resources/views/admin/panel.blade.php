@@ -15,7 +15,7 @@
                         </h4>
                         <small class="text-muted">Gestión de usuarios y registros pendientes</small>
                     </div>
-                    <button class="btn btn-primary w-md-auto" data-bs-toggle="modal" data-bs-target="#crearUsuarioModal">
+                    <button class="btn btn-primary w-md-auto" id="btnAbrirCrearUsuario" data-bs-toggle="modal" data-bs-target="#crearUsuarioModal">
                         <i class="bx bx-plus me-1"></i>
                         Crear Usuario
                     </button>
