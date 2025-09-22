@@ -120,9 +120,5 @@ data-template="horizontal-menu-template">
 <script src="{{ asset('sneat/assets/js/main.js') }}"></script>
 <script src="{{ asset('vendor/jquery-confirm/dist/jquery-confirm.min.js') }}"></script>
 <script src="{{ asset('js/jquery-confirm.js') }}"></script>
-<script>
-    @include('partials.routes')
-</script>
-<script src="{{ asset('js/auth/email-verification.js') }}"></script>
 </body>
 </html>

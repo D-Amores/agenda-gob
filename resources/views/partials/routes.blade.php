@@ -6,7 +6,7 @@
 window.Routes = {
     // Autenticación
     login: "{{ route('login') }}",
-    register: "{{ route('register') }}",
+    //register: "{{ route('register') }}",
     
     // Verificación de registro
     registrationPending: "{{ route('registration.pending') }}",

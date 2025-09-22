@@ -99,10 +99,6 @@ window.verifyEmailToken = function(token) {
                             </div>
                         ` : ''}
                         <div class="d-grid gap-2 mt-3">
-                            <a href="${route('register')}" class="btn btn-primary">
-                                <i class="bx bx-user-plus me-2"></i>
-                                Registrarme de nuevo
-                            </a>
                             <a href="${route('login')}" class="btn btn-outline-secondary">
                                 <i class="bx bx-log-in me-2"></i>
                                 Ir al Login
@@ -140,10 +136,6 @@ window.verifyEmailToken = function(token) {
                             <i class="bx bx-refresh me-2"></i>
                             Intentar de nuevo
                         </button>
-                        <a href="${route('register')}" class="btn btn-outline-secondary">
-                            <i class="bx bx-user-plus me-2"></i>
-                            Volver al registro
-                        </a>
                     </div>
                 </div>
             `,
@@ -198,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         text: 'Cancelar',
                         btnClass: 'btn-outline-secondary',
                         action: function() {
-                            window.location.href = route('register');
+                            window.location.href = route('login');
                         }
                     }
                 }
