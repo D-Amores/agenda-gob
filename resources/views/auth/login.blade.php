@@ -195,8 +195,6 @@ data-template="horizontal-menu-template">
     <script src="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js') }}"></script>
 
-    <!-- Main JS -->
-    <script src="{{ asset('sneat/assets/js/main.js') }}"></script>
 
     <!-- Page JS -->
     <script src="{{ asset('sneat/assets/js/pages-auth.js') }}"></script>
