@@ -41,11 +41,11 @@ Route::middleware('guest')->group(function () {
     // Register routes
     //Route::get('/register', [RegisterController::class, 'index'])->name('register');
     //Route::post('/register', [RegisterController::class, 'register'])->middleware('throttle.registration')->name('register.submit');
-    
+
     // Registration verification routes
     //Route::get('/registration/pending', [EmailVerificationRegistrationController::class, 'pending'])->name('registration.pending');
     Route::get('/registration/verify/{token}', [EmailVerificationRegistrationController::class, 'verify'])->name('registration.verify');
-    
+
     // Password reset routes
     Route::get('/forgot-password', [PasswordResetController::class, 'showForm'])->name('password.request');
     Route::post('/forgot-password', [PasswordResetController::class, 'sendNewPassword'])->middleware('throttle.registration')->name('password.send');
@@ -60,6 +60,12 @@ Route::middleware(['auth'])->group(function () {
     // Perfil (URIs: profile/{user}/edit, profile/{user})
     Route::resource('profile', ProfileController::class)->parameters(['profile' => 'user'])->only(['edit', 'update']);
     Route::put('/profile/{user}/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
+
+    // Configuración de Telegram
+    Route::get('/profile/{user}/telegram', [ProfileController::class, 'configureTelegram'])->name('profile.telegram');
+    Route::put('/profile/{user}/telegram', [ProfileController::class, 'updateTelegram'])->name('profile.telegram.update');
+    Route::post('/profile/{user}/telegram/detect', [ProfileController::class, 'detectChatId'])->name('profile.telegram.detect');
+    Route::post('/telegram/test', [ProfileController::class, 'testTelegram'])->name('telegram.test');
 
     // Audiencias
     Route::resource('audiencias', AudienciaController::class)->parameters(['audiencia' => 'audiencia'])->except(['index', 'show']);
