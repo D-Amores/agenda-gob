@@ -42,6 +42,16 @@
                 </a>
             </li>
 
+            <li class="menu-item {{ request()->routeIs('users.*') ? 'active' : '' }} me-2">
+                @role('admin') {{-- Solo usuarios con rol "admin" --}}
+                    <a href="{{ route('users.index') }}" class="menu-link menu-adm">
+                        <i class="menu-icon tf-icons bx bx-calendar-event"></i>
+                        <span class="menu-title text-uppercase fw-semibold">Administrar Usuarios</span>
+                    </a>
+                @endrole
+            </li>
+
+
         </ul>
     </div>
 </aside>

@@ -103,10 +103,6 @@
     <!-- librerías necesarias -->
     <script src="{{ asset('sneat/assets/js/charts-apex.js') }}"></script>
 
-    <!-- flatpickr para rango personalizado -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
     <script type="text/javascript">
         var fechasTodas = @json($fechasTodas);
         var audiencias = @json($audienciasData);
@@ -115,15 +111,8 @@
         window.dashboardConfig = {
             baseUrl: '{{ url("/") }}',
             chartDataUrl: '{{ route("dashboard.chart-data") }}',
-            debug: true // Para debugging
+            debug: false // Para debugging
         };
-        
-        // Debug info
-        if (window.dashboardConfig.debug) {
-            console.log('🔧 Dashboard Config:', window.dashboardConfig);
-            console.log('📍 Current URL:', window.location.href);
-            console.log('🔗 Chart Data URL:', window.dashboardConfig.chartDataUrl);
-        }
     </script>
 
     <script src="{{ asset('js/dashboard/tablero.js') }}"></script>

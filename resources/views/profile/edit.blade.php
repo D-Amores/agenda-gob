@@ -5,7 +5,7 @@
 @endsection
 
 @section('link')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css">
+    <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/cropperjs/cropper.min.css') }}">
 @endsection
 
 @section('content')
@@ -241,8 +241,8 @@
 @endsection
 
 @section('script')
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ asset('js/vendors/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('js/jquery-confirm/jquery-confirm.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
+    <script src="{{ asset('js/vendors/cropper.min.js') }}"></script>
     <script src="{{ asset('js/profile/edit.js') }}"></script>
 @endsection

@@ -48,20 +48,6 @@ data-template="horizontal-menu-template">
     <!-- Template customizer & Theme config -->
     <script src="{{ asset('sneat/assets/vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('sneat/assets/js/config.js') }}"></script>
-
-
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-        gtag('config', 'GA_MEASUREMENT_ID');
-    </script>
-    <!-- Custom notification for demo -->
     <!-- beautify ignore:end -->
 
 </head>
@@ -209,12 +195,28 @@ data-template="horizontal-menu-template">
     <script src="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js') }}"></script>
     <script src="{{ asset('sneat/assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js') }}"></script>
 
-    <!-- Main JS -->
-    <script src="{{ asset('sneat/assets/js/main.js') }}"></script>
 
     <!-- Page JS -->
     <script src="{{ asset('sneat/assets/js/pages-auth.js') }}"></script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const togglePassword = document.querySelector('.form-password-toggle .input-group-text.cursor-pointer');
+    const passwordInput = document.getElementById('password');
+    const icon = togglePassword.querySelector('i');
 
+    togglePassword.addEventListener('click', function() {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.remove('bx-hide');
+            icon.classList.add('bx-show');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('bx-show');
+            icon.classList.add('bx-hide');
+        }
+    });
+});
+</script>
 
 </body>
 

@@ -15,9 +15,12 @@ class CreatePendingRegistrationsTable extends Migration
     {
         Schema::create('pending_registrations', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->string('username')->unique();
             $table->string('email')->unique();
+            $table->string('phone')->nullable();
             $table->unsignedBigInteger('area_id');
+            $table->string('rol'); // Nuevo campo para el rol
             $table->string('verification_token', 64)->unique();
             $table->string('password'); // Contraseña ya hasheada
             $table->timestamp('expires_at');

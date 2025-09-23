@@ -19,8 +19,10 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
+        'name',
         'username',
         'email',
+        'phone',
         'profile_photo_path',
         'password',
         'area_id',
@@ -35,6 +37,9 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+        'pivot',
+        'created_at',
+        'updated_at',
     ];
 
     /**
@@ -50,6 +55,8 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsTo(Area::class); // asumiendo que el modelo User tiene area_id
     }
+
+    protected $appends = ['avatar_url'];
 
     public function getAvatarUrlAttribute(): string
     {

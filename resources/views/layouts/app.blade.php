@@ -23,7 +23,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
-
+<!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title')</title>
 
     <meta name="description" content="Most Powerful &amp; Comprehensive Bootstrap 5 HTML Admin Dashboard Template built for developers!" />
@@ -61,8 +62,8 @@
     @yield('link')
 
     <!-- FaltPickr -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/flatpickr/flatpickr.css') }}">
+    <script src="{{ asset('sneat/assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
     <!-- ClockPicker CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.css">
@@ -73,20 +74,6 @@
 
     <!-- Template customizer & Theme config -->
     <script src="{{ asset('sneat/assets/js/config.js') }}"></script>
-
-
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-        gtag('config', 'GA_MEASUREMENT_ID');
-    </script>
-
 </head>
 
 <body>
@@ -163,7 +150,7 @@
 <script src="{{ asset('sneat/assets/js/dashboards-analytics.js') }}"></script>
 
 <!-- JQUERY CONFIRM -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js"></script>
+<script src="{{ asset('js/jquery-confirm/jquery-confirm.min.js') }}"></script>
 
 @yield('script')
 </body>

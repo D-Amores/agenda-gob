@@ -14,17 +14,28 @@ class PermisoSeeder extends Seeder
         // Limpia la caché de permisos y roles
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Permisos comunes para eventos y audiencias
-        $acciones = ['ver', 'crear', 'editar', 'eliminar'];
-        $modulos = ['evento', 'audiencia'];
-
-        $permisos = [];
-
-        foreach ($modulos as $modulo) {
-            foreach ($acciones as $accion) {
-                $permisos[] = "$accion $modulo";
-            }
-        }
+        // Permisos para el sistema
+        $permisos = [
+            // Gestión de usuarios (solo admin)
+            'gestionar usuarios',
+            'ver usuarios',
+            'crear usuarios',
+            'editar usuarios',
+            'eliminar usuarios',
+            
+            // Eventos y audiencias (ambos roles)
+            'ver evento',
+            'crear evento',
+            'editar evento',
+            'eliminar evento',
+            'ver audiencia',
+            'crear audiencia',
+            'editar audiencia',
+            'eliminar audiencia',
+            
+            // Panel de administración
+            'acceder panel admin'
+        ];
 
         // Crear permisos si no existen
         foreach ($permisos as $permiso) {
@@ -33,33 +44,28 @@ class PermisoSeeder extends Seeder
 
         // Crear roles
         $admin = Role::firstOrCreate(['name' => 'admin']);
-        $encargado = Role::firstOrCreate(['name' => 'encargado']);
-        $usuario = Role::firstOrCreate(['name' => 'usuario']);
+        $user = Role::firstOrCreate(['name' => 'user']);
 
         // Asignar todos los permisos al admin
         $admin->syncPermissions(Permission::all());
 
-        // Encargado: puede ver, crear, y editar, pero no eliminar
-        $permisosEncargado = array_filter($permisos, function ($p) {
-            return !str_starts_with($p, 'eliminar');
-        });
-        $encargado->syncPermissions($permisosEncargado);
+        // Usuario regular: puede gestionar eventos y audiencias, pero no usuarios
+        $permisosUser = [
+            'ver evento',
+            'crear evento',
+            'editar evento',
+            'eliminar evento',
+            'ver audiencia',
+            'crear audiencia',
+            'editar audiencia',
+            'eliminar audiencia'
+        ];
+        $user->syncPermissions($permisosUser);
 
-        // Usuario: solo puede ver y crear
-        $permisosUsuario = array_filter($permisos, function ($p) {
-            return str_starts_with($p, 'ver') || str_starts_with($p, 'crear');
-        });
-        $usuario->syncPermissions(Permission::all());
-
-        // (Opcional) Asignar rol a un usuario existente
-        // Asignar rol de admin a los dos primeros usuarios (si existen)
-        $admins = User::take(2)->get();
-
-        foreach ($admins as $adminUser) {
-            if (!$adminUser->hasRole('usuario')) {
-                $adminUser->assignRole('usuario');
-            }
+        // Asignar rol de admin al primer usuario (si existe)
+        $primerUsuario = User::first();
+        if ($primerUsuario && !$primerUsuario->hasAnyRole()) {
+            $primerUsuario->assignRole('admin');
         }
-
     }
 }

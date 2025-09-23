@@ -199,8 +199,8 @@
     <script src="{{ asset('sneat/assets/vendor/libs/select2/select2.js') }}"></script>
     <!-- <script src="{{ asset('js/evento/establecer-hora-inicio-fin.js') }}"></script> -->
     <!-- jQuery y ClockPicker JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{{ asset('js/vendors/bootstrap-clockpicker.min.js') }}"></script>
+    <script src="{{ asset('js/vendors/toastr.min.js') }}"></script>
 
     <script src="{{ asset('js/flatpicker/evento.js') }}"></script>
 

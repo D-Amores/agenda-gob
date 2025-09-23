@@ -47,21 +47,6 @@ data-template="horizontal-menu-template">
     <script src="{{ asset('sneat/assets/vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('sneat/assets/js/config.js') }}"></script>
 
-    
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag('js', new Date());
-    gtag('config', 'GA_MEASUREMENT_ID');
-    </script>
-    <!-- Custom notification for demo -->
-    <!-- beautify ignore:end -->
-
 </head>
 
 <body>
@@ -183,8 +168,8 @@ data-template="horizontal-menu-template">
 
     <!-- Vendors JS -->
     <!-- jQuery Confirm Library -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+    <link rel="stylesheet" href="{{ asset('sneat/assets/vendor/libs/jquery-confirm/jquery-confirm.min.css') }}">
+    <script src="{{ asset('js/vendors/jquery-confirm.min.js') }}"></script>
 
     <!-- Page JS -->
     <script src="{{ asset('js/jquery-confirm/jquery-confirm.js') }}"></script>
