@@ -27,6 +27,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'area_id',
         'email_verified_at',
+        'telegram_chat_id',
+        'telegram_notifications_enabled',
     ];
 
     /**
@@ -54,6 +56,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function area()
     {
         return $this->belongsTo(Area::class); // asumiendo que el modelo User tiene area_id
+    }
+
+    public function audiencias()
+    {
+        return $this->hasMany(Audiencia::class);
+    }
+
+    public function eventos()
+    {
+        return $this->hasMany(Evento::class);
     }
 
     protected $appends = ['avatar_url'];
