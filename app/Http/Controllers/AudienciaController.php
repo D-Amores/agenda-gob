@@ -8,6 +8,7 @@ use App\Models\Audiencia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use App\Services\TelegramService;
 
 class AudienciaController extends Controller
 {
@@ -42,7 +43,7 @@ class AudienciaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, TelegramService $telegramService)
     {
         $response = ['ok' => false, 'message' => '', 'errors' => null];
         $status = 422;
@@ -57,6 +58,7 @@ class AudienciaController extends Controller
             'hora_fin_audiencia'   => 'required|date_format:H:i|after:hora_audiencia',
             //'estatus_id'           => 'required|exists:estatus,id',
             'descripcion'          => 'nullable|string|max:500',
+            'notificar_telegram'   => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -95,8 +97,34 @@ class AudienciaController extends Controller
                 'user_id'           => Auth::id(),
             ]);
 
+            // Enviar notificación por Telegram si está habilitada
+            if (isset($validated['notificar_telegram']) && $validated['notificar_telegram']) {
+                $user = Auth::user();
+                
+                // Verificar que el usuario tenga configurado su chat_id de Telegram
+                if ($user->telegram_chat_id) {
+                    
+                    // Cargar las relaciones necesarias para la notificación
+                    $audiencia->load(['estatus', 'area']);
+                    
+                    $notificationSent = $telegramService->sendAudienciaRegistradaNotification($audiencia, $user);
+                    
+                    if ($notificationSent) {
+                        $response['telegram_notification_sent'] = true;
+                        $response['message'] = 'Audiencia creada correctamente y notificación enviada por Telegram.';
+                    } else {
+                        $response['telegram_notification_sent'] = false;
+                        $response['message'] = 'Audiencia creada correctamente, pero hubo un problema al enviar la notificación por Telegram.';
+                    }
+                } else {
+                    $response['telegram_notification_sent'] = false;
+                    $response['message'] = 'Audiencia creada correctamente. Para recibir notificaciones por Telegram, configura tu chat ID en el perfil.';
+                }
+            } else {
+                $response['message'] = 'Audiencia creada correctamente.';
+            }
+
             $response['ok'] = true;
-            $response['message'] = 'Audiencia creada correctamente.';
             return response()->json($response, 201);
         } catch (\Throwable $e) {
             report($e);

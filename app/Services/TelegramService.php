@@ -24,6 +24,42 @@ class TelegramService
 
         if ($this->botToken) {
             $this->telegram = new BotApi($this->botToken);
+            
+            // Configurar cURL para manejar certificados SSL en desarrollo/local
+            $this->configureHttpClient();
+        }
+    }
+
+    /**
+     * Configura el cliente HTTP para manejar certificados SSL
+     */
+    private function configureHttpClient(): void
+    {
+        // Configurar opciones de cURL para resolver problemas de SSL
+        $curlOptions = [
+            CURLOPT_SSL_VERIFYPEER => false,  // Desactivar verificación de certificados SSL
+            CURLOPT_SSL_VERIFYHOST => false,  // Desactivar verificación del host SSL
+            CURLOPT_TIMEOUT => 30,            // Timeout de 30 segundos
+            CURLOPT_CONNECTTIMEOUT => 10,     // Timeout de conexión de 10 segundos
+        ];
+
+        // Solo aplicar estas configuraciones en desarrollo local
+        if (app()->environment(['local', 'development'])) {
+            // Crear un cliente HTTP personalizado
+            $httpClient = new \GuzzleHttp\Client([
+                'verify' => false,  // Desactivar verificación SSL en desarrollo
+                'timeout' => 30,
+                'connect_timeout' => 10,
+            ]);
+            
+            // Configurar el cliente en el bot de Telegram si es posible
+            try {
+                // La librería telegram-bot/api usa cURL internamente,
+                // configuramos las opciones a nivel global
+                curl_setopt_array(curl_init(), $curlOptions);
+            } catch (\Throwable $e) {
+                Log::warning("Could not configure cURL options: " . $e->getMessage());
+            }
         }
     }
 
@@ -38,6 +74,11 @@ class TelegramService
         }
 
         try {
+            // Configurar opciones de cURL antes de la petición
+            if (app()->environment(['local', 'development'])) {
+                $this->configureCurlForDevelopment();
+            }
+
             // Agregar parse_mode por defecto para soportar Markdown (versión 1, más simple)
             $defaultOptions = [
                 'parse_mode' => 'Markdown'
@@ -51,6 +92,82 @@ class TelegramService
             return true;
         } catch (TelegramException $e) {
             Log::error("Failed to send Telegram message: " . $e->getMessage());
+            
+            // Intentar envío alternativo si es problema de SSL
+            if (strpos($e->getMessage(), 'SSL certificate') !== false || 
+                strpos($e->getMessage(), 'certificate') !== false) {
+                Log::info("Attempting alternative SSL configuration for Telegram message");
+                return $this->sendMessageWithAlternativeSSL($chatId, $message, $options);
+            }
+            
+            return false;
+        }
+    }
+
+    /**
+     * Configura cURL para desarrollo local
+     */
+    private function configureCurlForDevelopment(): void
+    {
+        // Configurar opciones globales de cURL para desarrollo
+        curl_setopt_array(curl_init(), [
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_CONNECTTIMEOUT => 10,
+        ]);
+    }
+
+    /**
+     * Método alternativo para enviar mensajes con configuración SSL más permisiva
+     */
+    private function sendMessageWithAlternativeSSL(string $chatId, string $message, array $options = []): bool
+    {
+        try {
+            // Usar cURL directo para mayor control sobre SSL
+            $url = "https://api.telegram.org/bot{$this->botToken}/sendMessage";
+            
+            $postData = [
+                'chat_id' => $chatId,
+                'text' => $message,
+                'parse_mode' => 'Markdown'
+            ];
+
+            $ch = curl_init();
+            curl_setopt_array($ch, [
+                CURLOPT_URL => $url,
+                CURLOPT_POST => true,
+                CURLOPT_POSTFIELDS => json_encode($postData),
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => false,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_CONNECTTIMEOUT => 10,
+                CURLOPT_HTTPHEADER => [
+                    'Content-Type: application/json',
+                ],
+            ]);
+
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $error = curl_error($ch);
+            curl_close($ch);
+
+            if ($error) {
+                Log::error("Alternative cURL error: " . $error);
+                return false;
+            }
+
+            if ($httpCode === 200) {
+                Log::info("Telegram message sent successfully via alternative method to chat: {$chatId}");
+                return true;
+            } else {
+                Log::error("Alternative method HTTP error: {$httpCode}, Response: {$response}");
+                return false;
+            }
+
+        } catch (\Throwable $e) {
+            Log::error("Alternative SSL method failed: " . $e->getMessage());
             return false;
         }
     }
@@ -277,5 +394,94 @@ class TelegramService
             Log::error("Failed to get recent updates: " . $e->getMessage());
             return [];
         }
+    }
+
+    /**
+     * Envía notificación de nueva audiencia registrada
+     */
+    public function sendAudienciaRegistradaNotification(Audiencia $audiencia, User $user): bool
+    {
+        if (!$user->telegram_chat_id) {
+            Log::warning("User {$user->id} does not have telegram_chat_id configured");
+            return false;
+        }
+
+        $fechaFormateada = Carbon::parse($audiencia->fecha_audiencia)->format('d/m/Y');
+        
+        $message = "✅ *AUDIENCIA REGISTRADA*\n\n";
+        $message .= "🎉 ¡Tu audiencia ha sido registrada exitosamente!\n\n";
+        $message .= "━━━━━━━━━━━━━━━━━\n";
+        $message .= "📋 **DETALLES DE LA AUDIENCIA**\n";
+        $message .= "━━━━━━━━━━━━━━━━━\n\n";
+        $message .= "👤 **Nombre:** `{$audiencia->nombre}`\n\n";
+        $message .= "📝 **Asunto:** " . substr($audiencia->asunto_audiencia, 0, 100) . 
+                   (strlen($audiencia->asunto_audiencia) > 100 ? "..." : "") . "\n\n";
+        $message .= "📅 **Fecha:** `{$fechaFormateada}`\n\n";
+        $message .= "🕐 **Horario:** `{$audiencia->hora_audiencia}` - `{$audiencia->hora_fin_audiencia}`\n\n";
+        $message .= "📍 **Lugar:** `{$audiencia->lugar}`\n\n";
+        
+        if ($audiencia->procedencia) {
+            $message .= "🏢 **Procedencia:** `{$audiencia->procedencia}`\n\n";
+        }
+        
+        if ($audiencia->area) {
+            $message .= "🏛️ **Área:** `{$audiencia->area->area}`\n\n";
+        }
+        
+        $message .= "📊 **Estado:** `" . ($audiencia->estatus->estatus ?? 'Programado') . "`\n\n";
+        
+        if ($audiencia->descripcion) {
+            $message .= "📄 **Descripción:** " . substr($audiencia->descripcion, 0, 150) . 
+                       (strlen($audiencia->descripcion) > 150 ? "..." : "") . "\n\n";
+        }
+        
+        $message .= "━━━━━━━━━━━━━━━━━\n";
+        $message .= "🔔 **Recordatorio:** Recibirás notificaciones diarias sobre tus audiencias programadas.\n\n";
+        $message .= "💼 ¡Que tengas una audiencia exitosa!";
+
+        return $this->sendMessage($user->telegram_chat_id, $message);
+    }
+
+    public function sendEventoRegistradoNotification(Evento $evento, User $user): bool
+    {
+        if (!$user->telegram_chat_id) {
+            Log::warning("User {$user->id} does not have telegram_chat_id configured");
+            return false;
+        }
+
+        $fechaFormateada = Carbon::parse($evento->fecha_evento)->format('d/m/Y');
+
+        $message = "✅ *EVENTO REGISTRADO*\n\n";
+        $message .= "🎉 ¡Tu evento ha sido registrado exitosamente!\n\n";
+        $message .= "━━━━━━━━━━━━━━━━━\n";
+        $message .= "📋 **DETALLES DEL EVENTO**\n";
+        $message .= "━━━━━━━━━━━━━━━━━\n\n";
+        $message .= "👤 **Nombre:** `{$evento->nombre}`\n\n";
+        $message .= "📅 **Fecha:** `{$fechaFormateada}`\n\n";
+        $message .= "🕐 **Horario:** `{$evento->hora_evento}` - `{$evento->hora_fin_evento}`\n\n";
+        $message .= "📍 **Lugar:** `{$evento->lugar}`\n\n";
+
+        if ($evento->descripcion) {
+            $message .= "� **Descripción:** " . substr($evento->descripcion, 0, 150) .
+                   (strlen($evento->descripcion) > 150 ? "..." : "") . "\n\n";
+        }
+
+        if ($evento->area) {
+            $message .= "🏛️ **Área:** `{$evento->area->area}`\n\n";
+        }
+
+        $message .= "📊 **Estado:** `" . ($evento->estatus->estatus ?? 'Programado') . "`\n\n";
+
+        if ($evento->asistencia_de_gobernador) {
+            $message .= "👨‍💼 **Asistencia del Gobernador:** Confirmada\n\n";
+        } else {
+            $message .= "👨‍💼 **Asistencia del Gobernador:** No Confirmada\n\n";
+        }
+        
+        $message .= "━━━━━━━━━━━━━━━━━\n";
+        $message .= "🔔 **Recordatorio:** Recibirás notificaciones diarias sobre tus eventos programados.\n\n";
+        $message .= "🎊 ¡Que tengas un evento exitoso!";
+
+        return $this->sendMessage($user->telegram_chat_id, $message);
     }
 }

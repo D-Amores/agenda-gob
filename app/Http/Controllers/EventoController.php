@@ -9,6 +9,7 @@ use App\Models\Estatus;
 use App\Models\Vestimenta;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use App\Services\TelegramService;
 
 class EventoController extends Controller
 {
@@ -39,7 +40,7 @@ class EventoController extends Controller
      * @param  \App\Http\Requests\StoreEventoRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreEventoRequest $request)
+    public function store(StoreEventoRequest $request, TelegramService $telegramService)
     {
         $response = ['ok' => false, 'message' => '', 'errors' => null];
         $status = 422;
@@ -62,7 +63,7 @@ class EventoController extends Controller
         }
 
         try {
-            Evento::create([
+            $evento = Evento::create([
                 'nombre' => $validated['formValidationName'],
                 'asistencia_de_gobernador' => $validated['asistenciaGobernador'],
                 'lugar' => $validated['formValidationLugar'],
@@ -76,8 +77,34 @@ class EventoController extends Controller
                 'user_id' => Auth::id(),
             ]);
 
+            // Enviar notificación por Telegram si está habilitada
+            if (isset($validated['notificar_telegram']) && $validated['notificar_telegram']) {
+                $user = Auth::user();
+                
+                // Verificar que el usuario tenga configurado su chat_id de Telegram
+                if ($user->telegram_chat_id) {
+                    
+                    // Cargar las relaciones necesarias para la notificación
+                    $evento->load(['estatus', 'area']);
+                    
+                    $notificationSent = $telegramService->sendEventoRegistradoNotification($evento, $user);
+                    
+                    if ($notificationSent) {
+                        $response['telegram_notification_sent'] = true;
+                        $response['message'] = 'Evento creado correctamente y notificación enviada por Telegram.';
+                    } else {
+                        $response['telegram_notification_sent'] = false;
+                        $response['message'] = 'Evento creado correctamente, pero hubo un problema al enviar la notificación por Telegram.';
+                    }
+                } else {
+                    $response['telegram_notification_sent'] = false;
+                    $response['message'] = 'Evento creado correctamente. Para recibir notificaciones por Telegram, configura tu chat ID en el perfil.';
+                }
+            } else {
+                $response['message'] = 'Evento creado correctamente.';
+            }
+
             $response['ok'] = true;
-            $response['message'] = 'Evento creado correctamente.';
             return response()->json($response, 201);
         } catch (\Exception $e) {
             report($e);
