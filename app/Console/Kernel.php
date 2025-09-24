@@ -23,7 +23,7 @@ class Kernel extends ConsoleKernel
 
         // Comando para enviar notificaciones diarias por Telegram
         $schedule->command('telegram:send-daily-notifications')
-                 ->dailyAt('01:08') // Cambiado temporalmente para prueba
+                 ->dailyAt('06:00') // Cambiado temporalmente para prueba
                  ->withoutOverlapping()
                  ->runInBackground()
                  ->timezone(config('telegram.notifications.timezone', 'America/Mexico_City'));

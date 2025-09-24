@@ -418,7 +418,7 @@
                                                             Sobre las Notificaciones
                                                         </h6>
                                                         <ul class="mb-0 text-muted">
-                                                            <li><strong>Horario:</strong> Recibirás un mensaje diario a las 8:00 AM con tus eventos y audiencias del día</li>
+                                                            <li><strong>Horario:</strong> Recibirás un mensaje diario a las 6:00 AM con tus eventos y audiencias del día</li>
                                                             <li><strong>Contenido:</strong> Lista detallada de eventos, audiencias, horarios, lugares y estados</li>
                                                             <li><strong>Privacidad:</strong> Solo tú recibirás información sobre tus propios eventos</li>
                                                             <li><strong>Control:</strong> Puedes habilitar/deshabilitar las notificaciones en cualquier momento</li>
