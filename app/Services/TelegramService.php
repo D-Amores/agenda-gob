@@ -104,57 +104,84 @@ class TelegramService
             ->orderBy('hora_evento')
             ->get();
 
-        $message = "🗓️ *AGENDA DEL DÍA " . Carbon::parse($date)->format('d/m/Y') . "*\n";
+        $message = "✨ *AGENDA DEL DÍA " . Carbon::parse($date)->format('d/m/Y') . "*\n";
         $message .= "👋 Hola *{$user->name}*\n\n";
 
         if ($audiencias->count() > 0) {
-            $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-            $message .= "🟢 *AUDIENCIAS (" . $audiencias->count() . ")*\n";
-            $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+            $message .= "━━━━━━━━━━━━━━━━━\n";
+            $message .= "  🟢 *AUDIENCIAS (" . $audiencias->count() . ")*\n";
+            $message .= "━━━━━━━━━━━━━━━━━\n\n";
 
-            foreach ($audiencias as $audiencia) {
-                $message .= "🟢 *{$audiencia->nombre}*\n";
-                $message .= "   🕐 `{$audiencia->hora_audiencia}` - `{$audiencia->hora_fin_audiencia}` • � `{$audiencia->lugar}`\n";
-                $message .= " 📝 " . substr($audiencia->asunto_audiencia, 0, 50) .
-                           (strlen($audiencia->asunto_audiencia) > 50 ? "..." : "") . "\n";
-                $message .= "   📊 *" . ($audiencia->estatus->estatus ?? 'N/A') . "*";
+            foreach ($audiencias as $index => $audiencia) {
+                $message .= "*{$audiencia->nombre}*\n\n";
+                $message .= "   🕐 - *Horario:* `{$audiencia->hora_audiencia}` - `{$audiencia->hora_fin_audiencia}`\n";
+                $message .= "   📍 - *Lugar:* `{$audiencia->lugar}`\n";
+                $message .= "   📝 - *Asunto:* " . substr($audiencia->asunto_audiencia, 0, 60) .
+                        (strlen($audiencia->asunto_audiencia) > 60 ? "..." : "") . "\n";
+                $message .= "   📊 - *Estado:* `" . ($audiencia->estatus->estatus ?? 'N/A') . "`\n";
+
                 if ($audiencia->area) {
-                    $message .= " • 🏢 `{$audiencia->area->area}`";
+                    $message .= "   🏢 - *Área:* `{$audiencia->area->area}`\n";
                 }
-                $message .= "\n\n";
+
+                // Separador entre audiencias (excepto la última)
+                if ($index < $audiencias->count() - 1) {
+                    $message .= "\n   ────────────────\n\n";
+                }
             }
+            $message .= "\n";
         }
 
         if ($eventos->count() > 0) {
-            $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-            $message .= "🟠 *EVENTOS (" . $eventos->count() . ")*\n";
-            $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-
-            foreach ($eventos as $evento) {
-                $message .= "🟠 *{$evento->nombre}*\n";
-                $message .= "   🕐 `{$evento->hora_evento}` - `{$evento->hora_fin_evento}` • 📍 `{$evento->lugar}`\n";
-                if ($evento->descripcion) {
-                    $message .= "   📝 " . substr($evento->descripcion, 0, 50) .
-                               (strlen($evento->descripcion) > 50 ? "..." : "") . "\n";
-                }
-                $message .= "   📊 *" . ($evento->estatus->estatus ?? 'N/A') . "*";
-                if ($evento->area) {
-                    $message .= " • 🏢 `{$evento->area->area}`";
-                }
-                if ($evento->asistencia_de_gobernador) {
-                    $message .= " • � *Gobernador*";
-                }
-                $message .= "\n\n";
+            // Espacio antes de la sección de eventos
+            if ($audiencias->count() > 0) {
+                $message .= "\n";
             }
+
+            $message .= "━━━━━━━━━━━━━━━━━\n";
+            $message .= "  🟠 *EVENTOS (" . $eventos->count() . ")*\n";
+            $message .= "━━━━━━━━━━━━━━━━━\n\n";
+
+            foreach ($eventos as $index => $evento) {
+                $message .= "*{$evento->nombre}*\n\n";
+                $message .= "   🕐 - *Horario:* `{$evento->hora_evento}` - `{$evento->hora_fin_evento}`\n";
+                $message .= "   📍 - *Lugar:* `{$evento->lugar}`\n";
+
+                if ($evento->descripcion) {
+                    $message .= "   📝 - *Descripción:* " . substr($evento->descripcion, 0, 60) .
+                            (strlen($evento->descripcion) > 60 ? "..." : "") . "\n";
+                }
+
+                $message .= "   📊 - *Estado:* `" . ($evento->estatus->estatus ?? 'N/A') . "`\n";
+
+                if ($evento->area) {
+                    $message .= "   🏢 - *Área:* `{$evento->area->area}`\n";
+                }
+
+                if ($evento->asistencia_de_gobernador) {
+                    $message .= "   👨‍💼 - *Asistencia del Gobernador:* Confirmada\n";
+                } else {
+                    $message .= "   👨‍💼 - *Asistencia del Gobernador:* No Confirmada\n";
+                }
+
+                // Separador entre eventos (excepto el último)
+                if ($index < $eventos->count() - 1) {
+                    $message .= "\n   ────────────────\n\n";
+                }
+            }
+            $message .= "\n";
         }
 
         if ($audiencias->count() === 0 && $eventos->count() === 0) {
-            $message .= "📅 *No tienes actividades programadas para hoy*\n\n";
-            $message .= "¡Que tengas un excelente día! 😊";
+            $message .= "📅 - *No tienes actividades programadas para hoy*\n\n";
+            $message .= "🌞 - ¡Que tengas un excelente día! 😊";
         } else {
-            $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-            $message .= "📊 *RESUMEN:* 🟢 {$audiencias->count()} audiencias • 🟠 {$eventos->count()} eventos\n\n";
-            $message .= "💪 ¡Que tengas un día productivo!";
+            $message .= "━━━━━━━━━━━━━━━━━\n";
+            $message .= "*RESUMEN DEL DÍA*\n";
+            $message .= "   🟢 - *Audiencias:* {$audiencias->count()}\n";
+            $message .= "   🟠 - *Eventos:* {$eventos->count()}\n";
+            $message .= "   - *Total:* " . ($audiencias->count() + $eventos->count()) . " actividades\n\n";
+            $message .= "💪 ¡Que tengas un día muy productivo!";
         }
 
         return $message;
