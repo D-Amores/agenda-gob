@@ -441,4 +441,47 @@ class TelegramService
 
         return $this->sendMessage($user->telegram_chat_id, $message);
     }
+
+    public function sendEventoRegistradoNotification(Evento $evento, User $user): bool
+    {
+        if (!$user->telegram_chat_id) {
+            Log::warning("User {$user->id} does not have telegram_chat_id configured");
+            return false;
+        }
+
+        $fechaFormateada = Carbon::parse($evento->fecha_evento)->format('d/m/Y');
+
+        $message = "✅ *EVENTO REGISTRADO*\n\n";
+        $message .= "🎉 ¡Tu evento ha sido registrado exitosamente!\n\n";
+        $message .= "━━━━━━━━━━━━━━━━━\n";
+        $message .= "📋 **DETALLES DEL EVENTO**\n";
+        $message .= "━━━━━━━━━━━━━━━━━\n\n";
+        $message .= "👤 **Nombre:** `{$evento->nombre}`\n\n";
+        $message .= "📅 **Fecha:** `{$fechaFormateada}`\n\n";
+        $message .= "🕐 **Horario:** `{$evento->hora_evento}` - `{$evento->hora_fin_evento}`\n\n";
+        $message .= "📍 **Lugar:** `{$evento->lugar}`\n\n";
+
+        if ($evento->descripcion) {
+            $message .= "� **Descripción:** " . substr($evento->descripcion, 0, 150) .
+                   (strlen($evento->descripcion) > 150 ? "..." : "") . "\n\n";
+        }
+
+        if ($evento->area) {
+            $message .= "🏛️ **Área:** `{$evento->area->area}`\n\n";
+        }
+
+        $message .= "📊 **Estado:** `" . ($evento->estatus->estatus ?? 'Programado') . "`\n\n";
+
+        if ($evento->asistencia_de_gobernador) {
+            $message .= "👨‍💼 **Asistencia del Gobernador:** Confirmada\n\n";
+        } else {
+            $message .= "👨‍💼 **Asistencia del Gobernador:** No Confirmada\n\n";
+        }
+        
+        $message .= "━━━━━━━━━━━━━━━━━\n";
+        $message .= "🔔 **Recordatorio:** Recibirás notificaciones diarias sobre tus eventos programados.\n\n";
+        $message .= "🎊 ¡Que tengas un evento exitoso!";
+
+        return $this->sendMessage($user->telegram_chat_id, $message);
+    }
 }

@@ -33,6 +33,7 @@ class StoreEventoRequest extends FormRequest
             'hora_fin_evento'      => 'required|date_format:H:i|after:hora_evento',
             //'estatus_id'           => 'required|exists:estatus,id',
             'descripcion'          => 'nullable|string|max:500',
+            'notificar_telegram'   => 'nullable|boolean',
         ];
     }
 
