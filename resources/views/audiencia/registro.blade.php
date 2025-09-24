@@ -156,6 +156,19 @@
                                     
                                 </div>
 
+                                <!-- Notificación por Telegram -->
+                                <div class="col-sm-7 d-flex justify-content-center align-items-center pt-2 mx-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="notificar_telegram" name="notificar_telegram" value="1">
+                                        <label class="form-check-label" for="notificar_telegram">
+                                            <i class="bx bxl-telegram me-2"></i>
+                                            Enviar notificación por Telegram inmediatamente
+                                        </label>
+                                        <div class="form-text">
+                                            Se enviará una notificación a tu chat de Telegram cuando se registre la audiencia, debe tener configurado el bot y haber iniciado una conversación con él. Configurar Telegram <a href="{{ route('profile.edit', Auth::user()) }}">aquí</a>.
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <!-- Descripción (campo grande, opcional) -->
                                 <div class="col-sm-12">
