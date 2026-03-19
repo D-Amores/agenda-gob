@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             EstatusSeeder::class,
             VestimentasSeeder::class,
             PermisoSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }
